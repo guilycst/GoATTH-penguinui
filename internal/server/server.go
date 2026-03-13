@@ -7,7 +7,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/guilycst/gottha-penguinui/internal/pages/demo/components"
+	"github.com/guilycst/GoATTH-penguinui/internal/pages/demo/components"
 )
 
 // Server handles HTTP requests for both original PenguinUI and GoATTH components

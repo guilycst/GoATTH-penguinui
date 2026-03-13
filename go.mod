@@ -1,4 +1,4 @@
-module github.com/guilycst/gottha-penguinui
+module github.com/guilycst/GoATTH-penguinui
 
 go 1.25.0
 

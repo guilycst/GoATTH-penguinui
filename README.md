@@ -23,7 +23,7 @@ This is a hard fork of [Penguin UI](https://www.penguinui.com) by Salar Houshvan
 ## Project Structure
 
 ```
-gottha-penguinui/
+GoATTH-penguinui/
 ├── cmd/server/              # Demo server
 ├── components/              # GoATTH component library
 │   └── button/             # Button component
@@ -89,7 +89,7 @@ Tests automatically:
 ### Button Component
 
 ```go
-import "github.com/guilycst/gottha-penguinui/components/button"
+import "github.com/guilycst/GoATTH-penguinui/components/button"
 
 // Basic button
 @button.Button(button.Config{

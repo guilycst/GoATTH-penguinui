@@ -8,7 +8,7 @@ import (
 	"path/filepath"
 	"runtime"
 
-	"github.com/guilycst/gottha-penguinui/internal/server"
+	"github.com/guilycst/GoATTH-penguinui/internal/server"
 )
 
 func main() {
