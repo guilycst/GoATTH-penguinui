@@ -59,7 +59,7 @@ templ buttonDemoPreview() {
 
 // ButtonFragment renders just the button grid (for HTMX fragment requests)
 templ ButtonFragment(disabled bool) {
-	<div class="grid grid-cols-2 lg:grid-cols-4 gap-8 place-content-evenly place-items-center" id="button-fragment">
+	<div class="mx-auto grid grid-cols-2 lg:grid-cols-4 gap-8 p-8 place-content-evenly place-items-center" id="button-fragment">
 		@button.Button(button.Config{
 			Variant:  button.Primary,
 			Type:     "button",

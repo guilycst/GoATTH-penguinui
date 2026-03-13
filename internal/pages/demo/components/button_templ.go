@@ -5,9 +5,10 @@ package components
 
 //lint:file-ignore SA4006 This context is only used if a nested component is present.
 
+import "github.com/a-h/templ"
+import templruntime "github.com/a-h/templ/runtime"
+
 import (
-	"github.com/a-h/templ"
-	templruntime "github.com/a-h/templ/runtime"
 	"github.com/guilycst/GoATTH-penguinui/components/button"
 	"github.com/guilycst/GoATTH-penguinui/internal/pages/demo"
 )
@@ -161,7 +162,7 @@ func ButtonFragment(disabled bool) templ.Component {
 			templ_7745c5c3_Var4 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"grid grid-cols-2 lg:grid-cols-4 gap-8 place-content-evenly place-items-center\" id=\"button-fragment\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"mx-auto grid grid-cols-2 lg:grid-cols-4 gap-8 p-8 place-content-evenly place-items-center\" id=\"button-fragment\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
