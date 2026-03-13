@@ -261,8 +261,8 @@ func TestTheme_Visual_Comparison(t *testing.T) {
 	})
 }
 
-// TestTheme_Visual_Parity_99_69 tests for 99.69% visual parity between Original and GoTTHA
-func TestTheme_Visual_Parity_99_69(t *testing.T) {
+// TestTheme_Visual_Parity_99_99 tests for 99.99% visual parity between Original and GoTTHA
+func TestTheme_Visual_Parity_99_99(t *testing.T) {
 	if testing.Short() {
 		t.Skip("skipping E2E test in short mode")
 	}
@@ -290,7 +290,7 @@ func TestTheme_Visual_Parity_99_69(t *testing.T) {
 	})
 	require.NoError(t, err)
 
-	t.Run("Visual_Parity_99.69_Percent", func(t *testing.T) {
+	t.Run("Visual_Parity_99.99_Percent", func(t *testing.T) {
 		// Take screenshot of button preview areas only (not the full sections)
 		// Get the first button grid from Original section
 		originalGrid := page.Locator("#buttonDefault").Locator("..").Locator(".grid").First()
@@ -345,8 +345,8 @@ func TestTheme_Visual_Parity_99_69(t *testing.T) {
 								Math.pow(a1 - a2, 2)
 							);
 							
-							// Consider pixels matching if distance is small (tolerance for anti-aliasing)
-							if (distance < 30) {
+							// Very strict tolerance for 99.99% parity (only allow minimal anti-aliasing differences)
+							if (distance < 5) {
 								matchingPixels++;
 							}
 						}
@@ -362,10 +362,10 @@ func TestTheme_Visual_Parity_99_69(t *testing.T) {
 		require.NoError(t, err)
 		similarityPct := similarity.(float64) * 100
 
-		// Assert 99.69% or higher similarity
-		assert.GreaterOrEqual(t, similarityPct, 99.69,
-			"Visual parity should be at least 99.69%%, but got %.2f%%", similarityPct)
+		// Assert 99.99% or higher similarity
+		assert.GreaterOrEqual(t, similarityPct, 99.99,
+			"Visual parity should be at least 99.99%%, but got %.2f%%", similarityPct)
 
-		t.Logf("✓ Visual parity: %.2f%% (threshold: 99.69%%)", similarityPct)
+		t.Logf("✓ Visual parity: %.2f%% (threshold: 99.99%%)", similarityPct)
 	})
 }
