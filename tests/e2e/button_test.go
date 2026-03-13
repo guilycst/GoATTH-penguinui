@@ -89,7 +89,7 @@ func TestButton_OriginalPenguinUI(t *testing.T) {
 	})
 }
 
-func TestButton_GoTTHAComponent(t *testing.T) {
+func TestButton_GoATTHComponent(t *testing.T) {
 	// Skip if Playwright not available
 	if testing.Short() {
 		t.Skip("skipping E2E test in short mode")
@@ -107,7 +107,7 @@ func TestButton_GoTTHAComponent(t *testing.T) {
 	page, err := browser.NewPage()
 	require.NoError(t, err)
 
-	// Navigate to GoTTHA button demo
+	// Navigate to GoATTH button demo
 	_, err = page.Goto(baseURL+"/gottha/button", playwright.PageGotoOptions{
 		WaitUntil: playwright.WaitUntilStateNetworkidle,
 	})
@@ -132,7 +132,7 @@ func TestButton_GoTTHAComponent(t *testing.T) {
 		require.NoError(t, err)
 		require.GreaterOrEqual(t, count, 8, "expected at least 8 buttons")
 
-		t.Logf("✓ Found %d GoTTHA buttons", count)
+		t.Logf("✓ Found %d GoATTH buttons", count)
 	})
 
 	// Test: HTMX button works

@@ -14,10 +14,10 @@ type SplitViewProps struct {
 	Description   string
 	OriginalHTML  string
 	OriginalLabel string
-	GoTTHALabel   string
+	GoATTHLabel   string
 }
 
-// SplitView renders a side-by-side comparison of Original and GoTTHA implementations
+// SplitView renders a side-by-side comparison of Original and GoATTH implementations
 func SplitView(props SplitViewProps, goTTHAContent templ.Component, templCode string) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
@@ -39,7 +39,7 @@ func SplitView(props SplitViewProps, goTTHAContent templ.Component, templCode st
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div x-data=\"{ \n\t\tsize: 'md', \n\t\tdisabled: false,\n\t\tcopiedOriginal: false,\n\t\tcopiedGoTTHA: false,\n\t\tcopyToClipboard(text, type) {\n\t\t\tnavigator.clipboard.writeText(text).then(() => {\n\t\t\t\tif (type === 'original') this.copiedOriginal = true;\n\t\t\t\tif (type === 'gottha') this.copiedGoTTHA = true;\n\t\t\t\tsetTimeout(() => {\n\t\t\t\t\tif (type === 'original') this.copiedOriginal = false;\n\t\t\t\t\tif (type === 'gottha') this.copiedGoTTHA = false;\n\t\t\t\t}, 2000);\n\t\t\t});\n\t\t}\n\t}\"><!-- Header Section --><div class=\"mb-6\"><h1 class=\"text-3xl font-bold font-title mb-2\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div x-data=\"{ \n\t\tsize: 'md', \n\t\tdisabled: false,\n\t\tcopiedOriginal: false,\n\t\tcopiedGoATTH: false,\n\t\tcopyToClipboard(text, type) {\n\t\t\tnavigator.clipboard.writeText(text).then(() => {\n\t\t\t\tif (type === 'original') this.copiedOriginal = true;\n\t\t\t\tif (type === 'gottha') this.copiedGoATTH = true;\n\t\t\t\tsetTimeout(() => {\n\t\t\t\t\tif (type === 'original') this.copiedOriginal = false;\n\t\t\t\t\tif (type === 'gottha') this.copiedGoATTH = false;\n\t\t\t\t}, 2000);\n\t\t\t});\n\t\t}\n\t}\"><!-- Header Section --><div class=\"mb-6\"><h1 class=\"text-3xl font-bold font-title mb-2\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -91,12 +91,12 @@ func SplitView(props SplitViewProps, goTTHAContent templ.Component, templCode st
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "</code></pre></div></div></div><!-- GoTTHA Column --><div class=\"space-y-4\"><div class=\"flex items-center justify-between\"><h2 class=\"text-lg font-semibold font-title\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "</code></pre></div></div></div><!-- GoATTH Column --><div class=\"space-y-4\"><div class=\"flex items-center justify-between\"><h2 class=\"text-lg font-semibold font-title\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var6 string
-		templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(props.GoTTHALabel)
+		templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(props.GoATTHLabel)
 		if templ_7745c5c3_Err != nil {
 			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/split_view.templ`, Line: 171, Col: 69}
 		}
@@ -104,7 +104,7 @@ func SplitView(props SplitViewProps, goTTHAContent templ.Component, templCode st
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "</h2><span class=\"text-xs px-2 py-1 rounded-full bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200\">Go + Templ</span></div><!-- GoTTHA Preview - Matching PenguinUI exactly --><div class=\"overflow-hidden border border-outline dark:border-outline-dark rounded-2xl\"><div class=\"bg-surface-alt dark:bg-surface-dark-alt w-full px-4 py-3 flex items-center justify-between border-b border-outline dark:border-outline-dark\"><div class=\"flex gap-1.5\"><div class=\"rounded-full w-3 h-3 bg-red-500\"></div><div class=\"rounded-full w-3 h-3 bg-yellow-500\"></div><div class=\"rounded-full w-3 h-3 bg-green-500\"></div></div></div><div class=\"bg-pattern flex justify-center dark:bg-surface-dark bg-surface\"><div class=\"relative overflow-hidden w-full bg-surface dark:bg-surface-dark border-none\" id=\"gottha-button-preview\"><!-- Grid layout: 2 cols mobile, 4 cols desktop --><div class=\"mx-auto grid grid-cols-2 lg:grid-cols-4 gap-8 p-8 place-content-evenly place-items-center\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "</h2><span class=\"text-xs px-2 py-1 rounded-full bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200\">Go + Templ</span></div><!-- GoATTH Preview - Matching PenguinUI exactly --><div class=\"overflow-hidden border border-outline dark:border-outline-dark rounded-2xl\"><div class=\"bg-surface-alt dark:bg-surface-dark-alt w-full px-4 py-3 flex items-center justify-between border-b border-outline dark:border-outline-dark\"><div class=\"flex gap-1.5\"><div class=\"rounded-full w-3 h-3 bg-red-500\"></div><div class=\"rounded-full w-3 h-3 bg-yellow-500\"></div><div class=\"rounded-full w-3 h-3 bg-green-500\"></div></div></div><div class=\"bg-pattern flex justify-center dark:bg-surface-dark bg-surface\"><div class=\"relative overflow-hidden w-full bg-surface dark:bg-surface-dark border-none\" id=\"gottha-button-preview\"><!-- Grid layout: 2 cols mobile, 4 cols desktop --><div class=\"mx-auto grid grid-cols-2 lg:grid-cols-4 gap-8 p-8 place-content-evenly place-items-center\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -112,7 +112,7 @@ func SplitView(props SplitViewProps, goTTHAContent templ.Component, templCode st
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "</div></div></div></div><!-- GoTTHA Code --><div class=\"overflow-hidden border border-outline dark:border-outline-dark rounded-2xl\"><div class=\"flex items-center justify-between px-4 py-3 border-b border-outline dark:border-outline-dark bg-surface-alt dark:bg-surface-dark-alt\"><span class=\"text-sm font-medium\">Templ</span> <button @click=\"copyToClipboard(document.getElementById('gottha-code').textContent, 'gottha')\" class=\"flex items-center gap-1 text-xs text-on-surface/70 hover:text-primary transition-colors dark:text-on-surface-dark/70 dark:hover:text-primary-dark\"><svg x-show=\"!copiedGoTTHA\" xmlns=\"http://www.w3.org/2000/svg\" class=\"h-4 w-4\" fill=\"none\" viewBox=\"0 0 24 24\" stroke=\"currentColor\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z\"></path></svg> <svg x-show=\"copiedGoTTHA\" xmlns=\"http://www.w3.org/2000/svg\" class=\"h-4 w-4\" fill=\"none\" viewBox=\"0 0 24 24\" stroke=\"currentColor\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M5 13l4 4L19 7\"></path></svg> <span x-text=\"copiedGoTTHA ? 'Copied!' : 'Copy'\"></span></button></div><div class=\"p-4 overflow-x-auto bg-slate-900 text-slate-50\"><pre id=\"gottha-code\" class=\"font-mono text-sm\"><code>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "</div></div></div></div><!-- GoATTH Code --><div class=\"overflow-hidden border border-outline dark:border-outline-dark rounded-2xl\"><div class=\"flex items-center justify-between px-4 py-3 border-b border-outline dark:border-outline-dark bg-surface-alt dark:bg-surface-dark-alt\"><span class=\"text-sm font-medium\">Templ</span> <button @click=\"copyToClipboard(document.getElementById('gottha-code').textContent, 'gottha')\" class=\"flex items-center gap-1 text-xs text-on-surface/70 hover:text-primary transition-colors dark:text-on-surface-dark/70 dark:hover:text-primary-dark\"><svg x-show=\"!copiedGoATTH\" xmlns=\"http://www.w3.org/2000/svg\" class=\"h-4 w-4\" fill=\"none\" viewBox=\"0 0 24 24\" stroke=\"currentColor\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z\"></path></svg> <svg x-show=\"copiedGoATTH\" xmlns=\"http://www.w3.org/2000/svg\" class=\"h-4 w-4\" fill=\"none\" viewBox=\"0 0 24 24\" stroke=\"currentColor\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M5 13l4 4L19 7\"></path></svg> <span x-text=\"copiedGoATTH ? 'Copied!' : 'Copy'\"></span></button></div><div class=\"p-4 overflow-x-auto bg-slate-900 text-slate-50\"><pre id=\"gottha-code\" class=\"font-mono text-sm\"><code>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

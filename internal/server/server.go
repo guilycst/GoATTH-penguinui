@@ -10,7 +10,7 @@ import (
 	"github.com/guilycst/gottha-penguinui/internal/pages/demo/components"
 )
 
-// Server handles HTTP requests for both original PenguinUI and GoTTHA components
+// Server handles HTTP requests for both original PenguinUI and GoATTH components
 type Server struct {
 	projectRoot string
 	mux         *http.ServeMux

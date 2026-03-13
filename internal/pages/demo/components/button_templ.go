@@ -71,7 +71,7 @@ func buttonDemoContent(originalHTML string) templ.Component {
 				Description:   "Buttons are a fundamental element of any user interface. Users can use them to trigger actions, such as submitting a form, opening a modal, or navigating to another page.",
 				OriginalHTML:  originalHTML,
 				OriginalLabel: "Original",
-				GoTTHALabel:   "GoTTHA",
+				GoATTHLabel:   "GoATTH",
 			},
 			buttonDemoPreview(),
 			`// Primary Button
@@ -110,7 +110,7 @@ func buttonDemoContent(originalHTML string) templ.Component {
 	})
 }
 
-// buttonDemoPreview renders the GoTTHA button preview
+// buttonDemoPreview renders the GoATTH button preview
 func buttonDemoPreview() templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context

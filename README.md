@@ -1,6 +1,6 @@
-# GoTTHA PenguinUI
+# GoATTH PenguinUI
 
-**GoTTHA**: Go + Templ + Tailwind CSS + HTMX + Alpine.js
+**GoATTH**: Go + Templ + Tailwind CSS + HTMX + Alpine.js
 
 ## About This Fork
 
@@ -8,7 +8,7 @@ This is a hard fork of [Penguin UI](https://www.penguinui.com) by Salar Houshvan
 
 ### What's Changed?
 
-| Original | GoTTHA Fork |
+| Original | GoATTH Fork |
 |----------|-------------|
 | Static HTML | Go + Templ templates |
 | CDN assets | Configurable (CDN/Embedded/Custom) |
@@ -25,7 +25,7 @@ This is a hard fork of [Penguin UI](https://www.penguinui.com) by Salar Houshvan
 ```
 gottha-penguinui/
 ├── cmd/server/              # Demo server
-├── components/              # GoTTHA component library
+├── components/              # GoATTH component library
 │   └── button/             # Button component
 │       ├── types.go        # Configuration types
 │       └── button.templ    # Templ component
@@ -49,7 +49,7 @@ go run cmd/server/main.go
 
 # Server will start on http://localhost:8090
 # - Original PenguinUI: http://localhost:8090/original/
-# - GoTTHA Components: http://localhost:8090/gottha/
+# - GoATTH Components: http://localhost:8090/gottha/
 ```
 
 ## Running E2E Tests
@@ -62,7 +62,7 @@ just gp-test-e2e                    # Run all E2E tests
 just gp-test-e2e-one TestButton     # Run specific test
 
 # Or directly
-go test ./GoTTHA-penguinui/tests/e2e/... -v
+go test ./GoATTH-penguinui/tests/e2e/... -v
 
 # First time setup - install Playwright browsers
 just gp-install-playwright
@@ -77,7 +77,7 @@ Tests automatically:
 - Start the demo server
 - Run browser automation tests
 - Capture screenshots on failures to `test-results/screenshots/`
-- Verify both Original PenguinUI and GoTTHA component rendering
+- Verify both Original PenguinUI and GoATTH component rendering
 
 ### Current Test Coverage
 

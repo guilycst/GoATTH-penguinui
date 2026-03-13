@@ -22,7 +22,7 @@ var (
 
 var serverCmd *exec.Cmd
 
-// setupServer starts the GoTTHA server for testing (singleton)
+// setupServer starts the GoATTH server for testing (singleton)
 func setupServer(t *testing.T) func() {
 	// Check if server is already running
 	resp, err := http.Get(baseURL)
