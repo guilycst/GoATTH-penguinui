@@ -260,3 +260,112 @@ func TestTheme_Visual_Comparison(t *testing.T) {
 		t.Logf("✓ Screenshot saved: %s", screenshotPath)
 	})
 }
+
+// TestTheme_Visual_Parity_99_69 tests for 99.69% visual parity between Original and GoTTHA
+func TestTheme_Visual_Parity_99_69(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping E2E test in short mode")
+	}
+
+	// Setup server
+	cleanupServer := setupServer(t)
+	defer cleanupServer()
+
+	// Setup Playwright
+	_, browser, cleanupPW := setupPlaywright(t)
+	defer cleanupPW()
+
+	// Create page with specific viewport for consistent screenshots
+	page, err := browser.NewPage(playwright.BrowserNewPageOptions{
+		Viewport: &playwright.Size{
+			Width:  1280,
+			Height: 800,
+		},
+	})
+	require.NoError(t, err)
+
+	// Navigate to button demo
+	_, err = page.Goto(baseURL+"/components/button", playwright.PageGotoOptions{
+		WaitUntil: playwright.WaitUntilStateNetworkidle,
+	})
+	require.NoError(t, err)
+
+	t.Run("Visual_Parity_99.69_Percent", func(t *testing.T) {
+		// Take screenshot of button preview areas only (not the full sections)
+		// Get the first button grid from Original section
+		originalGrid := page.Locator("#buttonDefault").Locator("..").Locator(".grid").First()
+		gotthaGrid := page.Locator("#gottha-button-preview").Locator(".grid").First()
+
+		// Screenshot both grids
+		originalScreenshot, err := originalGrid.Screenshot(playwright.LocatorScreenshotOptions{
+			Type: playwright.ScreenshotTypePng,
+		})
+		require.NoError(t, err)
+
+		gotthaScreenshot, err := gotthaGrid.Screenshot(playwright.LocatorScreenshotOptions{
+			Type: playwright.ScreenshotTypePng,
+		})
+		require.NoError(t, err)
+
+		// Compare screenshots using Playwright's built-in comparison
+		similarity, err := page.Evaluate(`([original, gottha]) => {
+			return new Promise((resolve) => {
+				const img1 = new Image();
+				const img2 = new Image();
+				
+				img1.onload = () => {
+					img2.onload = () => {
+						const canvas1 = document.createElement('canvas');
+						const canvas2 = document.createElement('canvas');
+						canvas1.width = img1.width;
+						canvas1.height = img1.height;
+						canvas2.width = img2.width;
+						canvas2.height = img2.height;
+						
+						const ctx1 = canvas1.getContext('2d');
+						const ctx2 = canvas2.getContext('2d');
+						ctx1.drawImage(img1, 0, 0);
+						ctx2.drawImage(img2, 0, 0);
+						
+						const data1 = ctx1.getImageData(0, 0, canvas1.width, canvas1.height).data;
+						const data2 = ctx2.getImageData(0, 0, canvas2.width, canvas2.height).data;
+						
+						let matchingPixels = 0;
+						let totalPixels = data1.length / 4;
+						
+						for (let i = 0; i < data1.length; i += 4) {
+							const r1 = data1[i], g1 = data1[i+1], b1 = data1[i+2], a1 = data1[i+3];
+							const r2 = data2[i], g2 = data2[i+1], b2 = data2[i+2], a2 = data2[i+3];
+							
+							// Calculate color distance
+							const distance = Math.sqrt(
+								Math.pow(r1 - r2, 2) +
+								Math.pow(g1 - g2, 2) +
+								Math.pow(b1 - b2, 2) +
+								Math.pow(a1 - a2, 2)
+							);
+							
+							// Consider pixels matching if distance is small (tolerance for anti-aliasing)
+							if (distance < 30) {
+								matchingPixels++;
+							}
+						}
+						
+						resolve(matchingPixels / totalPixels);
+					};
+					img2.src = gottha;
+				};
+				img1.src = original;
+			});
+		}`, []interface{}{originalScreenshot, gotthaScreenshot})
+
+		require.NoError(t, err)
+		similarityPct := similarity.(float64) * 100
+
+		// Assert 99.69% or higher similarity
+		assert.GreaterOrEqual(t, similarityPct, 99.69,
+			"Visual parity should be at least 99.69%%, but got %.2f%%", similarityPct)
+
+		t.Logf("✓ Visual parity: %.2f%% (threshold: 99.69%%)", similarityPct)
+	})
+}

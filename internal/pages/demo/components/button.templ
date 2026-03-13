@@ -96,11 +96,11 @@ templ ButtonFragment(disabled bool) {
 			Info
 		}
 		@button.Button(button.Config{
-			Variant:  button.Success,
+			Variant:  button.Danger,
 			Type:     "button",
 			Disabled: disabled,
 		}) {
-			Success
+			Danger
 		}
 		@button.Button(button.Config{
 			Variant:  button.Warning,
@@ -110,11 +110,11 @@ templ ButtonFragment(disabled bool) {
 			Warning
 		}
 		@button.Button(button.Config{
-			Variant:  button.Danger,
+			Variant:  button.Success,
 			Type:     "button",
 			Disabled: disabled,
 		}) {
-			Danger
+			Success
 		}
 	</div>
 }
