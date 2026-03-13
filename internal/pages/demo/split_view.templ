@@ -16,14 +16,6 @@ templ SplitView(props SplitViewProps, goTTHAContent templ.Component, templCode s
 		disabled: false,
 		copiedOriginal: false,
 		copiedGoTTHA: false,
-		get sizeClasses() {
-			switch(this.size) {
-				case 'sm': return 'px-4 py-2 text-xs';
-				case 'md': return 'px-4 py-2 text-sm';
-				case 'lg': return 'px-4 py-2 text-base';
-				case 'xl': return 'px-4 py-2 text-lg';
-			}
-		},
 		copyToClipboard(text, type) {
 			navigator.clipboard.writeText(text).then(() => {
 				if (type === 'original') this.copiedOriginal = true;
@@ -37,8 +29,8 @@ templ SplitView(props SplitViewProps, goTTHAContent templ.Component, templCode s
 	}">
 		<!-- Header Section -->
 		<div class="mb-6">
-			<h1 class="text-3xl font-bold mb-2" style="font-family: var(--font-title);">{ props.Title }</h1>
-			<p class="text-lg max-w-4xl" style="color: var(--color-on-surface);">
+			<h1 class="text-3xl font-bold font-title mb-2">{ props.Title }</h1>
+			<p class="text-lg text-on-surface/70 dark:text-on-surface-dark/70 max-w-3xl">
 				{ props.Description }
 			</p>
 		</div>
@@ -48,32 +40,32 @@ templ SplitView(props SplitViewProps, goTTHAContent templ.Component, templCode s
 			<div class="flex flex-col gap-4">
 				<div class="grid grid-cols-1 lg:grid-cols-3 gap-2 lg:gap-4 w-full mx-auto">
 					<!-- Size Controls -->
-					<div role="group" class="flex border border-outline dark:border-outlineDark rounded-2xl overflow-hidden">
+					<div role="group" class="flex border border-outline dark:border-outline-dark rounded-2xl overflow-hidden">
 						<button 
 							@click="size = 'sm'"
 							class="px-2 py-1 h-9 text-sm w-full focus:z-10 focus-visible:outline-2 transition-colors"
-							:class="size === 'sm' ? 'bg-primary dark:bg-primaryDark text-onPrimary dark:text-onPrimaryDark' : 'bg-surfaceAlt dark:bg-surfaceDarkAlt text-onSurface dark:text-onSurfaceDark'"
+							:class="size === 'sm' ? 'bg-primary text-on-primary dark:bg-primary-dark dark:text-on-primary-dark' : 'bg-surface-alt text-on-surface dark:bg-surface-dark-alt dark:text-on-surface-dark'"
 						>
 							sm
 						</button>
 						<button 
 							@click="size = 'md'"
-							class="px-2 py-1 h-9 text-sm w-full border-l border-outline dark:border-outlineDark focus:z-10 focus-visible:outline-2 transition-colors"
-							:class="size === 'md' ? 'bg-primary dark:bg-primaryDark text-onPrimary dark:text-onPrimaryDark' : 'bg-surfaceAlt dark:bg-surfaceDarkAlt text-onSurface dark:text-onSurfaceDark'"
+							class="px-2 py-1 h-9 text-sm w-full border-l border-outline dark:border-outline-dark focus:z-10 focus-visible:outline-2 transition-colors"
+							:class="size === 'md' ? 'bg-primary text-on-primary dark:bg-primary-dark dark:text-on-primary-dark' : 'bg-surface-alt text-on-surface dark:bg-surface-dark-alt dark:text-on-surface-dark'"
 						>
 							md
 						</button>
 						<button 
 							@click="size = 'lg'"
-							class="px-2 py-1 h-9 text-sm w-full border-l border-outline dark:border-outlineDark focus:z-10 focus-visible:outline-2 transition-colors"
-							:class="size === 'lg' ? 'bg-primary dark:bg-primaryDark text-onPrimary dark:text-onPrimaryDark' : 'bg-surfaceAlt dark:bg-surfaceDarkAlt text-onSurface dark:text-onSurfaceDark'"
+							class="px-2 py-1 h-9 text-sm w-full border-l border-outline dark:border-outline-dark focus:z-10 focus-visible:outline-2 transition-colors"
+							:class="size === 'lg' ? 'bg-primary text-on-primary dark:bg-primary-dark dark:text-on-primary-dark' : 'bg-surface-alt text-on-surface dark:bg-surface-dark-alt dark:text-on-surface-dark'"
 						>
 							lg
 						</button>
 						<button 
 							@click="size = 'xl'"
-							class="px-2 py-1 h-9 text-sm w-full border-l border-outline dark:border-outlineDark focus:z-10 focus-visible:outline-2 transition-colors"
-							:class="size === 'xl' ? 'bg-primary dark:bg-primaryDark text-onPrimary dark:text-onPrimaryDark' : 'bg-surfaceAlt dark:bg-surfaceDarkAlt text-onSurface dark:text-onSurfaceDark'"
+							class="px-2 py-1 h-9 text-sm w-full border-l border-outline dark:border-outline-dark focus:z-10 focus-visible:outline-2 transition-colors"
+							:class="size === 'xl' ? 'bg-primary text-on-primary dark:bg-primary-dark dark:text-on-primary-dark' : 'bg-surface-alt text-on-surface dark:bg-surface-dark-alt dark:text-on-surface-dark'"
 						>
 							xl
 						</button>
@@ -82,11 +74,11 @@ templ SplitView(props SplitViewProps, goTTHAContent templ.Component, templCode s
 					<div class="hidden lg:block"></div>
 					
 					<!-- Disabled Toggle -->
-					<label class="flex h-9 justify-between items-center border border-outline dark:border-outlineDark bg-surfaceAlt dark:bg-surfaceDarkAlt p-2 px-3 text-sm cursor-pointer rounded-2xl text-onSurface dark:text-onSurfaceDark">
+					<label class="flex h-9 justify-between items-center border border-outline dark:border-outline-dark bg-surface-alt dark:bg-surface-dark-alt p-2 px-3 text-sm cursor-pointer rounded-2xl text-on-surface dark:text-on-surface-dark">
 						Disabled
 						<div class="relative inline-flex cursor-pointer items-center">
 							<input type="checkbox" x-model="disabled" class="peer sr-only">
-							<div class="peer h-5 w-9 rounded-full bg-surface dark:bg-surfaceDark border border-outline dark:border-outlineDark after:absolute after:left-[2px] after:top-0.5 after:h-4 after:w-4 after:rounded-full after:transition-all after:content-[''] peer-checked:after:translate-x-full peer-checked:bg-primary dark:peer-checked:bg-primaryDark after:bg-onSurface dark:after:bg-onSurfaceDark peer-checked:after:bg-onPrimary dark:peer-checked:after:bg-onPrimaryDark"></div>
+							<div class="peer h-5 w-9 rounded-full bg-surface dark:bg-surface-dark border border-outline dark:border-outline-dark after:absolute after:left-[2px] after:top-0.5 after:h-4 after:w-4 after:rounded-full after:transition-all after:content-[''] peer-checked:after:translate-x-full peer-checked:bg-primary dark:peer-checked:bg-primary-dark after:bg-on-surface dark:after:bg-on-surface-dark peer-checked:after:bg-on-primary dark:peer-checked:after:bg-on-primary-dark"></div>
 						</div>
 					</label>
 				</div>
@@ -98,51 +90,58 @@ templ SplitView(props SplitViewProps, goTTHAContent templ.Component, templCode s
 			<!-- Original Column -->
 			<div class="space-y-4">
 				<div class="flex items-center justify-between">
-					<h2 class="text-lg font-semibold" style="font-family: var(--font-title);">{ props.OriginalLabel }</h2>
-					<span class="text-xs px-2 py-1 rounded-full bg-surfaceAlt dark:bg-surfaceDarkAlt text-onSurface dark:text-onSurfaceDark">Static HTML</span>
+					<h2 class="text-lg font-semibold font-title">{ props.OriginalLabel }</h2>
+					<span class="text-xs px-2 py-1 rounded-full bg-surface-alt dark:bg-surface-dark-alt text-on-surface/60 dark:text-on-surface-dark/60">Static HTML</span>
 				</div>
 
 				<!-- Original Preview - Matching PenguinUI exactly -->
-				<div class="overflow-hidden border border-outline dark:border-outlineDark rounded-2xl">
-					<div class="bg-surfaceAlt dark:bg-surfaceDarkAlt w-full px-4 py-3 flex items-center justify-between border-b border-outline dark:border-outlineDark">
+				<div class="overflow-hidden border border-outline dark:border-outline-dark rounded-2xl">
+					<div class="bg-surface-alt dark:bg-surface-dark-alt w-full px-4 py-3 flex items-center justify-between border-b border-outline dark:border-outline-dark">
 						<div class="flex gap-1.5">
 							<div class="rounded-full w-3 h-3 bg-red-500"></div>
 							<div class="rounded-full w-3 h-3 bg-yellow-500"></div>
 							<div class="rounded-full w-3 h-3 bg-green-500"></div>
 						</div>
 					</div>
-					<div class="bg-pattern flex justify-center dark:bg-surfaceDark bg-surface">
-						<div class="relative overflow-hidden w-full bg-surface dark:bg-surfaceDark border-none">
+					<div class="bg-pattern flex justify-center dark:bg-surface-dark bg-surface">
+						<div class="relative overflow-hidden w-full bg-surface dark:bg-surface-dark border-none">
+							<!-- Grid layout: 2 cols mobile, 4 cols desktop -->
 							<div :disabled="disabled" class="mx-auto grid grid-cols-2 lg:grid-cols-4 gap-8 p-8 place-content-evenly place-items-center">
-								<!-- Primary -->
-								<button type="button" :disabled="disabled" :class="sizeClasses" class="whitespace-nowrap bg-primary font-medium tracking-wide text-onPrimary transition hover:opacity-75 text-center border border-primary dark:border-primaryDark focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:opacity-100 active:outline-offset-0 dark:bg-primaryDark dark:text-onPrimaryDark dark:focus-visible:outline-primaryDark disabled:opacity-75 disabled:cursor-not-allowed rounded-2xl">Primary</button>
-								<!-- Secondary -->
-								<button type="button" :disabled="disabled" :class="sizeClasses" class="whitespace-nowrap bg-secondary font-medium tracking-wide text-onSecondary transition hover:opacity-75 text-center border border-secondary dark:border-secondaryDark focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-secondary active:opacity-100 active:outline-offset-0 dark:bg-secondaryDark dark:text-onSecondaryDark dark:focus-visible:outline-secondaryDark disabled:opacity-75 disabled:cursor-not-allowed rounded-2xl">Secondary</button>
-								<!-- Alternate -->
-								<button type="button" :disabled="disabled" :class="sizeClasses" class="whitespace-nowrap bg-surfaceAlt font-medium tracking-wide text-onSurfaceStrong transition hover:opacity-75 text-center border border-surfaceAlt dark:border-surfaceDarkAlt focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-surfaceAlt active:opacity-100 active:outline-offset-0 dark:bg-surfaceDarkAlt dark:text-onSurfaceDarkStrong dark:focus-visible:outline-surfaceDarkAlt disabled:opacity-75 disabled:cursor-not-allowed rounded-2xl">Alternate</button>
-								<!-- Inverse -->
-								<button type="button" :disabled="disabled" :class="sizeClasses" class="whitespace-nowrap bg-surfaceDark font-medium tracking-wide text-onSurfaceDark transition hover:opacity-75 text-center border border-surfaceDark dark:border-surfaceDark focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-surfaceDark active:opacity-100 active:outline-offset-0 dark:bg-surface dark:text-onSurface dark:focus-visible:outline-surface disabled:opacity-75 disabled:cursor-not-allowed rounded-2xl">Inverse</button>
-								<!-- Info -->
-								<button type="button" :disabled="disabled" :class="sizeClasses" class="whitespace-nowrap bg-info font-medium tracking-wide text-onInfo transition hover:opacity-75 text-center border border-info dark:border-info focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-info active:opacity-100 active:outline-offset-0 dark:focus-visible:outline-info disabled:opacity-75 disabled:cursor-not-allowed rounded-2xl">Info</button>
-								<!-- Danger -->
-								<button type="button" :disabled="disabled" :class="sizeClasses" class="whitespace-nowrap bg-danger font-medium tracking-wide text-onDanger transition hover:opacity-75 text-center border border-danger dark:border-danger focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-danger active:opacity-100 active:outline-offset-0 dark:focus-visible:outline-danger disabled:opacity-75 disabled:cursor-not-allowed rounded-2xl">Danger</button>
-								<!-- Warning -->
-								<button type="button" :disabled="disabled" :class="sizeClasses" class="whitespace-nowrap bg-warning font-medium tracking-wide text-onWarning transition hover:opacity-75 text-center border border-warning dark:border-warning focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-warning active:opacity-100 active:outline-offset-0 dark:focus-visible:outline-warning disabled:opacity-75 disabled:cursor-not-allowed rounded-2xl">Warning</button>
-								<!-- Success -->
-								<button type="button" :disabled="disabled" :class="sizeClasses" class="whitespace-nowrap bg-success font-medium tracking-wide text-onSuccess transition hover:opacity-75 text-center border border-success dark:border-success focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-success active:opacity-100 active:outline-offset-0 dark:focus-visible:outline-success disabled:opacity-75 disabled:cursor-not-allowed rounded-2xl">Success</button>
+								<!-- Primary Button -->
+								<button type="button" :disabled="disabled" class="whitespace-nowrap rounded-2xl font-medium tracking-wide transition hover:opacity-75 text-center focus-visible:outline-2 focus-visible:outline-offset-2 active:opacity-100 active:outline-offset-0 disabled:opacity-75 disabled:cursor-not-allowed border bg-primary text-on-primary border-primary dark:bg-primary-dark dark:text-on-primary-dark dark:border-primary-dark focus-visible:outline-primary dark:focus-visible:outline-primary-dark" :class="size === 'sm' ? 'px-4 py-2 text-xs' : size === 'lg' ? 'px-4 py-2 text-base' : size === 'xl' ? 'px-4 py-2 text-lg' : 'px-4 py-2 text-sm'">Primary</button>
+								
+								<!-- Secondary Button -->
+								<button type="button" :disabled="disabled" class="whitespace-nowrap rounded-2xl font-medium tracking-wide transition hover:opacity-75 text-center focus-visible:outline-2 focus-visible:outline-offset-2 active:opacity-100 active:outline-offset-0 disabled:opacity-75 disabled:cursor-not-allowed border bg-secondary text-on-secondary border-secondary dark:bg-secondary-dark dark:text-on-secondary-dark dark:border-secondary-dark focus-visible:outline-secondary dark:focus-visible:outline-secondary-dark" :class="size === 'sm' ? 'px-4 py-2 text-xs' : size === 'lg' ? 'px-4 py-2 text-base' : size === 'xl' ? 'px-4 py-2 text-lg' : 'px-4 py-2 text-sm'">Secondary</button>
+								
+								<!-- Alternate Button -->
+								<button type="button" :disabled="disabled" class="whitespace-nowrap rounded-2xl font-medium tracking-wide transition hover:opacity-75 text-center focus-visible:outline-2 focus-visible:outline-offset-2 active:opacity-100 active:outline-offset-0 disabled:opacity-75 disabled:cursor-not-allowed border bg-surface-alt text-on-surface-strong border-surface-alt dark:bg-surface-dark-alt dark:text-on-surface-dark-strong dark:border-surface-dark-alt focus-visible:outline-surface-alt dark:focus-visible:outline-surface-dark-alt" :class="size === 'sm' ? 'px-4 py-2 text-xs' : size === 'lg' ? 'px-4 py-2 text-base' : size === 'xl' ? 'px-4 py-2 text-lg' : 'px-4 py-2 text-sm'">Alternate</button>
+								
+								<!-- Inverse Button -->
+								<button type="button" :disabled="disabled" class="whitespace-nowrap rounded-2xl font-medium tracking-wide transition hover:opacity-75 text-center focus-visible:outline-2 focus-visible:outline-offset-2 active:opacity-100 active:outline-offset-0 disabled:opacity-75 disabled:cursor-not-allowed border bg-surface-dark text-on-surface-dark border-surface-dark dark:bg-surface dark:text-on-surface dark:border-surface focus-visible:outline-surface-dark dark:focus-visible:outline-surface" :class="size === 'sm' ? 'px-4 py-2 text-xs' : size === 'lg' ? 'px-4 py-2 text-base' : size === 'xl' ? 'px-4 py-2 text-lg' : 'px-4 py-2 text-sm'">Inverse</button>
+								
+								<!-- Info Button -->
+								<button type="button" :disabled="disabled" class="whitespace-nowrap rounded-2xl font-medium tracking-wide transition hover:opacity-75 text-center focus-visible:outline-2 focus-visible:outline-offset-2 active:opacity-100 active:outline-offset-0 disabled:opacity-75 disabled:cursor-not-allowed border bg-info text-on-info border-info dark:bg-info-dark dark:text-on-info-dark dark:border-info-dark focus-visible:outline-info dark:focus-visible:outline-info" :class="size === 'sm' ? 'px-4 py-2 text-xs' : size === 'lg' ? 'px-4 py-2 text-base' : size === 'xl' ? 'px-4 py-2 text-lg' : 'px-4 py-2 text-sm'">Info</button>
+								
+								<!-- Danger Button -->
+								<button type="button" :disabled="disabled" class="whitespace-nowrap rounded-2xl font-medium tracking-wide transition hover:opacity-75 text-center focus-visible:outline-2 focus-visible:outline-offset-2 active:opacity-100 active:outline-offset-0 disabled:opacity-75 disabled:cursor-not-allowed border bg-danger text-on-danger border-danger dark:bg-danger-dark dark:text-on-danger-dark dark:border-danger-dark focus-visible:outline-danger dark:focus-visible:outline-danger" :class="size === 'sm' ? 'px-4 py-2 text-xs' : size === 'lg' ? 'px-4 py-2 text-base' : size === 'xl' ? 'px-4 py-2 text-lg' : 'px-4 py-2 text-sm'">Danger</button>
+								
+								<!-- Warning Button -->
+								<button type="button" :disabled="disabled" class="whitespace-nowrap rounded-2xl font-medium tracking-wide transition hover:opacity-75 text-center focus-visible:outline-2 focus-visible:outline-offset-2 active:opacity-100 active:outline-offset-0 disabled:opacity-75 disabled:cursor-not-allowed border bg-warning text-on-warning border-warning dark:bg-warning-dark dark:text-on-warning-dark dark:border-warning-dark focus-visible:outline-warning dark:focus-visible:outline-warning" :class="size === 'sm' ? 'px-4 py-2 text-xs' : size === 'lg' ? 'px-4 py-2 text-base' : size === 'xl' ? 'px-4 py-2 text-lg' : 'px-4 py-2 text-sm'">Warning</button>
+								
+								<!-- Success Button -->
+								<button type="button" :disabled="disabled" class="whitespace-nowrap rounded-2xl font-medium tracking-wide transition hover:opacity-75 text-center focus-visible:outline-2 focus-visible:outline-offset-2 active:opacity-100 active:outline-offset-0 disabled:opacity-75 disabled:cursor-not-allowed border bg-success text-on-success border-success dark:bg-success-dark dark:text-on-success-dark dark:border-success-dark focus-visible:outline-success dark:focus-visible:outline-success" :class="size === 'sm' ? 'px-4 py-2 text-xs' : size === 'lg' ? 'px-4 py-2 text-base' : size === 'xl' ? 'px-4 py-2 text-lg' : 'px-4 py-2 text-sm'">Success</button>
 							</div>
 						</div>
 					</div>
 				</div>
 
 				<!-- Original Code -->
-				<div class="overflow-hidden border border-outline dark:border-outlineDark rounded-2xl">
-					<div class="flex items-center justify-between px-4 py-3 border-b border-outline dark:border-outlineDark bg-surfaceAlt dark:bg-surfaceDarkAlt">
+				<div class="overflow-hidden border border-outline dark:border-outline-dark rounded-2xl">
+					<div class="flex items-center justify-between px-4 py-3 border-b border-outline dark:border-outline-dark bg-surface-alt dark:bg-surface-dark-alt">
 						<span class="text-sm font-medium">HTML</span>
 						<button 
 							@click="copyToClipboard(document.getElementById('original-code').textContent, 'original')"
-							class="flex items-center gap-1 text-xs hover:text-primary transition-colors"
-							style="color: var(--color-on-surface);"
+							class="flex items-center gap-1 text-xs text-on-surface/70 hover:text-primary transition-colors dark:text-on-surface-dark/70 dark:hover:text-primary-dark"
 						>
 							<svg x-show="!copiedOriginal" xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
 								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/>
@@ -153,7 +152,7 @@ templ SplitView(props SplitViewProps, goTTHAContent templ.Component, templCode s
 							<span x-text="copiedOriginal ? 'Copied!' : 'Copy'"></span>
 						</button>
 					</div>
-					<div class="p-4 overflow-x-auto bg-surface-dark text-surface-dark" style="background-color: #0f172a; color: #f1f5f9;">
+					<div class="p-4 overflow-x-auto bg-slate-900 text-slate-50">
 						<pre id="original-code" class="font-mono text-sm"><code>{ props.OriginalHTML }</code></pre>
 					</div>
 				</div>
@@ -162,21 +161,22 @@ templ SplitView(props SplitViewProps, goTTHAContent templ.Component, templCode s
 			<!-- GoTTHA Column -->
 			<div class="space-y-4">
 				<div class="flex items-center justify-between">
-					<h2 class="text-lg font-semibold" style="font-family: var(--font-title);">{ props.GoTTHALabel }</h2>
+					<h2 class="text-lg font-semibold font-title">{ props.GoTTHALabel }</h2>
 					<span class="text-xs px-2 py-1 rounded-full bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">Go + Templ</span>
 				</div>
 
 				<!-- GoTTHA Preview - Matching PenguinUI exactly -->
-				<div class="overflow-hidden border border-outline dark:border-outlineDark rounded-2xl">
-					<div class="bg-surfaceAlt dark:bg-surfaceDarkAlt w-full px-4 py-3 flex items-center justify-between border-b border-outline dark:border-outlineDark">
+				<div class="overflow-hidden border border-outline dark:border-outline-dark rounded-2xl">
+					<div class="bg-surface-alt dark:bg-surface-dark-alt w-full px-4 py-3 flex items-center justify-between border-b border-outline dark:border-outline-dark">
 						<div class="flex gap-1.5">
 							<div class="rounded-full w-3 h-3 bg-red-500"></div>
 							<div class="rounded-full w-3 h-3 bg-yellow-500"></div>
 							<div class="rounded-full w-3 h-3 bg-green-500"></div>
 						</div>
 					</div>
-					<div class="bg-pattern flex justify-center dark:bg-surfaceDark bg-surface">
-						<div class="relative overflow-hidden w-full bg-surface dark:bg-surfaceDark border-none">
+					<div class="bg-pattern flex justify-center dark:bg-surface-dark bg-surface">
+						<div class="relative overflow-hidden w-full bg-surface dark:bg-surface-dark border-none">
+							<!-- Grid layout: 2 cols mobile, 4 cols desktop -->
 							<div class="mx-auto grid grid-cols-2 lg:grid-cols-4 gap-8 p-8 place-content-evenly place-items-center">
 								@goTTHAContent
 							</div>
@@ -185,13 +185,12 @@ templ SplitView(props SplitViewProps, goTTHAContent templ.Component, templCode s
 				</div>
 
 				<!-- GoTTHA Code -->
-				<div class="overflow-hidden border border-outline dark:border-outlineDark rounded-2xl">
-					<div class="flex items-center justify-between px-4 py-3 border-b border-outline dark:border-outlineDark bg-surfaceAlt dark:bg-surfaceDarkAlt">
+				<div class="overflow-hidden border border-outline dark:border-outline-dark rounded-2xl">
+					<div class="flex items-center justify-between px-4 py-3 border-b border-outline dark:border-outline-dark bg-surface-alt dark:bg-surface-dark-alt">
 						<span class="text-sm font-medium">Templ</span>
 						<button 
 							@click="copyToClipboard(document.getElementById('gottha-code').textContent, 'gottha')"
-							class="flex items-center gap-1 text-xs hover:text-primary transition-colors"
-							style="color: var(--color-on-surface);"
+							class="flex items-center gap-1 text-xs text-on-surface/70 hover:text-primary transition-colors dark:text-on-surface-dark/70 dark:hover:text-primary-dark"
 						>
 							<svg x-show="!copiedGoTTHA" xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
 								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/>
@@ -202,7 +201,7 @@ templ SplitView(props SplitViewProps, goTTHAContent templ.Component, templCode s
 							<span x-text="copiedGoTTHA ? 'Copied!' : 'Copy'"></span>
 						</button>
 					</div>
-					<div class="p-4 overflow-x-auto bg-surface-dark text-surface-dark" style="background-color: #0f172a; color: #f1f5f9;">
+					<div class="p-4 overflow-x-auto bg-slate-900 text-slate-50">
 						<pre id="gottha-code" class="font-mono text-sm"><code>{ templCode }</code></pre>
 					</div>
 				</div>

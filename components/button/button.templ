@@ -1,9 +1,8 @@
 package button
 
-// Button renders a PenguinUI-styled button with support for HTMX and Alpine.js
+// Button renders a PenguinUI-styled button with Tailwind utility classes
 templ Button(cfg Config) {
 	{{ classes := buttonClasses(cfg) }}
-	{{ styles := variantStyles(cfg.Variant) }}
 	{{ hasHTMX := cfg.HTMX != nil }}
 	{{ hasAlpine := cfg.Alpine != nil }}
 	
@@ -12,8 +11,7 @@ templ Button(cfg Config) {
 			id={ cfg.ID }
 		}
 		type={ cfg.Type }
-		class={ classes + " " + cfg.Class }
-		style={ styles }
+		class={ classes }
 		if cfg.Disabled {
 			disabled
 		}
