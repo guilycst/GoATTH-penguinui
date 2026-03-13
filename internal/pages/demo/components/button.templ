@@ -54,52 +54,65 @@ templ buttonDemoContent(originalHTML string) {
 
 // buttonDemoPreview renders the GoTTHA button preview
 templ buttonDemoPreview() {
-	<div class="flex flex-wrap items-center justify-center gap-4">
+	@ButtonFragment(false)
+}
+
+// ButtonFragment renders just the button grid (for HTMX fragment requests)
+templ ButtonFragment(disabled bool) {
+	<div class="grid grid-cols-2 lg:grid-cols-4 gap-8 place-content-evenly place-items-center" id="button-fragment">
 		@button.Button(button.Config{
-			Variant: button.Primary,
-			Type:    "button",
+			Variant:  button.Primary,
+			Type:     "button",
+			Disabled: disabled,
 		}) {
 			Primary
 		}
 		@button.Button(button.Config{
-			Variant: button.Secondary,
-			Type:    "button",
+			Variant:  button.Secondary,
+			Type:     "button",
+			Disabled: disabled,
 		}) {
 			Secondary
 		}
 		@button.Button(button.Config{
-			Variant: button.Alternate,
-			Type:    "button",
+			Variant:  button.Alternate,
+			Type:     "button",
+			Disabled: disabled,
 		}) {
 			Alternate
 		}
 		@button.Button(button.Config{
-			Variant: button.Inverse,
-			Type:    "button",
+			Variant:  button.Inverse,
+			Type:     "button",
+			Disabled: disabled,
 		}) {
 			Inverse
 		}
 		@button.Button(button.Config{
-			Variant: button.Info,
-			Type:    "button",
+			Variant:  button.Info,
+			Type:     "button",
+			Disabled: disabled,
 		}) {
 			Info
 		}
 		@button.Button(button.Config{
-			Variant: button.Success,
-			Type:    "button",
+			Variant:  button.Success,
+			Type:     "button",
+			Disabled: disabled,
 		}) {
 			Success
 		}
 		@button.Button(button.Config{
-			Variant: button.Warning,
-			Type:    "button",
+			Variant:  button.Warning,
+			Type:     "button",
+			Disabled: disabled,
 		}) {
 			Warning
 		}
 		@button.Button(button.Config{
-			Variant: button.Danger,
-			Type:    "button",
+			Variant:  button.Danger,
+			Type:     "button",
+			Disabled: disabled,
 		}) {
 			Danger
 		}

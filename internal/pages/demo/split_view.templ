@@ -73,11 +73,18 @@ templ SplitView(props SplitViewProps, goTTHAContent templ.Component, templCode s
 					
 					<div class="hidden lg:block"></div>
 					
-					<!-- Disabled Toggle -->
-					<label class="flex h-9 justify-between items-center border border-outline dark:border-outline-dark bg-surface-alt dark:bg-surface-dark-alt p-2 px-3 text-sm cursor-pointer rounded-2xl text-on-surface dark:text-on-surface-dark">
+					<!-- Disabled Toggle with HTMX -->
+					<label 
+						class="flex h-9 justify-between items-center border border-outline dark:border-outline-dark bg-surface-alt dark:bg-surface-dark-alt p-2 px-3 text-sm cursor-pointer rounded-2xl text-on-surface dark:text-on-surface-dark"
+						hx-get="/api/components/button"
+						hx-target="#gottha-button-preview"
+						hx-swap="innerHTML"
+						hx-trigger="change from:#disabled-toggle"
+						hx-vals="js:{disabled: document.getElementById('disabled-toggle').checked}"
+					>
 						Disabled
 						<div class="relative inline-flex cursor-pointer items-center">
-							<input type="checkbox" x-model="disabled" class="peer sr-only">
+							<input type="checkbox" x-model="disabled" id="disabled-toggle" class="peer sr-only">
 							<div class="peer h-5 w-9 rounded-full bg-surface dark:bg-surface-dark border border-outline dark:border-outline-dark after:absolute after:left-[2px] after:top-0.5 after:h-4 after:w-4 after:rounded-full after:transition-all after:content-[''] peer-checked:after:translate-x-full peer-checked:bg-primary dark:peer-checked:bg-primary-dark after:bg-on-surface dark:after:bg-on-surface-dark peer-checked:after:bg-on-primary dark:peer-checked:after:bg-on-primary-dark"></div>
 						</div>
 					</label>
@@ -175,7 +182,7 @@ templ SplitView(props SplitViewProps, goTTHAContent templ.Component, templCode s
 						</div>
 					</div>
 					<div class="bg-pattern flex justify-center dark:bg-surface-dark bg-surface">
-						<div class="relative overflow-hidden w-full bg-surface dark:bg-surface-dark border-none">
+						<div class="relative overflow-hidden w-full bg-surface dark:bg-surface-dark border-none" id="gottha-button-preview">
 							<!-- Grid layout: 2 cols mobile, 4 cols desktop -->
 							<div class="mx-auto grid grid-cols-2 lg:grid-cols-4 gap-8 p-8 place-content-evenly place-items-center">
 								@goTTHAContent

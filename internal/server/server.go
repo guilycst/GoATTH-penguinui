@@ -42,6 +42,7 @@ func (s *Server) setupRoutes() {
 
 	// API endpoints for HTMX demos
 	s.mux.HandleFunc("/api/hello", s.handleAPIHello)
+	s.mux.HandleFunc("/api/components/button", s.handleButtonFragment)
 
 	// Root redirect to first component
 	s.mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
@@ -95,6 +96,16 @@ func (s *Server) loadOriginalHTML(filename string) (string, error) {
 func (s *Server) handleAPIHello(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/html")
 	fmt.Fprintf(w, `<p class="text-green-600">Hello from HTMX! Request received at %s %s</p>`, r.Method, r.URL.Path)
+}
+
+func (s *Server) handleButtonFragment(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "text/html")
+
+	// Get disabled state from query params
+	disabled := r.URL.Query().Get("disabled") == "true"
+
+	// Render just the button grid fragment
+	components.ButtonFragment(disabled).Render(r.Context(), w)
 }
 
 // ServeHTTP implements http.Handler
