@@ -1,30 +1,151 @@
-# 🐧 Penguin UI
+# GoTTHA PenguinUI
 
-<div align="center">
+**GoTTHA**: Go + Templ + Tailwind CSS + HTMX + Alpine.js
 
-![Penguin UI](https://img.shields.io/badge/Penguin%20UI-v4.0-blue?style=for-the-badge&logo=tailwindcss)
-![Tailwind CSS](https://img.shields.io/badge/Tailwind%20CSS-4.0-38B2AC?style=for-the-badge&logo=tailwindcss)
-![Alpine.js](https://img.shields.io/badge/Alpine.js-3.0-77C1D2?style=for-the-badge&logo=alpine.js)
+## About This Fork
 
-*A collection of beautifully designed UI components built with **Tailwind CSS** and **Alpine.js***
+This is a hard fork of [Penguin UI](https://www.penguinui.com) by Salar Houshvand, transformed from static HTML/Alpine.js components into a complete Go web component library.
 
- [📚 **Documentation**](https://www.penguinui.com) • [🚀 **Getting Started**](https://www.penguinui.com/docs/getting-started)
+### What's Changed?
 
-</div>
+| Original | GoTTHA Fork |
+|----------|-------------|
+| Static HTML | Go + Templ templates |
+| CDN assets | Configurable (CDN/Embedded/Custom) |
+| Copy-paste | `go get` importable |
+| Alpine.js only | HTMX + Alpine.js + Go backend |
 
+## Credits
 
+- **Original**: [Penguin UI](https://www.penguinui.com) by [Salar Houshvand](https://x.com/salar_houshvand)
+- **License**: MIT (preserved from original)
 
+## Project Structure
 
-## 📄 License
+```
+gottha-penguinui/
+├── cmd/server/              # Demo server
+├── components/              # GoTTHA component library
+│   └── button/             # Button component
+│       ├── types.go        # Configuration types
+│       └── button.templ    # Templ component
+├── internal/
+│   └── pages/demo/         # Demo pages
+├── assets/css/             # Styles
+├── tests/e2e/              # Playwright E2E tests
+└── buttons/                # Original PenguinUI (preserved)
+```
 
-This project is licensed under the MIT License - see the [LICENSE](https://www.penguinui.com/docs/license) for details.
+## Running the Demo
 
----
+```bash
+# Install dependencies
+make install
 
-<div align="center">
+# Run the demo server
+make dev
+# or
+go run cmd/server/main.go
 
-**Created by Salar Houshvand**
+# Server will start on http://localhost:8090
+# - Original PenguinUI: http://localhost:8090/original/
+# - GoTTHA Components: http://localhost:8090/gottha/
+```
 
-[![X](https://img.shields.io/badge/salar_houshvand-000?style=for-the-badge&logo=x&logoColor=white)](https://x.com/salar_houshvand)
+## Running E2E Tests
 
-</div>
+E2E tests use [playwright-go](https://github.com/playwright-community/playwright-go) (following the tks-console pattern) for Go-based browser automation.
+
+```bash
+# Using just (from repo root)
+just gp-test-e2e                    # Run all E2E tests
+just gp-test-e2e-one TestButton     # Run specific test
+
+# Or directly
+go test ./GoTTHA-penguinui/tests/e2e/... -v
+
+# First time setup - install Playwright browsers
+just gp-install-playwright
+# or
+go install github.com/playwright-community/playwright-go/cmd/playwright@v0.5700.1
+playwright install chromium
+```
+
+### Test Results
+
+Tests automatically:
+- Start the demo server
+- Run browser automation tests
+- Capture screenshots on failures to `test-results/screenshots/`
+- Verify both Original PenguinUI and GoTTHA component rendering
+
+### Current Test Coverage
+
+- **Button Component**: Verifies all 8 variants render correctly, HTMX attributes, Alpine.js integration
+- **Screenshots**: Auto-captured for visual debugging
+
+## Component Usage
+
+### Button Component
+
+```go
+import "github.com/guilycst/gottha-penguinui/components/button"
+
+// Basic button
+@button.Button(button.Config{
+    Variant: button.Primary,
+    Type:    "button",
+}) {
+    Click Me
+}
+
+// With HTMX
+@button.Button(button.Config{
+    Variant: button.Primary,
+    HTMX: &button.HTMXConfig{
+        Post:   "/api/action",
+        Target: "#result",
+        Swap:   "innerHTML",
+    },
+}) {
+    Submit
+}
+
+// With Alpine.js
+@button.Button(button.Config{
+    Variant: button.Primary,
+    Alpine: &button.AlpineConfig{
+        OnClick: "modalIsOpen = true",
+    },
+}) {
+    Open Modal
+}
+```
+
+## Development
+
+### Building
+
+```bash
+make build
+```
+
+### Generating Templ Files
+
+```bash
+make generate
+```
+
+### Testing
+
+```bash
+# Go tests
+make test
+
+# E2E tests
+make test-e2e
+```
+
+## License
+
+MIT License - See original [Penguin UI](https://www.penguinui.com/docs/license) for details.

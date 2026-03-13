@@ -1,0 +1,83 @@
+package button
+
+// Button renders a PenguinUI-styled button with support for HTMX and Alpine.js
+templ Button(cfg Config) {
+	{{ classes := buttonClasses(cfg) }}
+	{{ hasHTMX := cfg.HTMX != nil }}
+	{{ hasAlpine := cfg.Alpine != nil }}
+	
+	<button
+		if cfg.ID != "" {
+			id={ cfg.ID }
+		}
+		type={ cfg.Type }
+		class={ classes + " " + cfg.Class }
+		if cfg.Disabled {
+			disabled
+		}
+		
+		if hasAlpine {
+			if cfg.Alpine.OnClick != "" {
+				x-on:click={ cfg.Alpine.OnClick }
+			}
+			if cfg.Alpine.Show != "" {
+				x-show={ cfg.Alpine.Show }
+			}
+			if cfg.Alpine.BindDisabled != "" {
+				:disabled={ cfg.Alpine.BindDisabled }
+			}
+			if cfg.Alpine.Transition {
+				x-transition
+			}
+			if cfg.Alpine.Data != "" {
+				x-data={ cfg.Alpine.Data }
+			}
+		}
+		
+		if hasHTMX {
+			if cfg.HTMX.Get != "" {
+				hx-get={ cfg.HTMX.Get }
+			}
+			if cfg.HTMX.Post != "" {
+				hx-post={ cfg.HTMX.Post }
+			}
+			if cfg.HTMX.Put != "" {
+				hx-put={ cfg.HTMX.Put }
+			}
+			if cfg.HTMX.Delete != "" {
+				hx-delete={ cfg.HTMX.Delete }
+			}
+			if cfg.HTMX.Patch != "" {
+				hx-patch={ cfg.HTMX.Patch }
+			}
+			if cfg.HTMX.Target != "" {
+				hx-target={ cfg.HTMX.Target }
+			}
+			if cfg.HTMX.Swap != "" {
+				hx-swap={ cfg.HTMX.Swap }
+			}
+			if cfg.HTMX.Trigger != "" {
+				hx-trigger={ cfg.HTMX.Trigger }
+			}
+			if cfg.HTMX.Indicator != "" {
+				hx-indicator={ cfg.HTMX.Indicator }
+			}
+			if cfg.HTMX.PushURL {
+				hx-push-url="true"
+			}
+			if cfg.HTMX.Confirm != "" {
+				hx-confirm={ cfg.HTMX.Confirm }
+			}
+			if cfg.HTMX.Vals != "" {
+				hx-vals={ cfg.HTMX.Vals }
+			}
+		}
+	>
+		if cfg.LoadingText != "" && hasHTMX {
+			<span class="htmx-indicator-content">{ children... }</span>
+			<span class={ "htmx-indicator hidden " + cfg.LoadingText }></span>
+		} else {
+			{ children... }
+		}
+	</button>
+}

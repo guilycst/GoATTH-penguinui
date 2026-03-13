@@ -1,0 +1,56 @@
+# Binaries
+bin/
+*.exe
+*.dll
+*.so
+*.dylib
+
+# Test binary, built with `go test -c`
+*.test
+
+# Output of the go coverage tool
+*.out
+
+# Dependency directories
+vendor/
+
+# Go workspace file
+go.work
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.temp
+
+# Generated templ files (keep the source .templ, ignore generated)
+# *_templ.go
+
+# Node modules (if using npm for anything)
+node_modules/
+
+# Test results
+test-results/
+*.png
+*.jpg
+*.jpeg
+
+# Screenshots from E2E tests (keep fixtures, ignore test outputs)
+tests/e2e/test-results/
+
+# Environment files
+.env
+.env.local
+
+# Build artifacts
+dist/
+build/

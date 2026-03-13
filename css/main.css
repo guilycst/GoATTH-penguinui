@@ -1,0 +1,63 @@
+@import "tailwindcss";
+
+/* Theme configuration - matching PenguinUI */
+@theme {
+  /* Fonts */
+  --font-body: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  --font-title: 'Montserrat', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+
+  /* Light Theme Colors */
+  --color-surface: #ffffff;
+  --color-surface-alt: #f8fafc;
+  --color-on-surface: #475569;
+  --color-on-surface-strong: #0f172a;
+  --color-primary: #000000;
+  --color-on-primary: #f1f5f9;
+  --color-secondary: #1e293b;
+  --color-on-secondary: #ffffff;
+  --color-outline: #cbd5e1;
+  --color-outline-strong: #1e293b;
+
+  /* Dark Theme Colors */
+  --color-surface-dark: #0f172a;
+  --color-surface-dark-alt: #1e293b;
+  --color-on-surface-dark: #cbd5e1;
+  --color-on-surface-dark-strong: #ffffff;
+  --color-primary-dark: #ffffff;
+  --color-on-primary-dark: #000000;
+  --color-secondary-dark: #cbd5e1;
+  --color-on-secondary-dark: #000000;
+  --color-outline-dark: #334155;
+  --color-outline-dark-strong: #cbd5e1;
+
+  /* Semantic Colors */
+  --color-info: #0ea5e9;
+  --color-on-info: #ffffff;
+  --color-success: #22c55e;
+  --color-on-success: #ffffff;
+  --color-warning: #f59e0b;
+  --color-on-warning: #ffffff;
+  --color-danger: #ef4444;
+  --color-on-danger: #ffffff;
+
+  /* Border Radius */
+  --radius-radius: 0.375rem;
+}
+
+/* Source scanning */
+@source "../internal/**/*.templ";
+@source "../internal/**/*.go";
+
+/* Base styles */
+@layer base {
+  body {
+    font-family: var(--font-body);
+  }
+}
+
+/* Custom utilities */
+@layer utilities {
+  .font-title {
+    font-family: var(--font-title);
+  }
+}
