@@ -3,6 +3,7 @@ package button
 // Button renders a PenguinUI-styled button with support for HTMX and Alpine.js
 templ Button(cfg Config) {
 	{{ classes := buttonClasses(cfg) }}
+	{{ styles := variantStyles(cfg.Variant) }}
 	{{ hasHTMX := cfg.HTMX != nil }}
 	{{ hasAlpine := cfg.Alpine != nil }}
 	
@@ -12,6 +13,7 @@ templ Button(cfg Config) {
 		}
 		type={ cfg.Type }
 		class={ classes + " " + cfg.Class }
+		style={ styles }
 		if cfg.Disabled {
 			disabled
 		}
