@@ -13,8 +13,8 @@ import (
 	"github.com/guilycst/GoATTH-penguinui/internal/pages/demo"
 )
 
-// ButtonDemoPage renders the Button component demo with split view comparison
-func ButtonDemoPage(originalHTML string) templ.Component {
+// ButtonDemoPage renders the Button component demo
+func ButtonDemoPage() templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -35,7 +35,7 @@ func ButtonDemoPage(originalHTML string) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = demo.Layout("Buttons", "button", buttonDemoContent(originalHTML)).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = demo.Layout("Buttons", "button", buttonDemoContent()).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -44,7 +44,7 @@ func ButtonDemoPage(originalHTML string) templ.Component {
 }
 
 // buttonDemoContent renders the actual content inside the layout
-func buttonDemoContent(originalHTML string) templ.Component {
+func buttonDemoContent() templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -65,13 +65,13 @@ func buttonDemoContent(originalHTML string) templ.Component {
 			templ_7745c5c3_Var2 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = demo.SplitView(
-			demo.SplitViewProps{
+		templ_7745c5c3_Err = demo.ComponentDemo(
+			demo.ComponentDemoProps{
 				Title:         "Buttons",
 				Description:   "Buttons are a fundamental element of any user interface. Users can use them to trigger actions, such as submitting a form, opening a modal, or navigating to another page.",
-				OriginalHTML:  originalHTML,
-				OriginalLabel: "Original",
-				GoATTHLabel:   "GoATTH",
+				OriginalURL:   "/original/buttons/default-button.html",
+				OriginalLabel: "Original PenguinUI",
+				GoATTHLabel:   "GoATTH Component",
 			},
 			buttonDemoPreview(),
 			`// Primary Button
@@ -90,7 +90,7 @@ func buttonDemoContent(originalHTML string) templ.Component {
     Secondary
 }
 
-// With HTMX
+// With HTMX - Basic POST
 @button.Button(button.Config{
     Variant: button.Primary,
     Type:    "button",
@@ -101,6 +101,47 @@ func buttonDemoContent(originalHTML string) templ.Component {
     },
 }) {
     Submit
+}
+
+// With HTMX - GET Request
+@button.Button(button.Config{
+    Variant: button.Info,
+    Type:    "button",
+    HTMX: &button.HTMXConfig{
+        Get:     "/api/data",
+        Target:  "#data-container",
+        Trigger: "click",
+    },
+}) {
+    Load Data
+}
+
+// With HTMX - With Loading State
+@button.Button(button.Config{
+    Variant:    button.Secondary,
+    Type:       "button",
+    LoadingText: "Loading...",
+    HTMX: &button.HTMXConfig{
+        Post:      "/api/process",
+        Target:    "#output",
+        Indicator: "#spinner",
+    },
+}) {
+    Process
+}
+
+// With HTMX - Confirm Dialog
+@button.Button(button.Config{
+    Variant: button.Danger,
+    Type:    "button",
+    HTMX: &button.HTMXConfig{
+        Delete:  "/api/item/123",
+        Confirm: "Are you sure you want to delete this?",
+        Target:  "#item-123",
+        Swap:    "outerHTML",
+    },
+}) {
+    Delete
 }`,
 		).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
@@ -375,6 +416,138 @@ func ButtonFragment(disabled bool) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "</div>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		return nil
+	})
+}
+
+// HTMXButtonDemos renders buttons with HTMX functionality
+func HTMXButtonDemos() templ.Component {
+	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
+			return templ_7745c5c3_CtxErr
+		}
+		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+		if !templ_7745c5c3_IsBuffer {
+			defer func() {
+				templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err == nil {
+					templ_7745c5c3_Err = templ_7745c5c3_BufErr
+				}
+			}()
+		}
+		ctx = templ.InitializeContext(ctx)
+		templ_7745c5c3_Var13 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var13 == nil {
+			templ_7745c5c3_Var13 = templ.NopComponent
+		}
+		ctx = templ.ClearChildren(ctx)
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "<div class=\"space-y-6 p-8\"><div class=\"flex items-center gap-4\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Var14 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+			templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+			templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+			if !templ_7745c5c3_IsBuffer {
+				defer func() {
+					templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+					if templ_7745c5c3_Err == nil {
+						templ_7745c5c3_Err = templ_7745c5c3_BufErr
+					}
+				}()
+			}
+			ctx = templ.InitializeContext(ctx)
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "Send POST Request")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			return nil
+		})
+		templ_7745c5c3_Err = button.Button(button.Config{
+			Variant: button.Primary,
+			Type:    "button",
+			HTMX: &button.HTMXConfig{
+				Post:   "/api/hello",
+				Target: "#htmx-result-1",
+				Swap:   "innerHTML",
+			},
+		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var14), templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "<div id=\"htmx-result-1\" class=\"text-sm text-on-surface dark:text-on-surface-dark\"><em>Click button to load content...</em></div></div><div class=\"flex items-center gap-4\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Var15 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+			templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+			templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+			if !templ_7745c5c3_IsBuffer {
+				defer func() {
+					templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+					if templ_7745c5c3_Err == nil {
+						templ_7745c5c3_Err = templ_7745c5c3_BufErr
+					}
+				}()
+			}
+			ctx = templ.InitializeContext(ctx)
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "Load with Spinner")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			return nil
+		})
+		templ_7745c5c3_Err = button.Button(button.Config{
+			Variant: button.Secondary,
+			Type:    "button",
+			HTMX: &button.HTMXConfig{
+				Get:       "/api/hello",
+				Target:    "#htmx-result-2",
+				Indicator: "#loading-spinner",
+			},
+		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var15), templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "<div id=\"loading-spinner\" class=\"htmx-indicator\"><svg class=\"animate-spin h-4 w-4 text-primary\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\" viewBox=\"0 0 24 24\"><circle class=\"opacity-25\" cx=\"12\" cy=\"12\" r=\"10\" stroke=\"currentColor\" stroke-width=\"4\"></circle> <path class=\"opacity-75\" fill=\"currentColor\" d=\"M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z\"></path></svg></div><div id=\"htmx-result-2\" class=\"text-sm text-on-surface dark:text-on-surface-dark\"><em>Content will appear here...</em></div></div><div class=\"flex items-center gap-4\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Var16 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+			templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+			templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+			if !templ_7745c5c3_IsBuffer {
+				defer func() {
+					templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+					if templ_7745c5c3_Err == nil {
+						templ_7745c5c3_Err = templ_7745c5c3_BufErr
+					}
+				}()
+			}
+			ctx = templ.InitializeContext(ctx)
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "Delete (with Confirm)")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			return nil
+		})
+		templ_7745c5c3_Err = button.Button(button.Config{
+			Variant: button.Danger,
+			Type:    "button",
+			HTMX: &button.HTMXConfig{
+				Delete:  "/api/hello",
+				Confirm: "Are you sure you want to proceed?",
+				Target:  "#htmx-result-3",
+			},
+		}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var16), templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "<div id=\"htmx-result-3\" class=\"text-sm text-on-surface dark:text-on-surface-dark\"></div></div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

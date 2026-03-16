@@ -1,0 +1,117 @@
+package accordion
+
+import "fmt"
+
+// Accordion renders a collapsible accordion component based on PenguinUI
+// Requires Alpine.js with collapse plugin
+// Usage:
+//
+//	@accordion.Accordion(accordion.AccordionConfig{
+//	    Items: []accordion.AccordionItem{
+//	        {ID: "item1", Title: "Section 1", Content: templ.Raw("<p>Content 1</p>")},
+//	        {ID: "item2", Title: "Section 2", Content: templ.Raw("<p>Content 2</p>")},
+//	    },
+//	})
+templ Accordion(cfg AccordionConfig) {
+	{{ containerID := cfg.ID }}
+	{{ if containerID == "" { containerID = "accordion" } }}
+	{{ alpineData := generateAlpineData(cfg) }}
+	
+	<div
+		id={ containerID }
+		class={ cfg.ContainerClasses() + " " + cfg.Class }
+		x-data={ alpineData }
+	>
+		for i, item := range cfg.Items {
+			{{ itemData := AccordionItemData{
+				Item:          item,
+				Index:         i,
+				AllowMultiple: cfg.AllowMultiple,
+				Variant:       cfg.Variant,
+				ContainerID:   containerID,
+			} }}
+			@accordionItem(itemData)
+		}
+	</div>
+}
+
+// generateAlpineData creates the Alpine.js data structure
+func generateAlpineData(cfg AccordionConfig) string {
+	// Build the opened array based on initial states
+	openedItems := "["
+	for i, item := range cfg.Items {
+		if i > 0 {
+			openedItems += ","
+		}
+		if item.InitiallyExpanded {
+			openedItems += "true"
+		} else {
+			openedItems += "false"
+		}
+	}
+	openedItems += "]"
+	
+	return fmt.Sprintf(`{ opened: %s, allowMultiple: %t, toggle(index) { if (this.allowMultiple) { this.opened[index] = !this.opened[index]; } else { const wasOpen = this.opened[index]; this.opened = this.opened.map(() => false); this.opened[index] = !wasOpen; } }, isOpen(index) { return this.opened[index]; } }`, openedItems, cfg.AllowMultiple)
+}
+
+// accordionItem renders a single accordion item
+templ accordionItem(data AccordionItemData) {
+	{{ item := data.Item }}
+	{{ index := data.Index }}
+	{{ itemID := item.ID }}
+	{{ if itemID == "" { itemID = "accordion-item-" + fmt.Sprintf("%d", index) } }}
+	{{ controlID := "controls-" + itemID }}
+	{{ contentID := "content-" + itemID }}
+	{{ idx := fmt.Sprintf("%d", index) }}
+	{{ clickHandler := "toggle(" + idx + ")" }}
+	{{ classBinding := "isOpen(" + idx + ") ? '" + data.ExpandedClasses() + "' : '" + data.CollapsedClasses() + "'" }}
+	{{ ariaBinding := "isOpen(" + idx + ") ? 'true' : 'false'" }}
+	{{ showBinding := "isOpen(" + idx + ")" }}
+	{{ chevronBinding := "isOpen(" + idx + ") ? 'rotate-180' : ''" }}
+	
+	<div>
+		<button
+			id={ controlID }
+			type="button"
+			class={ data.ItemButtonClasses() }
+			aria-controls={ contentID }
+			@click={ clickHandler }
+			:class={ classBinding }
+			:aria-expanded={ ariaBinding }
+			disabled?={ item.Disabled }
+		>
+			<span class="flex items-center gap-3">
+				if item.Icon != nil {
+					<span class="shrink-0">
+						@item.Icon
+					</span>
+				}
+				{ item.Title }
+			</span>
+			<svg
+				xmlns="http://www.w3.org/2000/svg"
+				viewBox="0 0 24 24"
+				fill="none"
+				stroke-width="2"
+				stroke="currentColor"
+				class="size-5 shrink-0 transition"
+				aria-hidden="true"
+				:class={ chevronBinding }
+			>
+				<path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5"/>
+			</svg>
+		</button>
+		<div
+			x-cloak
+			x-show={ showBinding }
+			id={ contentID }
+			role="region"
+			aria-labelledby={ controlID }
+			x-collapse
+		>
+			<div class={ data.ContentClasses() }>
+				@item.Content
+			</div>
+		</div>
+	</div>
+}

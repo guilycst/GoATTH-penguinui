@@ -1,12 +1,6 @@
 package demo
 
-// ComponentInfo holds information about a component for the sidebar
-type ComponentInfo struct {
-	Name     string
-	Label    string
-	Category string
-	Active   bool
-}
+import "github.com/guilycst/GoATTH-penguinui/components/sidebar"
 
 // Layout renders the main layout with sidebar navigation and global theme selector
 templ Layout(title string, activeComponent string, content templ.Component) {
@@ -36,9 +30,26 @@ templ Layout(title string, activeComponent string, content templ.Component) {
 			<script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/collapse@3.x.x/dist/cdn.min.js"></script>
 			<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 			<script src="https://unpkg.com/htmx.org@2.0.8/dist/htmx.min.js"></script>
+			<link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+			<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+			<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-go.min.js"></script>
 			<style>
 				[x-cloak] { display: none !important; }
 				.code-block { font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace; }
+				pre[class*="language-"] {
+					background: #1e1e1e !important;
+					margin: 0 !important;
+					padding: 1rem !important;
+					border-radius: 0 !important;
+				}
+				/* Hide scrollbar for sidebar */
+				.sidebar-scroll::-webkit-scrollbar {
+					display: none;
+				}
+				.sidebar-scroll {
+					-ms-overflow-style: none;
+					scrollbar-width: none;
+				}
 			</style>
 		</head>
 		<body class="min-h-screen bg-surface text-on-surface dark:bg-surface-dark dark:text-on-surface-dark theme-transition">
@@ -128,56 +139,28 @@ templ Layout(title string, activeComponent string, content templ.Component) {
 				</div>
 			</header>
 
-			<div class="flex min-h-[calc(100vh-4rem)]">
-				<!-- Sidebar -->
-				<aside 
-					class="fixed inset-y-0 left-0 z-40 w-64 transform border-r border-outline bg-surface transition-transform duration-200 ease-in-out lg:static lg:translate-x-0 dark:border-outline-dark dark:bg-surface-dark"
+			<div class="flex h-[calc(100vh-4rem)] overflow-hidden">
+				<!-- Sidebar Component -->
+				<div 
+					class="fixed inset-y-0 left-0 z-40 w-64 transform transition-transform duration-200 ease-in-out lg:static lg:translate-x-0"
 					:class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'"
 				>
-					<div class="flex h-16 items-center justify-between border-b border-outline px-4 lg:hidden dark:border-outline-dark">
-						<span class="font-semibold">Components</span>
-						<button @click="sidebarOpen = false" class="p-2 rounded-md hover:bg-surface-alt dark:hover:bg-surface-dark-alt">
-							<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-							</svg>
-						</button>
-					</div>
-					
-					<nav class="p-4">
-						<div class="space-y-6">
-							<div>
-								<h3 class="mb-2 text-xs font-semibold uppercase tracking-wider text-on-surface/50 dark:text-on-surface-dark/50">Components</h3>
-								<ul class="space-y-1">
-									@sidebarItem("button", "Buttons", activeComponent)
-									@sidebarItem("card", "Card", activeComponent, true)
-									@sidebarItem("modal", "Modal", activeComponent, true)
-									@sidebarItem("alert", "Alert", activeComponent, true)
-									@sidebarItem("badge", "Badge", activeComponent, true)
-								</ul>
-							</div>
-							
-							<div>
-								<h3 class="mb-2 text-xs font-semibold uppercase tracking-wider text-on-surface/50 dark:text-on-surface-dark/50">Forms</h3>
-								<ul class="space-y-1">
-									@sidebarItem("input", "Input", activeComponent, true)
-									@sidebarItem("select", "Select", activeComponent, true)
-									@sidebarItem("checkbox", "Checkbox", activeComponent, true)
-								</ul>
-							</div>
-						</div>
-					</nav>
-				</aside>
+					@sidebar.Sidebar(sidebar.Config{
+						LogoText: "GoATTH",
+						Items: getSidebarItems(activeComponent),
+					})
+				</div>
 
 				<!-- Overlay for mobile sidebar -->
-				<div 
-					x-show="sidebarOpen" 
+				<div
+					x-show="sidebarOpen"
 					@click="sidebarOpen = false"
 					class="fixed inset-0 z-30 bg-black/50 lg:hidden"
 					x-cloak
 				></div>
 
 				<!-- Main Content -->
-				<main class="flex-1 p-4 lg:p-8">
+				<main class="flex-1 overflow-y-auto p-4 lg:p-8">
 					@content
 				</main>
 			</div>
@@ -185,25 +168,99 @@ templ Layout(title string, activeComponent string, content templ.Component) {
 	</html>
 }
 
-// sidebarItem renders a single sidebar navigation item
-templ sidebarItem(name string, label string, activeComponent string, disabled ...bool) {
-	{{ isDisabled := len(disabled) > 0 && disabled[0] }}
-	{{ isActive := name == activeComponent }}
-	<li>
-		if isDisabled {
-			<span class="flex items-center rounded-md px-3 py-2 text-sm text-on-surface/40 cursor-not-allowed dark:text-on-surface-dark/40">
-				{ label }
-				<span class="ml-auto text-xs rounded-full bg-on-surface/10 px-2 py-0.5 dark:bg-on-surface-dark/10">Soon</span>
-			</span>
-		} else {
-			<a 
-				href={ templ.SafeURL("/components/" + name) }
-				class={ "flex items-center rounded-md px-3 py-2 text-sm transition-colors", 
-					templ.KV("bg-primary/10 text-primary dark:bg-primary-dark/10 dark:text-primary-dark font-medium", isActive),
-					templ.KV("hover:bg-surface-alt dark:hover:bg-surface-dark-alt", !isActive) }
-			>
-				{ label }
-			</a>
-		}
-	</li>
+// getSidebarItems returns the sidebar navigation items
+func getSidebarItems(activeComponent string) []sidebar.Item {
+	return []sidebar.Item{
+		{
+			ID:     "button",
+			Label:  "Buttons",
+			Href:   "/components/button",
+			Icon:   nil,
+			Active: activeComponent == "button",
+		},
+		{
+			ID:     "accordion",
+			Label:  "Accordion",
+			Href:   "/components/accordion",
+			Icon:   nil,
+			Active: activeComponent == "accordion",
+		},
+		{
+			ID:     "sidebar",
+			Label:  "Sidebar",
+			Href:   "/components/sidebar",
+			Icon:   nil,
+			Active: activeComponent == "sidebar",
+		},
+		{
+			ID:     "avatar",
+			Label:  "Avatar",
+			Href:   "/components/avatar",
+			Icon:   nil,
+			Active: activeComponent == "avatar",
+		},
+		{
+			ID:       "card",
+			Label:    "Card",
+			Href:     "#",
+			Icon:     nil,
+			Disabled: true,
+			Badge:    "Soon",
+			Active:   activeComponent == "card",
+		},
+		{
+			ID:       "modal",
+			Label:    "Modal",
+			Href:     "#",
+			Icon:     nil,
+			Disabled: true,
+			Badge:    "Soon",
+			Active:   activeComponent == "modal",
+		},
+		{
+			ID:       "alert",
+			Label:    "Alert",
+			Href:     "#",
+			Icon:     nil,
+			Disabled: true,
+			Badge:    "Soon",
+			Active:   activeComponent == "alert",
+		},
+		{
+			ID:       "badge",
+			Label:    "Badge",
+			Href:     "#",
+			Icon:     nil,
+			Disabled: true,
+			Badge:    "Soon",
+			Active:   activeComponent == "badge",
+		},
+		{
+			ID:       "input",
+			Label:    "Input",
+			Href:     "#",
+			Icon:     nil,
+			Disabled: true,
+			Badge:    "Soon",
+			Active:   activeComponent == "input",
+		},
+		{
+			ID:       "select",
+			Label:    "Select",
+			Href:     "#",
+			Icon:     nil,
+			Disabled: true,
+			Badge:    "Soon",
+			Active:   activeComponent == "select",
+		},
+		{
+			ID:       "checkbox",
+			Label:    "Checkbox",
+			Href:     "#",
+			Icon:     nil,
+			Disabled: true,
+			Badge:    "Soon",
+			Active:   activeComponent == "checkbox",
+		},
+	}
 }

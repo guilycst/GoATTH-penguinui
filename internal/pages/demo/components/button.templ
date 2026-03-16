@@ -5,20 +5,20 @@ import (
 	"github.com/guilycst/GoATTH-penguinui/internal/pages/demo"
 )
 
-// ButtonDemoPage renders the Button component demo with split view comparison
-templ ButtonDemoPage(originalHTML string) {
-	@demo.Layout("Buttons", "button", buttonDemoContent(originalHTML))
+// ButtonDemoPage renders the Button component demo
+templ ButtonDemoPage() {
+	@demo.Layout("Buttons", "button", buttonDemoContent())
 }
 
 // buttonDemoContent renders the actual content inside the layout
-templ buttonDemoContent(originalHTML string) {
-	@demo.SplitView(
-		demo.SplitViewProps{
+templ buttonDemoContent() {
+	@demo.ComponentDemo(
+		demo.ComponentDemoProps{
 			Title:         "Buttons",
 			Description:   "Buttons are a fundamental element of any user interface. Users can use them to trigger actions, such as submitting a form, opening a modal, or navigating to another page.",
-			OriginalHTML:  originalHTML,
-			OriginalLabel: "Original",
-			GoATTHLabel:   "GoATTH",
+			OriginalURL:   "/original/buttons/default-button.html",
+			OriginalLabel: "Original PenguinUI",
+			GoATTHLabel:   "GoATTH Component",
 		},
 		buttonDemoPreview(),
 		`// Primary Button
@@ -37,7 +37,7 @@ templ buttonDemoContent(originalHTML string) {
     Secondary
 }
 
-// With HTMX
+// With HTMX - Basic POST
 @button.Button(button.Config{
     Variant: button.Primary,
     Type:    "button",
@@ -48,6 +48,47 @@ templ buttonDemoContent(originalHTML string) {
     },
 }) {
     Submit
+}
+
+// With HTMX - GET Request
+@button.Button(button.Config{
+    Variant: button.Info,
+    Type:    "button",
+    HTMX: &button.HTMXConfig{
+        Get:     "/api/data",
+        Target:  "#data-container",
+        Trigger: "click",
+    },
+}) {
+    Load Data
+}
+
+// With HTMX - With Loading State
+@button.Button(button.Config{
+    Variant:    button.Secondary,
+    Type:       "button",
+    LoadingText: "Loading...",
+    HTMX: &button.HTMXConfig{
+        Post:      "/api/process",
+        Target:    "#output",
+        Indicator: "#spinner",
+    },
+}) {
+    Process
+}
+
+// With HTMX - Confirm Dialog
+@button.Button(button.Config{
+    Variant: button.Danger,
+    Type:    "button",
+    HTMX: &button.HTMXConfig{
+        Delete:  "/api/item/123",
+        Confirm: "Are you sure you want to delete this?",
+        Target:  "#item-123",
+        Swap:    "outerHTML",
+    },
+}) {
+    Delete
 }`,
 	)
 }
@@ -116,5 +157,68 @@ templ ButtonFragment(disabled bool) {
 		}) {
 			Success
 		}
+	</div>
+}
+
+// HTMXButtonDemos renders buttons with HTMX functionality
+templ HTMXButtonDemos() {
+	<div class="space-y-6 p-8">
+		// Basic HTMX POST
+		<div class="flex items-center gap-4">
+			@button.Button(button.Config{
+				Variant: button.Primary,
+				Type:    "button",
+				HTMX: &button.HTMXConfig{
+					Post:   "/api/hello",
+					Target: "#htmx-result-1",
+					Swap:   "innerHTML",
+				},
+			}) {
+				Send POST Request
+			}
+			<div id="htmx-result-1" class="text-sm text-on-surface dark:text-on-surface-dark">
+				<em>Click button to load content...</em>
+			</div>
+		</div>
+
+		// HTMX with Loading Indicator
+		<div class="flex items-center gap-4">
+			@button.Button(button.Config{
+				Variant: button.Secondary,
+				Type:    "button",
+				HTMX: &button.HTMXConfig{
+					Get:       "/api/hello",
+					Target:    "#htmx-result-2",
+					Indicator: "#loading-spinner",
+				},
+			}) {
+				Load with Spinner
+			}
+			<div id="loading-spinner" class="htmx-indicator">
+				<svg class="animate-spin h-4 w-4 text-primary" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+					<circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+					<path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+				</svg>
+			</div>
+			<div id="htmx-result-2" class="text-sm text-on-surface dark:text-on-surface-dark">
+				<em>Content will appear here...</em>
+			</div>
+		</div>
+
+		// HTMX with Confirm
+		<div class="flex items-center gap-4">
+			@button.Button(button.Config{
+				Variant: button.Danger,
+				Type:    "button",
+				HTMX: &button.HTMXConfig{
+					Delete:  "/api/hello",
+					Confirm: "Are you sure you want to proceed?",
+					Target:  "#htmx-result-3",
+				},
+			}) {
+				Delete (with Confirm)
+			}
+			<div id="htmx-result-3" class="text-sm text-on-surface dark:text-on-surface-dark"></div>
+		</div>
 	</div>
 }

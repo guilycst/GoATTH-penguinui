@@ -1,4 +1,4 @@
-.PHONY: all build test test-e2e clean dev dev-watch install install-templ install-playwright css css-watch generate
+.PHONY: all build test test-e2e clean dev dev-watch dev-air install install-templ install-playwright css css-watch generate
 
 # Default target
 all: css build
@@ -17,6 +17,18 @@ dev-watch: css
 	@echo "Run these in separate terminals:"
 	@echo "  Terminal 1: make css-watch"
 	@echo "  Terminal 2: make dev"
+
+# Run with Air for live reloading (recommended for development)
+dev-air: css
+	@echo "Starting server with Air (live reload)..."
+	@echo "Server will be available at http://localhost:8090"
+	@echo "Air will watch for changes and automatically rebuild"
+	@which air > /dev/null || (echo "Air not installed. Run: go install github.com/air-verse/air@latest" && exit 1)
+	air
+
+# Install Air if not already installed
+install-air:
+	go install github.com/air-verse/air@latest
 
 # Build Tailwind CSS
 css:
@@ -41,7 +53,7 @@ test-e2e-one:
 	go test ./tests/e2e/... -v -run $(TEST)
 
 # Install dependencies
-install: install-templ install-playwright
+install: install-templ install-playwright install-air
 	go mod download
 
 # Install templ CLI
@@ -77,12 +89,14 @@ help:
 	@echo "  make build          - Build CSS and server binary"
 	@echo "  make dev            - Build CSS and run dev server"
 	@echo "  make dev-watch      - Show instructions for dev with CSS watching"
+	@echo "  make dev-air        - Run with Air (live reload) - RECOMMENDED"
 	@echo "  make css            - Build Tailwind CSS"
 	@echo "  make css-watch      - Watch and rebuild CSS on changes"
 	@echo "  make test           - Run Go tests"
 	@echo "  make test-e2e       - Run E2E tests"
 	@echo "  make test-e2e-one   - Run specific E2E test (TEST=TestName)"
 	@echo "  make install        - Install all dependencies"
+	@echo "  make install-air    - Install Air live reload tool"
 	@echo "  make generate       - Generate templ files"
 	@echo "  make clean          - Clean build artifacts"
 	@echo "  make fmt            - Format code"

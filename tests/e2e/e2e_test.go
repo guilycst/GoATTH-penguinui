@@ -107,8 +107,8 @@ func takeScreenshot(t *testing.T, page playwright.Page, name string) {
 	}
 }
 
-// normalizeHTML normalizes HTML for comparison
-func normalizeHTML(html string) string {
+// normalizeHTMLSimple normalizes HTML for comparison (simple version)
+func normalizeHTMLSimple(html string) string {
 	// Remove extra whitespace
 	html = strings.ReplaceAll(html, ">\n<", "><")
 	html = strings.ReplaceAll(html, ">  <", "><")

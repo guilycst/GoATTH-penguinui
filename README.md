@@ -38,6 +38,23 @@ GoATTH-penguinui/
 
 ## Running the Demo
 
+### Quick Start (Recommended: Air with Live Reload)
+
+```bash
+# Install dependencies (including Air)
+make install
+make install-air
+
+# Run with live reload (auto-rebuilds on file changes)
+make dev-air
+
+# Server will start on http://localhost:8090
+# Accordion Demo: http://localhost:8090/components/accordion
+# Button Demo: http://localhost:8090/components/button
+```
+
+### Standard Development
+
 ```bash
 # Install dependencies
 make install

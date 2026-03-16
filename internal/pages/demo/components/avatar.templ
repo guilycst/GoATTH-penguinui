@@ -1,0 +1,260 @@
+package components
+
+import (
+	"github.com/guilycst/GoATTH-penguinui/components/avatar"
+	"github.com/guilycst/GoATTH-penguinui/internal/pages/demo"
+)
+
+// AvatarDemoPage renders the Avatar component demo
+templ AvatarDemoPage() {
+	@demo.Layout("Avatar", "avatar", avatarDemoContent())
+}
+
+// avatarDemoContent renders the actual content inside the layout
+templ avatarDemoContent() {
+	@demo.ComponentDemo(
+		demo.ComponentDemoProps{
+			Title:         "Avatar",
+			Description:   "An avatar is a visual representation of a user or entity, typically displayed as a profile picture or initials.",
+			OriginalURL:   "/original/avatar/default-avatar.html",
+			OriginalLabel: "Original PenguinUI",
+			GoATTHLabel:   "GoATTH Component",
+		},
+		avatarDemoPreview(),
+		`// Image Avatar
+@avatar.Avatar(avatar.Config{
+    Src: "https://example.com/avatar.jpg",
+    Alt: "John Doe",
+    Size: avatar.SizeMD,
+})
+
+// Initials Avatar
+@avatar.Avatar(avatar.Config{
+    Initials: "JS",
+    Variant:  avatar.Primary,
+    Size:     avatar.SizeLG,
+})
+
+// With Status Indicator
+@avatar.Avatar(avatar.Config{
+    Src:    "https://example.com/avatar.jpg",
+    Status: avatar.StatusSuccess,
+    Size:   avatar.SizeMD,
+})
+
+// With Border
+@avatar.Avatar(avatar.Config{
+    Src:         "https://example.com/avatar.jpg",
+    Border:      true,
+    BorderColor: "border-primary",
+    Size:        avatar.SizeMD,
+})
+
+// Square Avatar
+@avatar.Avatar(avatar.Config{
+    Initials: "AB",
+    Shape:    avatar.ShapeSquare,
+    Variant:  avatar.Info,
+    Size:     avatar.SizeMD,
+})
+
+// Different Sizes
+@avatar.Avatar(avatar.Config{Initials: "XS", Size: avatar.SizeXS})
+@avatar.Avatar(avatar.Config{Initials: "SM", Size: avatar.SizeSM})
+@avatar.Avatar(avatar.Config{Initials: "MD", Size: avatar.SizeMD})
+@avatar.Avatar(avatar.Config{Initials: "LG", Size: avatar.SizeLG})
+@avatar.Avatar(avatar.Config{Initials: "XL", Size: avatar.SizeXL})`,
+	)
+}
+
+// avatarDemoPreview renders the GoATTH avatar preview
+templ avatarDemoPreview() {
+	<div class="w-full max-w-4xl mx-auto space-y-8">
+		// Image Avatars
+		<div>
+			<h4 class="text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong">Image Avatars</h4>
+			<div class="flex flex-wrap items-center gap-4">
+				@avatar.Avatar(avatar.Config{
+					Src:  "https://penguinui.s3.amazonaws.com/component-assets/avatar-8.webp",
+					Alt:  "User Avatar",
+					Size: avatar.SizeMD,
+				})
+				@avatar.Avatar(avatar.Config{
+					Src:   "https://penguinui.s3.amazonaws.com/component-assets/avatar-8.webp",
+					Alt:   "User Avatar Large",
+					Size:  avatar.SizeLG,
+					Border: true,
+					BorderColor: "border-primary",
+				})
+				@avatar.Avatar(avatar.Config{
+					Src:    "https://penguinui.s3.amazonaws.com/component-assets/avatar-8.webp",
+					Alt:    "User with Status",
+					Size:   avatar.SizeMD,
+					Status: avatar.StatusSuccess,
+				})
+				@avatar.Avatar(avatar.Config{
+					Src:    "https://penguinui.s3.amazonaws.com/component-assets/avatar-8.webp",
+					Alt:    "User Offline",
+					Size:   avatar.SizeMD,
+					Status: avatar.StatusOffline,
+				})
+			</div>
+		</div>
+
+		// Initials Avatars
+		<div>
+			<h4 class="text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong">Initials Avatars</h4>
+			<div class="flex flex-wrap items-center gap-4">
+				@avatar.Avatar(avatar.Config{
+					Initials: "JD",
+					Variant:  avatar.Default,
+					Size:     avatar.SizeMD,
+				})
+				@avatar.Avatar(avatar.Config{
+					Initials: "AB",
+					Variant:  avatar.Primary,
+					Size:     avatar.SizeMD,
+				})
+				@avatar.Avatar(avatar.Config{
+					Initials: "CD",
+					Variant:  avatar.Secondary,
+					Size:     avatar.SizeMD,
+				})
+				@avatar.Avatar(avatar.Config{
+					Initials: "EF",
+					Variant:  avatar.Info,
+					Size:     avatar.SizeMD,
+				})
+				@avatar.Avatar(avatar.Config{
+					Initials: "GH",
+					Variant:  avatar.Success,
+					Size:     avatar.SizeMD,
+				})
+				@avatar.Avatar(avatar.Config{
+					Initials: "IJ",
+					Variant:  avatar.Warning,
+					Size:     avatar.SizeMD,
+				})
+				@avatar.Avatar(avatar.Config{
+					Initials: "KL",
+					Variant:  avatar.Danger,
+					Size:     avatar.SizeMD,
+				})
+			</div>
+		</div>
+
+		// Icon Placeholders
+		<div>
+			<h4 class="text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong">Icon Placeholders</h4>
+			<div class="flex flex-wrap items-center gap-4">
+				@avatar.Avatar(avatar.Config{
+					Size:    avatar.SizeMD,
+					Variant: avatar.Default,
+				})
+				@avatar.Avatar(avatar.Config{
+					Size:    avatar.SizeMD,
+					Variant: avatar.Primary,
+				})
+				@avatar.Avatar(avatar.Config{
+					Size:    avatar.SizeMD,
+					Variant: avatar.Info,
+				})
+			</div>
+		</div>
+
+		// Status Indicators
+		<div>
+			<h4 class="text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong">Status Indicators</h4>
+			<div class="flex flex-wrap items-center gap-4">
+				@avatar.Avatar(avatar.Config{
+					Src:    "https://penguinui.s3.amazonaws.com/component-assets/avatar-8.webp",
+					Alt:    "Offline",
+					Size:   avatar.SizeMD,
+					Status: avatar.StatusOffline,
+				})
+				@avatar.Avatar(avatar.Config{
+					Src:    "https://penguinui.s3.amazonaws.com/component-assets/avatar-8.webp",
+					Alt:    "Info",
+					Size:   avatar.SizeMD,
+					Status: avatar.StatusInfo,
+				})
+				@avatar.Avatar(avatar.Config{
+					Src:    "https://penguinui.s3.amazonaws.com/component-assets/avatar-8.webp",
+					Alt:    "Online",
+					Size:   avatar.SizeMD,
+					Status: avatar.StatusSuccess,
+				})
+				@avatar.Avatar(avatar.Config{
+					Src:    "https://penguinui.s3.amazonaws.com/component-assets/avatar-8.webp",
+					Alt:    "Away",
+					Size:   avatar.SizeMD,
+					Status: avatar.StatusWarning,
+				})
+				@avatar.Avatar(avatar.Config{
+					Src:    "https://penguinui.s3.amazonaws.com/component-assets/avatar-8.webp",
+					Alt:    "Busy",
+					Size:   avatar.SizeMD,
+					Status: avatar.StatusDanger,
+				})
+			</div>
+		</div>
+
+		// Different Sizes
+		<div>
+			<h4 class="text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong">Sizes</h4>
+			<div class="flex flex-wrap items-end gap-4">
+				@avatar.Avatar(avatar.Config{
+					Initials: "XS",
+					Variant:  avatar.Primary,
+					Size:     avatar.SizeXS,
+				})
+				@avatar.Avatar(avatar.Config{
+					Initials: "SM",
+					Variant:  avatar.Primary,
+					Size:     avatar.SizeSM,
+				})
+				@avatar.Avatar(avatar.Config{
+					Initials: "MD",
+					Variant:  avatar.Primary,
+					Size:     avatar.SizeMD,
+				})
+				@avatar.Avatar(avatar.Config{
+					Initials: "LG",
+					Variant:  avatar.Primary,
+					Size:     avatar.SizeLG,
+				})
+				@avatar.Avatar(avatar.Config{
+					Initials: "XL",
+					Variant:  avatar.Primary,
+					Size:     avatar.SizeXL,
+				})
+			</div>
+		</div>
+
+		// Square Shape
+		<div>
+			<h4 class="text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong">Square Shape</h4>
+			<div class="flex flex-wrap items-center gap-4">
+				@avatar.Avatar(avatar.Config{
+					Initials: "SQ",
+					Variant:  avatar.Info,
+					Shape:    avatar.ShapeSquare,
+					Size:     avatar.SizeMD,
+				})
+				@avatar.Avatar(avatar.Config{
+					Src:   "https://penguinui.s3.amazonaws.com/component-assets/avatar-8.webp",
+					Alt:   "Square",
+					Shape: avatar.ShapeSquare,
+					Size:  avatar.SizeMD,
+				})
+				@avatar.Avatar(avatar.Config{
+					Initials: "SQ",
+					Variant:  avatar.Success,
+					Shape:    avatar.ShapeSquare,
+					Size:     avatar.SizeMD,
+					Status:   avatar.StatusSuccess,
+				})
+			</div>
+		</div>
+	</div>
+}

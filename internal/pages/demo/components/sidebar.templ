@@ -1,0 +1,116 @@
+package components
+
+import (
+	"github.com/guilycst/GoATTH-penguinui/components/sidebar"
+	"github.com/guilycst/GoATTH-penguinui/internal/pages/demo"
+)
+
+// SidebarDemoPage renders the Sidebar component demo
+templ SidebarDemoPage() {
+	@demo.Layout("Sidebar", "sidebar", sidebarDemoContent())
+}
+
+// sidebarDemoContent renders the actual content inside the layout
+templ sidebarDemoContent() {
+	@demo.ComponentDemo(
+		demo.ComponentDemoProps{
+			Title:         "Sidebar",
+			Description:   "A responsive sidebar navigation component with collapsible mobile view, search functionality, and nested navigation support.",
+			OriginalURL:   "/original/sidebar/simple-sidebar.html",
+			OriginalLabel: "Original PenguinUI",
+			GoATTHLabel:   "GoATTH Component",
+		},
+		sidebarDemoPreview(),
+		`// Basic Sidebar
+@sidebar.Sidebar(sidebar.Config{
+    LogoText: "MyApp",
+    Items: []sidebar.Item{
+        {ID: "home", Label: "Home", Href: "/", Icon: homeIcon, Active: true},
+        {ID: "profile", Label: "Profile", Href: "/profile", Icon: profileIcon},
+        {ID: "settings", Label: "Settings", Href: "/settings", Icon: settingsIcon},
+    },
+})
+
+// Sidebar with Search
+@sidebar.Sidebar(sidebar.Config{
+    LogoText: "Dashboard",
+    ShowSearch: true,
+    SearchPlaceholder: "Search...",
+    Items: []sidebar.Item{
+        {ID: "dashboard", Label: "Dashboard", Href: "/", Icon: dashboardIcon, Active: true},
+        {ID: "users", Label: "Users", Href: "/users", Icon: usersIcon},
+        {ID: "products", Label: "Products", Href: "/products", Icon: productsIcon},
+    },
+})
+
+// Sidebar with Badges
+@sidebar.Sidebar(sidebar.Config{
+    LogoText: "App",
+    Items: []sidebar.Item{
+        {ID: "inbox", Label: "Inbox", Href: "/inbox", Icon: inboxIcon, Badge: "5"},
+        {ID: "notifications", Label: "Notifications", Href: "/notifications", Icon: bellIcon, Badge: "New"},
+        {ID: "soon", Label: "Upcoming", Href: "#", Icon: clockIcon, Badge: "Soon", Disabled: true},
+    },
+})`,
+	)
+}
+
+// sidebarDemoPreview renders the GoATTH sidebar preview
+templ sidebarDemoPreview() {
+	<div class="w-full max-w-md mx-auto">
+		<div class="border border-outline dark:border-outline-dark rounded-2xl overflow-hidden">
+			<div class="bg-surface dark:bg-surface-dark p-4">
+				@sidebar.Sidebar(sidebar.Config{
+					LogoText: "GoATTH",
+					ShowSearch: true,
+					SearchPlaceholder: "Search components...",
+					Items: []sidebar.Item{
+						{ID: "dashboard", Label: "Dashboard", Href: "#", Icon: dashboardIcon(), Active: true},
+						{ID: "components", Label: "Components", Href: "#", Icon: componentsIcon()},
+						{ID: "forms", Label: "Forms", Href: "#", Icon: formsIcon()},
+						{ID: "settings", Label: "Settings", Href: "#", Icon: settingsIcon()},
+						{ID: "new", Label: "New Features", Href: "#", Icon: newIcon(), Badge: "New"},
+						{ID: "soon", Label: "Coming Soon", Href: "#", Icon: soonIcon(), Badge: "Soon", Disabled: true},
+					},
+				})
+			</div>
+		</div>
+	</div>
+}
+
+// Icon components
+templ dashboardIcon() {
+	<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-full h-full">
+		<path d="M15.5 2A1.5 1.5 0 0 0 14 3.5v13a1.5 1.5 0 0 0 1.5 1.5h1a1.5 1.5 0 0 0 1.5-1.5v-13A1.5 1.5 0 0 0 16.5 2h-1ZM9.5 6A1.5 1.5 0 0 0 8 7.5v9A1.5 1.5 0 0 0 9.5 18h1a1.5 1.5 0 0 0 1.5-1.5v-9A1.5 1.5 0 0 0 10.5 6h-1ZM3.5 10A1.5 1.5 0 0 0 2 11.5v5A1.5 1.5 0 0 0 3.5 18h1A1.5 1.5 0 0 0 6 16.5v-5A1.5 1.5 0 0 0 4.5 10h-1Z"/>
+	</svg>
+}
+
+templ componentsIcon() {
+	<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-full h-full">
+		<path fill-rule="evenodd" d="M4.5 2A2.5 2.5 0 0 0 2 4.5v11A2.5 2.5 0 0 0 4.5 18h11a2.5 2.5 0 0 0 2.5-2.5v-11A2.5 2.5 0 0 0 15.5 2h-11Zm0 2h11a.5.5 0 0 1 .5.5v11a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5Z" clip-rule="evenodd"/>
+	</svg>
+}
+
+templ formsIcon() {
+	<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-full h-full">
+		<path fill-rule="evenodd" d="M4 2a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H4Zm0 2h12v12H4V4Zm2 3a1 1 0 0 1 1-1h6a1 1 0 1 1 0 2H7a1 1 0 0 1-1-1Zm0 4a1 1 0 0 1 1-1h6a1 1 0 1 1 0 2H7a1 1 0 0 1-1-1Z" clip-rule="evenodd"/>
+	</svg>
+}
+
+templ settingsIcon() {
+	<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-full h-full">
+		<path fill-rule="evenodd" d="M7.84 1.804A1 1 0 0 1 8.82 1h2.36a1 1 0 0 1 .98.804l.331 1.652a6.993 6.993 0 0 1 1.929 1.115l1.598-.54a1 1 0 0 1 1.186.447l1.18 2.044a1 1 0 0 1-.205 1.251l-1.267 1.113a7.047 7.047 0 0 1 0 2.228l1.267 1.113a1 1 0 0 1 .206 1.25l-1.18 2.045a1 1 0 0 1-1.187.447l-1.598-.54a6.993 6.993 0 0 1-1.929 1.115l-.33 1.652a1 1 0 0 1-.98.804H8.82a1 1 0 0 1-.98-.804l-.331-1.652a6.993 6.993 0 0 1-1.929-1.115l-1.598.54a1 1 0 0 1-1.186-.447l-1.18-2.044a1 1 0 0 1 .205-1.251l1.267-1.114a7.05 7.05 0 0 1 0-2.227L1.821 7.773a1 1 0 0 1-.206-1.25l1.18-2.045a1 1 0 0 1 1.187-.447l1.598.54A6.992 6.992 0 0 1 7.51 3.456l.33-1.652ZM10 13a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" clip-rule="evenodd"/>
+	</svg>
+}
+
+templ newIcon() {
+	<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-full h-full">
+		<path fill-rule="evenodd" d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16Zm.75-11.25a.75.75 0 0 0-1.5 0v2.5h-2.5a.75.75 0 0 0 0 1.5h2.5v2.5a.75.75 0 0 0 1.5 0v-2.5h2.5a.75.75 0 0 0 0-1.5h-2.5v-2.5Z" clip-rule="evenodd"/>
+	</svg>
+}
+
+templ soonIcon() {
+	<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-full h-full">
+		<path fill-rule="evenodd" d="M10 2a6 6 0 0 0-6 6c0 1.887-.454 3.665-1.257 5.234a.75.75 0 0 0 .515 1.076 32.91 32.91 0 0 0 3.256.508 3.5 3.5 0 0 0 6.972 0 32.903 32.903 0 0 0 3.256-.508.75.75 0 0 0 .515-1.076A11.448 11.448 0 0 1 16 8a6 6 0 0 0-6-6ZM8.05 14.943a33.54 33.54 0 0 0 3.9 0 2 2 0 0 1-3.9 0Z" clip-rule="evenodd"/>
+	</svg>
+}
