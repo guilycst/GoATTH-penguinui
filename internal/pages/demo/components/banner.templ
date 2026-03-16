@@ -21,15 +21,15 @@ templ bannerDemoContent() {
 			GoATTHLabel:   "GoATTH Component",
 		},
 		bannerDemoPreview(),
-		`// Simple Banner
+		`// Simple Banner (Dismissible by default)
 @banner.Banner(banner.Config{
     Text: "Limited Time Offer! Check out our deals",
 })
 
-// Dismissible Banner
+// Persistent Banner (Non-dismissible)
 @banner.Banner(banner.Config{
-    Text: "New features available! Update now",
-    Dismissible: true,
+    Text:       "Important announcement - cannot be dismissed",
+    Persistent: true,
 })
 
 // Banner with CTA Button
@@ -72,20 +72,20 @@ templ bannerDemoContent() {
 // bannerDemoPreview renders the GoATTH banner preview
 templ bannerDemoPreview() {
 	<div class="w-full max-w-4xl mx-auto space-y-8">
-		// Simple Banner
+		// Simple Banner (Dismissible by default)
 		<div>
-			<h4 class="text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong">Simple Banner</h4>
+			<h4 class="text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong">Simple Banner (Dismissible by Default)</h4>
 			@banner.Banner(banner.Config{
 				Text: "Limited Time Offer! Explore exclusive deals & savings",
 			})
 		</div>
 
-		// Dismissible Banner
+		// Persistent Banner (Non-dismissible)
 		<div>
-			<h4 class="text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong">Dismissible Banner</h4>
+			<h4 class="text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong">Persistent Banner (Non-dismissible)</h4>
 			@banner.Banner(banner.Config{
-				Text:        "New features are now available! Check them out",
-				Dismissible: true,
+				Text:       "This banner cannot be dismissed by users",
+				Persistent: true,
 			})
 		</div>
 
@@ -93,8 +93,7 @@ templ bannerDemoPreview() {
 		<div>
 			<h4 class="text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong">With CTA Button</h4>
 			@banner.Banner(banner.Config{
-				Text:        "Get Fit Anywhere, Anytime 💪",
-				Dismissible: true,
+				Text: "Get Fit Anywhere, Anytime 💪",
 				CTA: &banner.CTAConfig{
 					Text:    "Start free trial",
 					OnClick: "alert('Starting free trial...')",

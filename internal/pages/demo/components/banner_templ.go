@@ -74,15 +74,15 @@ func bannerDemoContent() templ.Component {
 				GoATTHLabel:   "GoATTH Component",
 			},
 			bannerDemoPreview(),
-			`// Simple Banner
+			`// Simple Banner (Dismissible by default)
 @banner.Banner(banner.Config{
     Text: "Limited Time Offer! Check out our deals",
 })
 
-// Dismissible Banner
+// Persistent Banner (Non-dismissible)
 @banner.Banner(banner.Config{
-    Text: "New features available! Update now",
-    Dismissible: true,
+    Text:       "Important announcement - cannot be dismissed",
+    Persistent: true,
 })
 
 // Banner with CTA Button
@@ -149,7 +149,7 @@ func bannerDemoPreview() templ.Component {
 			templ_7745c5c3_Var3 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"w-full max-w-4xl mx-auto space-y-8\"><div><h4 class=\"text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong\">Simple Banner</h4>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"w-full max-w-4xl mx-auto space-y-8\"><div><h4 class=\"text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong\">Simple Banner (Dismissible by Default)</h4>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -159,13 +159,13 @@ func bannerDemoPreview() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</div><div><h4 class=\"text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong\">Dismissible Banner</h4>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</div><div><h4 class=\"text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong\">Persistent Banner (Non-dismissible)</h4>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = banner.Banner(banner.Config{
-			Text:        "New features are now available! Check them out",
-			Dismissible: true,
+			Text:       "This banner cannot be dismissed by users",
+			Persistent: true,
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -175,8 +175,7 @@ func bannerDemoPreview() templ.Component {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = banner.Banner(banner.Config{
-			Text:        "Get Fit Anywhere, Anytime 💪",
-			Dismissible: true,
+			Text: "Get Fit Anywhere, Anytime 💪",
 			CTA: &banner.CTAConfig{
 				Text:    "Start free trial",
 				OnClick: "alert('Starting free trial...')",

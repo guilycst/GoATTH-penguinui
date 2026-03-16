@@ -30,8 +30,8 @@ type Config struct {
 	Variant Variant
 	// Position determines if banner is fixed or relative
 	Position Position
-	// Dismissible adds a close button
-	Dismissible bool
+	// Persistent disables the dismiss button (default: banners are dismissible)
+	Persistent bool
 	// DismissAction is the Alpine.js action when dismissed
 	DismissAction string
 	// CTA is the call-to-action button config (optional)

@@ -296,7 +296,7 @@ func simpleBanner(cfg Config) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		}
-		if cfg.Dismissible {
+		if !cfg.Persistent {
 			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "<button class=\"absolute top-1/2 -translate-y-1/2 right-4 p-1 hover:opacity-70 transition-opacity\" aria-label=\"dismiss banner\" @click=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err

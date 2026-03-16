@@ -65,7 +65,7 @@ templ simpleBanner(cfg Config) {
 			<p class={ cfg.TextClasses() }>{ cfg.Text }</p>
 		}
 		
-		if cfg.Dismissible {
+		if !cfg.Persistent {
 			<button 
 				class="absolute top-1/2 -translate-y-1/2 right-4 p-1 hover:opacity-70 transition-opacity"
 				aria-label="dismiss banner"
