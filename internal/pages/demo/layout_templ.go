@@ -111,6 +111,13 @@ func getSidebarItems(activeComponent string) []sidebar.Item {
 			Active: activeComponent == "badge",
 		},
 		{
+			ID:     "banner",
+			Label:  "Banner",
+			Href:   "/components/banner",
+			Icon:   nil,
+			Active: activeComponent == "banner",
+		},
+		{
 			ID:       "card",
 			Label:    "Card",
 			Href:     "#",

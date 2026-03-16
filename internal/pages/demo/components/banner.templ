@@ -1,0 +1,154 @@
+package components
+
+import (
+	"github.com/guilycst/GoATTH-penguinui/components/banner"
+	"github.com/guilycst/GoATTH-penguinui/internal/pages/demo"
+)
+
+// BannerDemoPage renders the Banner component demo
+templ BannerDemoPage() {
+	@demo.Layout("Banner", "banner", bannerDemoContent())
+}
+
+// bannerDemoContent renders the actual content inside the layout
+templ bannerDemoContent() {
+	@demo.ComponentDemo(
+		demo.ComponentDemoProps{
+			Title:         "Banner",
+			Description:   "A banner displays a prominent message at the top of a page or section. Used for announcements, promotions, alerts, and cookie consent.",
+			OriginalURL:   "/original/banner/simple-banner.html",
+			OriginalLabel: "Original PenguinUI",
+			GoATTHLabel:   "GoATTH Component",
+		},
+		bannerDemoPreview(),
+		`// Simple Banner
+@banner.Banner(banner.Config{
+    Text: "Limited Time Offer! Check out our deals",
+})
+
+// Dismissible Banner
+@banner.Banner(banner.Config{
+    Text: "New features available! Update now",
+    Dismissible: true,
+})
+
+// Banner with CTA Button
+@banner.Banner(banner.Config{
+    Text: "Get Fit Anywhere, Anytime",
+    CTA: &banner.CTAConfig{
+        Text: "Start free trial",
+        Href: "/signup",
+    },
+})
+
+// Fixed Position Banner (stays at top)
+@banner.Banner(banner.Config{
+    Text: "Important system maintenance scheduled",
+    Position: banner.PositionFixed,
+    Variant:  banner.Warning,
+})
+
+// Colored Variants
+@banner.Banner(banner.Config{
+    Text: "Success! Your changes have been saved",
+    Variant: banner.Success,
+})
+
+// Cookie Consent Banner
+@banner.Banner(banner.Config{
+    CookieBanner: true,
+    Text: "We use cookies to improve your experience",
+    CookieConfig: &banner.CookieBannerConfig{
+        Title:        "Cookie Settings",
+        AcceptText:   "Accept All",
+        RejectText:   "Decline",
+        AcceptAction: "acceptCookies()",
+        RejectAction: "show = false",
+    },
+})`,
+	)
+}
+
+// bannerDemoPreview renders the GoATTH banner preview
+templ bannerDemoPreview() {
+	<div class="w-full max-w-4xl mx-auto space-y-8">
+		// Simple Banner
+		<div>
+			<h4 class="text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong">Simple Banner</h4>
+			@banner.Banner(banner.Config{
+				Text: "Limited Time Offer! Explore exclusive deals & savings",
+			})
+		</div>
+
+		// Dismissible Banner
+		<div>
+			<h4 class="text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong">Dismissible Banner</h4>
+			@banner.Banner(banner.Config{
+				Text:        "New features are now available! Check them out",
+				Dismissible: true,
+			})
+		</div>
+
+		// Banner with CTA
+		<div>
+			<h4 class="text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong">With CTA Button</h4>
+			@banner.Banner(banner.Config{
+				Text:        "Get Fit Anywhere, Anytime 💪",
+				Dismissible: true,
+				CTA: &banner.CTAConfig{
+					Text:    "Start free trial",
+					OnClick: "alert('Starting free trial...')",
+				},
+			})
+		</div>
+
+		// Color Variants
+		<div>
+			<h4 class="text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong">Color Variants</h4>
+			<div class="space-y-2">
+				@banner.Banner(banner.Config{
+					Text:    "Default variant banner",
+					Variant: banner.Default,
+				})
+				@banner.Banner(banner.Config{
+					Text:    "Primary variant for promotions",
+					Variant: banner.Primary,
+				})
+				@banner.Banner(banner.Config{
+					Text:    "Info variant for general information",
+					Variant: banner.Info,
+				})
+				@banner.Banner(banner.Config{
+					Text:    "Success! Operation completed successfully",
+					Variant: banner.Success,
+				})
+				@banner.Banner(banner.Config{
+					Text:    "Warning: Please review your settings",
+					Variant: banner.Warning,
+				})
+				@banner.Banner(banner.Config{
+					Text:    "Error: Something went wrong",
+					Variant: banner.Danger,
+				})
+			</div>
+		</div>
+
+		// Cookie Consent Banner
+		<div class="relative h-48 overflow-hidden border border-outline dark:border-outline-dark rounded-2xl">
+			<h4 class="absolute top-4 left-4 text-sm font-medium text-on-surface-strong dark:text-on-surface-dark-strong z-10">Cookie Consent Banner (Bottom Right)</h4>
+			<div class="absolute inset-0 bg-surface dark:bg-surface-dark">
+				@banner.Banner(banner.Config{
+					CookieBanner: true,
+					Text:         "We use cookies to make your experience sweet and crispy. For more information, please read our Privacy Policy.",
+					CookieConfig: &banner.CookieBannerConfig{
+						Title:        "Cookie Time!",
+						AcceptText:   "Sounds Good!",
+						RejectText:   "No, thank you",
+						AcceptAction: "show = false",
+						RejectAction: "show = false",
+					},
+				})
+			</div>
+		</div>
+	</div>
+}

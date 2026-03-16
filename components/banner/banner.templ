@@ -1,0 +1,130 @@
+package banner
+
+// Banner renders a banner component based on PenguinUI
+// Usage:
+//
+//	// Simple dismissible banner
+//	@banner.Banner(banner.Config{
+//	    Text: "Limited Time Offer! Check out our deals",
+//	    Dismissible: true,
+//	})
+//
+//	// Banner with CTA button
+//	@banner.Banner(banner.Config{
+//	    Text: "Get Fit Anywhere, Anytime",
+//	    CTA: &banner.CTAConfig{
+//	        Text: "Start free trial",
+//	        OnClick: "showModal = true",
+//	    },
+//	})
+//
+//	// Fixed position banner
+//	@banner.Banner(banner.Config{
+//	    Text: "Important announcement",
+//	    Position: banner.PositionFixed,
+//	    Variant: banner.Warning,
+//	})
+templ Banner(cfg Config) {
+	if cfg.CookieBanner {
+		@cookieBanner(cfg)
+	} else {
+		@simpleBanner(cfg)
+	}
+}
+
+// simpleBanner renders a standard banner
+templ simpleBanner(cfg Config) {
+	{{ dismissAction := cfg.DismissAction }}
+	{{ if dismissAction == "" { dismissAction = "show = false" } }}
+	
+	<div 
+		x-data="{ show: true }"
+		x-show="show"
+		x-cloak
+		class={ cfg.ContainerClasses() }
+		role="banner"
+	>
+		if cfg.CTA != nil {
+			<div class="mx-auto flex flex-wrap items-center gap-2 px-6">
+				<p class={ cfg.TextClasses() }>{ cfg.Text }</p>
+				if cfg.CTA.Href != "" {
+					<a href={ templ.SafeURL(cfg.CTA.Href) } class={ cfg.CTAClasses() }>
+						{ cfg.CTA.Text }
+					</a>
+				} else {
+					<button 
+						type="button"
+						class={ cfg.CTAClasses() }
+						@click={ cfg.CTA.OnClick }
+					>
+						{ cfg.CTA.Text }
+					</button>
+				}
+			</div>
+		} else {
+			<p class={ cfg.TextClasses() }>{ cfg.Text }</p>
+		}
+		
+		if cfg.Dismissible {
+			<button 
+				class="absolute top-1/2 -translate-y-1/2 right-4 p-1 hover:opacity-70 transition-opacity"
+				aria-label="dismiss banner"
+				@click={ dismissAction }
+			>
+				<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" stroke="currentColor" fill="none" stroke-width="2.5" class="size-4 shrink-0">
+					<path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+				</svg>
+			</button>
+		}
+	</div>
+}
+
+// cookieBanner renders a cookie consent banner
+templ cookieBanner(cfg Config) {
+	{{ cookieCfg := cfg.CookieConfig }}
+	{{ if cookieCfg == nil { cookieCfg = &CookieBannerConfig{Title: "Cookie Consent", AcceptText: "Accept", RejectText: "Decline"} } }}
+	
+	<div 
+		x-data="{ show: true }"
+		x-show="show"
+		x-cloak
+		class="fixed bottom-4 left-4 right-4 sm:left-auto sm:right-4 sm:max-w-sm z-50 flex flex-col gap-4 border border-outline bg-surface-alt/50 text-on-surface dark:border-outline-dark dark:bg-surface-dark-alt/50 dark:text-on-surface-dark rounded-radius"
+		role="dialog"
+		aria-label="Cookie consent"
+	>
+		<!-- Header -->
+		<div class="flex items-center justify-between border-b border-outline bg-surface-alt/60 px-4 py-2 dark:border-outline-dark dark:bg-surface-dark-alt/20">
+			<h3 class="flex items-center gap-2 font-semibold text-on-surface-strong dark:text-on-surface-dark-strong">
+				if cookieCfg.Icon != nil {
+					<span class="text-2xl" aria-hidden="true">@cookieCfg.Icon</span>
+				} else {
+					<span class="text-2xl" aria-hidden="true">🍪</span>
+				}
+				{ cookieCfg.Title }
+			</h3>
+		</div>
+		
+		<!-- Body -->
+		<div class="px-4 text-sm">
+			<p class="text-pretty">{ cfg.Text }</p>
+		</div>
+		
+		<!-- Footer -->
+		<div class="flex flex-col-reverse justify-end gap-2 border-t border-outline bg-surface-alt/60 px-4 py-2 sm:flex-row sm:items-center dark:border-outline-dark dark:bg-surface-dark/20">
+			<button 
+				type="button"
+				class="cursor-pointer whitespace-nowrap p-2 text-center text-xs font-medium tracking-wide text-on-surface transition hover:opacity-75 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:opacity-100 active:outline-offset-0 dark:text-on-surface-dark dark:focus-visible:outline-primary-dark rounded-radius"
+				@click={ cookieCfg.RejectAction }
+			>
+				{ cookieCfg.RejectText }
+			</button>
+			<button 
+				type="button"
+				class="cursor-pointer whitespace-nowrap bg-primary px-4 py-2 border border-primary text-center text-xs font-medium tracking-wide text-on-primary transition hover:opacity-75 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:opacity-100 active:outline-offset-0 dark:bg-primary-dark dark:text-on-primary-dark dark:border-primary-dark dark:focus-visible:outline-primary-dark rounded-radius"
+				@click={ cookieCfg.AcceptAction }
+			>
+				{ cookieCfg.AcceptText }
+			</button>
+		</div>
+	</div>
+}

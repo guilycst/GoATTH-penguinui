@@ -76,6 +76,8 @@ func (s *Server) handleComponent(w http.ResponseWriter, r *http.Request) {
 		components.AvatarDemoPage().Render(r.Context(), w)
 	case "badge":
 		components.BadgeDemoPage().Render(r.Context(), w)
+	case "banner":
+		components.BannerDemoPage().Render(r.Context(), w)
 	default:
 		http.NotFound(w, r)
 	}
