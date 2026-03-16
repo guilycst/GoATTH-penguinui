@@ -1,0 +1,244 @@
+package components
+
+import (
+	"github.com/guilycst/GoATTH-penguinui/components/combobox"
+	"github.com/guilycst/GoATTH-penguinui/internal/pages/demo"
+)
+
+// ComboboxDemoPage renders the Combobox component demo
+templ ComboboxDemoPage() {
+	@demo.Layout("Combobox", "combobox", comboboxDemoContent())
+}
+
+// comboboxDemoContent renders the actual content inside the layout
+templ comboboxDemoContent() {
+	@demo.ComponentDemo(
+		demo.ComponentDemoProps{
+			Title:         "Combobox",
+			Description:   "A combobox is an input widget with an associated popup that enables users to select a value from a collection of possible values.",
+			OriginalURL:   "/original/combobox/simple-combobox.html",
+			OriginalLabel: "Original PenguinUI",
+			GoATTHLabel:   "GoATTH Component",
+		},
+		comboboxDemoPreview(),
+		`// Simple Single-Select
+@combobox.Combobox(combobox.Config{
+    ID:          "industry",
+    Label:       "Industry",
+    Placeholder: "Select an industry",
+    Options: []combobox.Option{
+        {Value: "tech", Label: "Technology"},
+        {Value: "health", Label: "Healthcare"},
+        {Value: "finance", Label: "Finance"},
+    },
+})
+
+// Multi-Select with Checkboxes
+@combobox.Combobox(combobox.Config{
+    ID:             "skills",
+    Label:          "Skills",
+    Mode:           combobox.ModeMultiple,
+    EnableClearAll: true,
+    Options: []combobox.Option{
+        {Value: "go", Label: "Go"},
+        {Value: "js", Label: "JavaScript"},
+        {Value: "py", Label: "Python"},
+    },
+})
+
+// With Search
+@combobox.Combobox(combobox.Config{
+    ID:           "country",
+    Label:        "Country",
+    EnableSearch: true,
+    Options:      countries,
+})
+
+// With Images (Avatars)
+@combobox.Combobox(combobox.Config{
+    ID:      "user",
+    Label:   "Share with",
+    Options: users, // Options with Img field
+})
+
+// HTMX Lazy Loading
+@combobox.Combobox(combobox.Config{
+    ID:              "products",
+    Label:           "Product",
+    HXMTEndpoint:    "/api/products",
+    EnableSearch:    true,
+    HTMXSearchParam: "q",
+})`,
+	)
+}
+
+// comboboxDemoPreview renders the GoATTH combobox preview
+templ comboboxDemoPreview() {
+	<div class="w-full max-w-4xl mx-auto space-y-8">
+		// Simple Single-Select
+		<div class="max-w-xs">
+			<h4 class="text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong">Single Select</h4>
+			@combobox.Combobox(combobox.Config{
+				ID:          "industry",
+				Label:       "Industry",
+				Placeholder: "Select an industry",
+				Name:        "industry",
+				Options: []combobox.Option{
+					{Value: "agriculture", Label: "Agriculture"},
+					{Value: "construction", Label: "Construction"},
+					{Value: "education", Label: "Education"},
+					{Value: "entertainment", Label: "Entertainment"},
+					{Value: "finance", Label: "Finance"},
+					{Value: "healthcare", Label: "Healthcare"},
+					{Value: "hospitality", Label: "Hospitality"},
+					{Value: "it", Label: "IT"},
+					{Value: "manufacturing", Label: "Manufacturing"},
+					{Value: "marketing", Label: "Marketing"},
+					{Value: "retail", Label: "Retail"},
+					{Value: "transportation", Label: "Transportation"},
+				},
+			})
+		</div>
+
+		// Single-Select with Search
+		<div class="max-w-xs">
+			<h4 class="text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong">Single Select with Search</h4>
+			@combobox.Combobox(combobox.Config{
+				ID:           "make",
+				Label:        "Make",
+				Placeholder:  "Select a make",
+				Name:         "make",
+				EnableSearch: true,
+				Options: []combobox.Option{
+					{Value: "acura", Label: "Acura"},
+					{Value: "audi", Label: "Audi"},
+					{Value: "bmw", Label: "BMW"},
+					{Value: "chevrolet", Label: "Chevrolet"},
+					{Value: "ferrari", Label: "Ferrari"},
+					{Value: "ford", Label: "Ford"},
+					{Value: "honda", Label: "Honda"},
+					{Value: "hyundai", Label: "Hyundai"},
+					{Value: "jaguar", Label: "Jaguar"},
+					{Value: "kia", Label: "Kia"},
+					{Value: "lexus", Label: "Lexus"},
+					{Value: "mazda", Label: "Mazda"},
+					{Value: "mercedes", Label: "Mercedes-Benz"},
+					{Value: "nissan", Label: "Nissan"},
+					{Value: "porsche", Label: "Porsche"},
+					{Value: "tesla", Label: "Tesla"},
+					{Value: "toyota", Label: "Toyota"},
+					{Value: "volkswagen", Label: "Volkswagen"},
+					{Value: "volvo", Label: "Volvo"},
+				},
+			})
+		</div>
+
+		// Multi-Select with Checkboxes
+		<div class="max-w-xs">
+			<h4 class="text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong">Multi-Select with Checkboxes</h4>
+			@combobox.Combobox(combobox.Config{
+				ID:             "skills",
+				Label:          "Skills",
+				Placeholder:    "Select skills",
+				Name:           "skills",
+				Mode:           combobox.ModeMultiple,
+				EnableClearAll: true,
+				Options: []combobox.Option{
+					{Value: "cpp", Label: "C++"},
+					{Value: "css", Label: "CSS"},
+					{Value: "go", Label: "Go"},
+					{Value: "html", Label: "HTML"},
+					{Value: "java", Label: "Java"},
+					{Value: "js", Label: "JavaScript"},
+					{Value: "kotlin", Label: "Kotlin"},
+					{Value: "php", Label: "PHP"},
+					{Value: "python", Label: "Python"},
+					{Value: "ruby", Label: "Ruby"},
+					{Value: "rust", Label: "Rust"},
+					{Value: "ts", Label: "TypeScript"},
+				},
+			})
+		</div>
+
+		// Multi-Select with Search
+		<div class="max-w-xs">
+			<h4 class="text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong">Multi-Select with Search</h4>
+			@combobox.Combobox(combobox.Config{
+				ID:             "languages",
+				Label:          "Languages",
+				Placeholder:    "Select languages",
+				Name:           "languages",
+				Mode:           combobox.ModeMultiple,
+				EnableSearch:   true,
+				EnableClearAll: true,
+				Options: []combobox.Option{
+					{Value: "en", Label: "English"},
+					{Value: "es", Label: "Spanish"},
+					{Value: "fr", Label: "French"},
+					{Value: "de", Label: "German"},
+					{Value: "it", Label: "Italian"},
+					{Value: "pt", Label: "Portuguese"},
+					{Value: "ru", Label: "Russian"},
+					{Value: "zh", Label: "Chinese"},
+					{Value: "ja", Label: "Japanese"},
+					{Value: "ko", Label: "Korean"},
+					{Value: "ar", Label: "Arabic"},
+					{Value: "hi", Label: "Hindi"},
+				},
+			})
+		</div>
+
+		// With Images (Avatars)
+		<div class="max-w-xs">
+			<h4 class="text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong">With Images</h4>
+			@combobox.Combobox(combobox.Config{
+				ID:          "user",
+				Label:       "Share with",
+				Placeholder: "Select a user",
+				Name:        "user",
+				Options: []combobox.Option{
+					{Value: "aiden", Label: "Aiden Walker", Img: "https://penguinui.s3.amazonaws.com/component-assets/avatar-1.webp"},
+					{Value: "bob", Label: "Bob Johnson", Img: "https://penguinui.s3.amazonaws.com/component-assets/avatar-2.webp"},
+					{Value: "emily", Label: "Emily Rodriguez", Img: "https://penguinui.s3.amazonaws.com/component-assets/avatar-3.webp"},
+					{Value: "emma", Label: "Emma Thompson", Img: "https://penguinui.s3.amazonaws.com/component-assets/avatar-4.webp"},
+					{Value: "alex", Label: "Alex Martinez", Img: "https://penguinui.s3.amazonaws.com/component-assets/avatar-5.webp"},
+				},
+			})
+		</div>
+
+		// Pre-selected Values
+		<div class="max-w-xs">
+			<h4 class="text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong">Pre-selected Values</h4>
+			@combobox.Combobox(combobox.Config{
+				ID:          "preselected",
+				Label:       "Frameworks",
+				Placeholder: "Select frameworks",
+				Name:        "frameworks",
+				Mode:        combobox.ModeMultiple,
+				EnableClearAll: true,
+				Selected:    []string{"react", "vue"},
+				Options: []combobox.Option{
+					{Value: "angular", Label: "Angular"},
+					{Value: "react", Label: "React"},
+					{Value: "svelte", Label: "Svelte"},
+					{Value: "vue", Label: "Vue"},
+				},
+			})
+		</div>
+
+		// Disabled State
+		<div class="max-w-xs">
+			<h4 class="text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong">Disabled State</h4>
+			@combobox.Combobox(combobox.Config{
+				ID:       "disabled",
+				Label:    "Disabled Combobox",
+				Name:     "disabled",
+				Disabled: true,
+				Options: []combobox.Option{
+					{Value: "a", Label: "Option A"},
+					{Value: "b", Label: "Option B"},
+				},
+			})
+		</div>
+	</div>
+}
