@@ -1,0 +1,109 @@
+package badge
+
+import "fmt"
+
+// Badge renders a badge component based on PenguinUI
+// Usage:
+//
+//	// Simple badge
+//	@badge.Badge(badge.Config{
+//	    Text: "New",
+//	    Variant: badge.Primary,
+//	})
+//
+//	// Soft style badge with icon
+//	@badge.Badge(badge.Config{
+//	    Text: "Active",
+//	    Variant: badge.Success,
+//	    Style: badge.StyleSoft,
+//	    Icon: checkIcon,
+//	})
+//
+//	// Badge with indicator dot
+//	@badge.Badge(badge.Config{
+//	    Text: "Live",
+//	    Variant: badge.Danger,
+//	    Indicator: true,
+//	})
+templ Badge(cfg Config) {
+	if cfg.IsSoft() || cfg.Icon != nil || cfg.Indicator {
+		@badgeWithInner(cfg)
+	} else {
+		@simpleBadge(cfg)
+	}
+}
+
+// simpleBadge renders a basic solid badge
+templ simpleBadge(cfg Config) {
+	{{ classes := "rounded-radius w-fit font-medium " + cfg.SizeClasses() + " " + cfg.VariantClasses() + " " + cfg.Class }}
+	
+	<span class={ classes }>
+		{ cfg.Text }
+	</span>
+}
+
+// badgeWithInner renders a badge with inner span (for soft style, icons, or indicators)
+templ badgeWithInner(cfg Config) {
+	{{ containerClasses := "w-fit inline-flex overflow-hidden rounded-radius font-medium " + cfg.SizeClasses() + " " }}
+	{{ if cfg.IsSoft() { containerClasses = containerClasses + cfg.SoftVariantClasses() } else { containerClasses = containerClasses + cfg.VariantClasses() } }}
+	{{ containerClasses = containerClasses + " " + cfg.Class }}
+	
+	<span class={ containerClasses }>
+		<span class={ "flex items-center gap-1 px-2 py-1 " + cfg.SoftInnerClasses() }>
+			if cfg.Indicator {
+				<span class={ cfg.IndicatorClasses() } aria-hidden="true"></span>
+			}
+			if cfg.Icon != nil {
+				<span class="shrink-0">
+					@cfg.Icon
+				</span>
+			}
+			{ cfg.Text }
+		</span>
+	</span>
+}
+
+// NotificationBadge renders a notification badge for buttons/icons
+// Usage:
+//
+//	@badge.NotificationBadge(99)
+templ NotificationBadge(count int) {
+	if count > 0 {
+		<span class="absolute left-1/2 -top-1 rounded-full bg-danger px-1 leading-4 text-xs font-medium text-on-danger">
+			if count > 99 {
+				99+
+			} else {
+				{ fmt.Sprintf("%d", count) }
+			}
+		</span>
+	}
+}
+
+// NotificationDot renders a simple notification dot (red badge without text)
+templ NotificationDot() {
+	<span class="absolute -right-0.5 top-0 size-3 rounded-full bg-danger text-xs font-medium"></span>
+}
+
+// AnimatingDot renders a pulsing notification dot
+// Usage:
+//
+//	@badge.AnimatingDot(badge.Primary)
+templ AnimatingDot(variant Variant) {
+	{{ colorClass := "bg-primary dark:bg-primary-dark" }}
+	switch variant {
+		case Secondary:
+			{{ colorClass = "bg-secondary dark:bg-secondary-dark" }}
+		case Info:
+			{{ colorClass = "bg-info" }}
+		case Success:
+			{{ colorClass = "bg-success" }}
+		case Warning:
+			{{ colorClass = "bg-warning" }}
+		case Danger:
+			{{ colorClass = "bg-danger" }}
+	}
+	
+	<span class={ "flex size-3 items-center justify-center rounded-full " + colorClass } aria-label="notification">
+		<span class={ "size-3 animate-ping rounded-full motion-reduce:animate-none " + colorClass }></span>
+	</span>
+}
