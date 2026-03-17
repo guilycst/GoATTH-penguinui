@@ -426,6 +426,12 @@ func singleSelectData(id, optionsJSON, selectedJSON, placeholder string, enableS
 	ph, _ := json.Marshal(placeholder)
 	enableSearchJSON, _ := json.Marshal(enableSearch)
 	
+	// Ensure selectedValues is always an array, not null
+	selectedValuesData := selectedJSON
+	if selectedValuesData == "null" {
+		selectedValuesData = "[]"
+	}
+	
 	return fmt.Sprintf(`{
 		id: %s,
 		placeholder: %s,
@@ -437,7 +443,7 @@ func singleSelectData(id, optionsJSON, selectedJSON, placeholder string, enableS
 		optionsLoaded: false,
 		enableSearch: %s,
 		get selectedOption() {
-			if (this.selectedValues.length === 0) return null;
+			if (!this.selectedValues || this.selectedValues.length === 0) return null;
 			const value = this.selectedValues[0];
 			return this.allOptions.find(o => o.value === value) || null;
 		},
@@ -463,16 +469,23 @@ func singleSelectData(id, optionsJSON, selectedJSON, placeholder string, enableS
 				if (el) el.focus();
 			}
 		}
-	}`, fid, ph, optionsJSON, selectedJSON, enableSearchJSON)
+	}`, fid, ph, optionsJSON, selectedValuesData, enableSearchJSON)
 }
 
 // multiSelectData generates Alpine.js data for multi-select combobox
 func multiSelectData(id, optionsJSON, selectedJSON, placeholder string, enableSearch bool) string {
 	fid, _ := json.Marshal(id)
 	ph, _ := json.Marshal(placeholder)
+	
+	// Ensure selected is always an array, not null
+	selectedValuesData := selectedJSON
+	if selectedValuesData == "null" {
+		selectedValuesData = "[]"
+	}
+	
 	optsData := fmt.Sprintf(`
-		allOptions: %s.map(o => ({...o, checked: %s.includes(o.value)})),
-	`, optionsJSON, selectedJSON)
+		allOptions: %s.map(o => ({...o, checked: (%s).includes(o.value)})),
+	`, optionsJSON, selectedValuesData)
 	enableSearchJSON, _ := json.Marshal(enableSearch)
 	
 	return fmt.Sprintf(`{
