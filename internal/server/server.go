@@ -46,6 +46,7 @@ func (s *Server) setupRoutes() {
 	s.mux.HandleFunc("/api/components/accordion-content/", s.handleAccordionContent)
 	s.mux.HandleFunc("/api/components/tab-content/", s.handleTabContent)
 	s.mux.HandleFunc("/api/components/table/rows", s.handleTableRows)
+	s.mux.HandleFunc("/api/components/toast", s.handleToastOOB)
 
 	// Root redirect to first component
 	s.mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
@@ -92,6 +93,8 @@ func (s *Server) handleComponent(w http.ResponseWriter, r *http.Request) {
 		components.TabsDemoPage().Render(r.Context(), w)
 	case "table":
 		components.TableDemoPage().Render(r.Context(), w)
+	case "toast":
+		components.ToastDemoPage().Render(r.Context(), w)
 	default:
 		http.NotFound(w, r)
 	}
