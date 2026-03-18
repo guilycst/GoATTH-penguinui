@@ -8,14 +8,14 @@ package main
 import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
-import (
-	"github.com/guilycst/GoATTH-penguinui/components/head"
-	"github.com/guilycst/GoATTH-penguinui/components/table"
-)
+import "github.com/guilycst/GoATTH-penguinui/components/table"
 
 // Page renders the dog breeds page using the GoATTH table component.
 // Filtering, sorting, and pagination are all built into the component —
 // just configure them via table.Config.
+//
+// Assets (CSS, Alpine.js, HTMX) are served from /assets/ via the embedded
+// assets.Handler() — no CDN needed, works fully offline.
 func Page(cfg table.Config) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
@@ -37,15 +37,7 @@ func Page(cfg table.Config) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<!doctype html><html lang=\"en\"><head><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"><title>Dog Breeds — GoATTH Getting Started</title>")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = head.Dependencies().Render(ctx, templ_7745c5c3_Buffer)
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</head><body class=\"min-h-screen bg-gray-50 text-gray-800 font-sans\"><div class=\"max-w-5xl mx-auto px-6 py-12\"><h1 class=\"text-3xl font-bold mb-2\">Dog Breeds</h1><p class=\"text-gray-500 mb-8\">A filterable, sortable, paginated table built with <a href=\"https://github.com/guilycst/GoATTH-penguinui\" class=\"underline\">GoATTH</a> — Go + Alpine.js + Tailwind CSS + Templ + HTMX.</p>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<!doctype html><html lang=\"en\" x-data x-init=\"\n\t\tconst t = localStorage.getItem('theme') || 'minimal';\n\t\tdocument.documentElement.setAttribute('data-theme', t);\n\t\tif (localStorage.getItem('darkMode') === 'true') document.documentElement.classList.add('dark');\n\t\"><head><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"><title>Dog Breeds — GoATTH Getting Started</title><!-- Embedded GoATTH assets (CSS with themes + JS) --><link rel=\"stylesheet\" href=\"/assets/styles.css\"><script defer src=\"/assets/js/vendor/alpine-collapse.min.js\"></script><script defer src=\"/assets/js/vendor/alpine-focus.min.js\"></script><script defer src=\"/assets/js/vendor/alpine.min.js\"></script><script src=\"/assets/js/vendor/htmx.min.js\"></script><script src=\"/assets/js/darkmode.js\"></script><style>[x-cloak] { display: none !important; }</style></head><body class=\"min-h-screen bg-surface text-on-surface dark:bg-surface-dark dark:text-on-surface-dark\"><div class=\"max-w-5xl mx-auto px-6 py-12\"><h1 class=\"text-3xl font-bold font-title mb-2 text-on-surface-strong dark:text-on-surface-dark-strong\">Dog Breeds</h1><p class=\"text-on-surface/60 dark:text-on-surface-dark/60 mb-8\">A filterable, sortable, paginated table built with <a href=\"https://github.com/guilycst/GoATTH-penguinui\" class=\"underline text-primary dark:text-primary-dark\">GoATTH</a> — Go + Alpine.js + Tailwind CSS + Templ + HTMX.</p>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -53,7 +45,7 @@ func Page(cfg table.Config) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<p class=\"mt-6 text-xs text-gray-400 text-center\">Built with <a href=\"https://github.com/guilycst/GoATTH-penguinui\" class=\"underline\">GoATTH</a></p></div></body></html>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "<p class=\"mt-6 text-xs text-on-surface/40 dark:text-on-surface-dark/40 text-center\">Built with <a href=\"https://github.com/guilycst/GoATTH-penguinui\" class=\"underline\">GoATTH</a></p></div></body></html>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

@@ -8,6 +8,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/guilycst/GoATTH-penguinui/assets"
 	"github.com/guilycst/GoATTH-penguinui/components/table"
 )
 
@@ -144,6 +145,9 @@ func main() {
 	const perPage = 5
 
 	mux := http.NewServeMux()
+
+	// Serve embedded GoATTH assets (CSS with themes, Alpine.js, HTMX, fonts)
+	mux.Handle("/assets/", assets.Handler())
 
 	// Main page — renders the full table with filters, sorting, and pagination
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
