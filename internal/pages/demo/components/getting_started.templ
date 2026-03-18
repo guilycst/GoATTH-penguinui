@@ -1,0 +1,191 @@
+package components
+
+import "github.com/guilycst/GoATTH-penguinui/internal/pages/demo"
+
+templ GettingStartedPage() {
+	@demo.Layout("Getting Started", "", gettingStartedContent())
+}
+
+templ gettingStartedContent() {
+	<div class="space-y-10 max-w-3xl">
+		<div>
+			<h1 class="text-3xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong">Getting Started</h1>
+			<p class="mt-2 text-on-surface dark:text-on-surface-dark">
+				Build a filterable, sortable table of dog breeds in under 100 lines of Go.
+				No Node.js, no bundlers — just Go + Templ + HTMX + Alpine.js.
+			</p>
+		</div>
+
+		<!-- Step 1 -->
+		<div>
+			<h2 class="text-xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong mb-3">1. Create your project</h2>
+			<pre class="rounded-radius bg-neutral-900 text-neutral-200 p-4 text-sm overflow-x-auto"><code>mkdir dog-breeds && cd dog-breeds
+go mod init dog-breeds
+go get github.com/a-h/templ@latest</code></pre>
+		</div>
+
+		<!-- Step 2 -->
+		<div>
+			<h2 class="text-xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong mb-3">2. Create your page template</h2>
+			<p class="text-on-surface dark:text-on-surface-dark mb-3">
+				Create <code class="bg-surface-alt dark:bg-surface-dark-alt px-1.5 py-0.5 rounded text-sm">page.templ</code> — a single file that renders the full page with Alpine.js for the filter bar and HTMX for loading data:
+			</p>
+			<pre class="rounded-radius bg-neutral-900 text-neutral-200 p-4 text-sm overflow-x-auto max-h-96 overflow-y-auto"><code>{ getPageTemplCode() }</code></pre>
+		</div>
+
+		<!-- Step 3 -->
+		<div>
+			<h2 class="text-xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong mb-3">3. Create the server</h2>
+			<p class="text-on-surface dark:text-on-surface-dark mb-3">
+				Create <code class="bg-surface-alt dark:bg-surface-dark-alt px-1.5 py-0.5 rounded text-sm">main.go</code> — serves the page and handles the HTMX API for filtering, searching, and sorting:
+			</p>
+			<pre class="rounded-radius bg-neutral-900 text-neutral-200 p-4 text-sm overflow-x-auto max-h-96 overflow-y-auto"><code>{ getMainGoCode() }</code></pre>
+		</div>
+
+		<!-- Step 4 -->
+		<div>
+			<h2 class="text-xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong mb-3">4. Generate and run</h2>
+			<pre class="rounded-radius bg-neutral-900 text-neutral-200 p-4 text-sm overflow-x-auto"><code>templ generate
+go run .
+# Open http://localhost:3000</code></pre>
+		</div>
+
+		<!-- What you get -->
+		<div>
+			<h2 class="text-xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong mb-3">What you get</h2>
+			<ul class="space-y-2 text-on-surface dark:text-on-surface-dark">
+				<li class="flex gap-2"><span class="text-primary dark:text-primary-dark">•</span> 20 dog breeds in a sortable table (click headers)</li>
+				<li class="flex gap-2"><span class="text-primary dark:text-primary-dark">•</span> Live search with 300ms debounce (Alpine.js x-model)</li>
+				<li class="flex gap-2"><span class="text-primary dark:text-primary-dark">•</span> Group filter dropdown (Herding, Working, Toy, etc.)</li>
+				<li class="flex gap-2"><span class="text-primary dark:text-primary-dark">•</span> Server-rendered HTML fragments via HTMX — no JSON, no fetch</li>
+				<li class="flex gap-2"><span class="text-primary dark:text-primary-dark">•</span> Single Go binary, zero JavaScript build tools</li>
+			</ul>
+		</div>
+
+		<!-- Source -->
+		<div class="pb-8">
+			<p class="text-sm text-on-surface/60 dark:text-on-surface-dark/60">
+				Full source: <a href="https://github.com/guilycst/GoATTH-penguinui/tree/main/examples/getting-started" target="_blank" class="text-primary dark:text-primary-dark underline underline-offset-2">examples/getting-started</a>
+			</p>
+		</div>
+	</div>
+}
+
+func getPageTemplCode() string {
+	return `package main
+
+templ Page() {
+  <!DOCTYPE html>
+  <html lang="en">
+    <head>
+      <title>Dog Breeds</title>
+      <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+      <script src="https://unpkg.com/htmx.org@2.0.8/dist/htmx.min.js"></script>
+      <link href="https://cdn.jsdelivr.net/npm/tailwindcss@4/dist/tailwind.min.css" rel="stylesheet"/>
+    </head>
+    <body class="min-h-screen bg-gray-50 text-gray-800">
+      <div class="max-w-5xl mx-auto px-6 py-12">
+        <h1 class="text-3xl font-bold mb-8">Dog Breeds</h1>
+        <!-- Alpine.js filter bar -->
+        <div x-data="{ search: '', group: '', buildURL() {
+            let u = '/api/breeds?';
+            if (this.search) u += 'search=' + encodeURIComponent(this.search) + '&';
+            if (this.group) u += 'group=' + encodeURIComponent(this.group);
+            return u;
+          } }" class="flex flex-wrap gap-4 mb-6">
+          <input type="search" x-model="search"
+            @input.debounce.300ms="htmx.ajax('GET', buildURL(), {target: '#breed-rows', swap: 'innerHTML'})"
+            placeholder="Search breeds..." class="border rounded-lg px-3 py-2 text-sm"/>
+          <select x-model="group"
+            @change="htmx.ajax('GET', buildURL(), {target: '#breed-rows', swap: 'innerHTML'})"
+            class="border rounded-lg px-3 py-2 text-sm">
+            <option value="">All Groups</option>
+            <option value="Herding">Herding</option>
+            <option value="Working">Working</option>
+            <option value="Toy">Toy</option>
+          </select>
+        </div>
+        <!-- HTMX sortable table -->
+        <table class="w-full text-left text-sm bg-white rounded-lg border">
+          <thead class="bg-gray-100 text-xs uppercase">
+            <tr>
+              <th class="px-4 py-3" hx-get="/api/breeds?order_by=breed&order_dir=asc"
+                hx-target="#breed-rows" hx-swap="innerHTML">Breed</th>
+              <th class="px-4 py-3">Group</th>
+              <th class="px-4 py-3">Origin</th>
+            </tr>
+          </thead>
+          <tbody id="breed-rows" hx-get="/api/breeds" hx-trigger="load" hx-swap="innerHTML">
+            <tr><td colspan="3" class="p-8 text-center text-gray-400">Loading...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </body>
+  </html>
+}`
+}
+
+func getMainGoCode() string {
+	return `package main
+
+import (
+  "fmt"
+  "log"
+  "net/http"
+  "sort"
+  "strings"
+)
+
+type Dog struct {
+  Breed, Group, Origin, Size, Temperament string
+}
+
+var breeds = []Dog{
+  {Breed: "Labrador Retriever", Group: "Sporting", Origin: "Canada", Size: "Large", Temperament: "Friendly"},
+  {Breed: "German Shepherd", Group: "Herding", Origin: "Germany", Size: "Large", Temperament: "Loyal"},
+  // ... 20 breeds total (see full source)
+}
+
+func main() {
+  mux := http.NewServeMux()
+
+  mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+    Page().Render(r.Context(), w)
+  })
+
+  mux.HandleFunc("/api/breeds", func(w http.ResponseWriter, r *http.Request) {
+    w.Header().Set("Content-Type", "text/html")
+    q := r.URL.Query()
+    search := strings.ToLower(q.Get("search"))
+    group := q.Get("group")
+    orderBy := q.Get("order_by")
+
+    // Filter
+    var filtered []Dog
+    for _, d := range breeds {
+      if group != "" && d.Group != group { continue }
+      if search != "" && !strings.Contains(strings.ToLower(d.Breed), search) { continue }
+      filtered = append(filtered, d)
+    }
+
+    // Sort
+    if orderBy != "" {
+      sort.SliceStable(filtered, func(i, j int) bool {
+        return filtered[i].Breed < filtered[j].Breed
+      })
+    }
+
+    // Render HTML rows
+    for _, d := range filtered {
+      fmt.Fprintf(w, ` + "`" + `<tr class="border-t">
+        <td class="px-4 py-3 font-medium">%s</td>
+        <td class="px-4 py-3">%s</td>
+        <td class="px-4 py-3">%s</td>
+      </tr>` + "`" + `, d.Breed, d.Group, d.Origin)
+    }
+  })
+
+  log.Println("Running at http://localhost:3000")
+  log.Fatal(http.ListenAndServe(":3000", mux))
+}`
+}

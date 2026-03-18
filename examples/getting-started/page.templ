@@ -1,0 +1,95 @@
+package main
+
+// Page renders the full dog breeds page with a filterable, sortable table.
+// Uses HTMX for server-driven filtering and Alpine.js for the filter bar UI.
+templ Page() {
+	<!DOCTYPE html>
+	<html lang="en">
+		<head>
+			<meta charset="UTF-8"/>
+			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+			<title>Dog Breeds — GoATTH Getting Started</title>
+			<script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+			<script src="https://unpkg.com/htmx.org@2.0.8/dist/htmx.min.js"></script>
+			<link href="https://cdn.jsdelivr.net/npm/tailwindcss@4/dist/tailwind.min.css" rel="stylesheet"/>
+		</head>
+		<body class="min-h-screen bg-gray-50 text-gray-800 font-sans">
+			<div class="max-w-5xl mx-auto px-6 py-12">
+				<h1 class="text-3xl font-bold mb-2">Dog Breeds</h1>
+				<p class="text-gray-500 mb-8">A filterable, sortable table built with Go + Templ + HTMX + Alpine.js.</p>
+
+				<!-- Filter bar powered by Alpine.js -->
+				<div
+					x-data="{ search: '', group: '', buildURL() { let u = '/api/breeds?'; if (this.search) u += 'search=' + encodeURIComponent(this.search) + '&'; if (this.group) u += 'group=' + encodeURIComponent(this.group); return u; } }"
+					class="flex flex-wrap gap-4 mb-6"
+				>
+					<div class="flex-1 min-w-[200px]">
+						<label class="block text-sm font-medium text-gray-600 mb-1">Search</label>
+						<input
+							type="search"
+							x-model="search"
+							@input.debounce.300ms="htmx.ajax('GET', buildURL(), {target: '#breed-rows', swap: 'innerHTML'})"
+							placeholder="Search breeds, origins, temperaments..."
+							class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+						/>
+					</div>
+					<div>
+						<label class="block text-sm font-medium text-gray-600 mb-1">Group</label>
+						<select
+							x-model="group"
+							@change="htmx.ajax('GET', buildURL(), {target: '#breed-rows', swap: 'innerHTML'})"
+							class="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+						>
+							<option value="">All Groups</option>
+							<option value="Sporting">Sporting</option>
+							<option value="Herding">Herding</option>
+							<option value="Hound">Hound</option>
+							<option value="Working">Working</option>
+							<option value="Non-Sporting">Non-Sporting</option>
+							<option value="Toy">Toy</option>
+						</select>
+					</div>
+				</div>
+
+				<!-- Sortable table with HTMX -->
+				<div class="border border-gray-200 rounded-lg overflow-hidden bg-white shadow-sm">
+					<table class="w-full text-left text-sm">
+						<thead class="bg-gray-100 text-gray-600 text-xs uppercase tracking-wider">
+							<tr>
+								<th class="px-4 py-3 cursor-pointer hover:text-gray-900"
+									hx-get="/api/breeds?order_by=breed&order_dir=asc"
+									hx-target="#breed-rows" hx-swap="innerHTML">
+									Breed
+								</th>
+								<th class="px-4 py-3 cursor-pointer hover:text-gray-900"
+									hx-get="/api/breeds?order_by=group&order_dir=asc"
+									hx-target="#breed-rows" hx-swap="innerHTML">
+									Group
+								</th>
+								<th class="px-4 py-3 cursor-pointer hover:text-gray-900"
+									hx-get="/api/breeds?order_by=origin&order_dir=asc"
+									hx-target="#breed-rows" hx-swap="innerHTML">
+									Origin
+								</th>
+								<th class="px-4 py-3 cursor-pointer hover:text-gray-900"
+									hx-get="/api/breeds?order_by=size&order_dir=asc"
+									hx-target="#breed-rows" hx-swap="innerHTML">
+									Size
+								</th>
+								<th class="px-4 py-3">Temperament</th>
+							</tr>
+						</thead>
+						<tbody id="breed-rows" hx-get="/api/breeds" hx-trigger="load" hx-swap="innerHTML">
+							<tr><td colspan="5" class="px-4 py-8 text-center text-gray-400">Loading...</td></tr>
+						</tbody>
+					</table>
+				</div>
+
+				<p class="mt-6 text-xs text-gray-400 text-center">
+					Built with <a href="https://github.com/guilycst/GoATTH-penguinui" class="underline">GoATTH</a> —
+					Go + Alpine.js + Tailwind CSS + Templ + HTMX
+				</p>
+			</div>
+		</body>
+	</html>
+}

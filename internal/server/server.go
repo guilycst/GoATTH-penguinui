@@ -50,6 +50,7 @@ func (s *Server) setupRoutes() {
 
 	// Docs pages
 	s.mux.HandleFunc("/docs/theme", s.handleThemePage)
+	s.mux.HandleFunc("/getting-started", s.handleGettingStarted)
 
 	// Landing page
 	s.mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
@@ -215,6 +216,10 @@ func (s *Server) handleTabContent(w http.ResponseWriter, r *http.Request) {
 
 func (s *Server) handleThemePage(w http.ResponseWriter, r *http.Request) {
 	components.ThemeDemoPage().Render(r.Context(), w)
+}
+
+func (s *Server) handleGettingStarted(w http.ResponseWriter, r *http.Request) {
+	components.GettingStartedPage().Render(r.Context(), w)
 }
 
 // ServeHTTP implements http.Handler

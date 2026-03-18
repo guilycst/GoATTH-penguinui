@@ -112,7 +112,7 @@ func Layout(title string, activeComponent string, content templ.Component) templ
 // getSidebarTopItems returns the top-level icon navigation items above the component sections
 func getSidebarTopItems(activeComponent string) []sidebar.Item {
 	return []sidebar.Item{
-		{ID: "home", Label: "Getting Started", Href: "/", Icon: sidebarHomeIcon(), Active: activeComponent == ""},
+		{ID: "home", Label: "Getting Started", Href: "/getting-started", Icon: sidebarHomeIcon(), Active: activeComponent == ""},
 		{ID: "theme", Label: "Theme", Href: "/docs/theme", Icon: sidebarThemeIcon(), Active: activeComponent == "theme"},
 	}
 }
