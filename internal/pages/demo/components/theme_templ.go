@@ -473,8 +473,8 @@ func getThemeCSSBlocks() map[string]string {
     --radius-radius: var(--radius-none);
 }`,
 		"totvs": `[data-theme=totvs] {
-    --font-body: 'Inter', sans-serif;
-    --font-title: 'Inter', sans-serif;
+    --font-body: 'TOTVS', ui-sans-serif, system-ui, sans-serif;
+    --font-title: 'TOTVS', ui-sans-serif, system-ui, sans-serif;
     --color-surface: #f0f4f8;
     --color-surface-alt: #e6e6e6;
     --color-on-surface: #545454;
