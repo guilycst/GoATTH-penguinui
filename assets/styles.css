@@ -849,6 +849,9 @@
   .max-h-svh {
     max-height: 100svh;
   }
+  .min-h-\[1\.5rem\] {
+    min-height: 1.5rem;
+  }
   .min-h-\[50svh\] {
     min-height: 50svh;
   }
