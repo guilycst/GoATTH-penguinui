@@ -141,12 +141,11 @@ templ Layout(title string, activeComponent string, content templ.Component) {
 
 			<div class="flex h-[calc(100vh-4rem)] overflow-hidden">
 				<!-- Sidebar Component -->
-				<div 
-					class="fixed inset-y-0 left-0 z-40 w-64 transform transition-transform duration-200 ease-in-out lg:static lg:translate-x-0"
+				<div
+					class="fixed top-16 bottom-0 left-0 z-40 w-64 transform transition-transform duration-200 ease-in-out lg:static lg:translate-x-0 lg:shrink-0"
 					:class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'"
 				>
 					@sidebar.Sidebar(sidebar.Config{
-						LogoText: "GoATTH",
 						Items: getSidebarItems(activeComponent),
 					})
 				</div>
