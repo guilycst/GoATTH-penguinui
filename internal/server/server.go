@@ -102,6 +102,8 @@ func (s *Server) handleComponent(w http.ResponseWriter, r *http.Request) {
 		components.DropdownDemoPage().Render(r.Context(), w)
 	case "select":
 		components.SelectDemoPage().Render(r.Context(), w)
+	case "spinner":
+		components.SpinnerDemoPage().Render(r.Context(), w)
 	default:
 		http.NotFound(w, r)
 	}
