@@ -1,6 +1,14 @@
 .git
 .gitignore
 bin
-tests/e2e/test-results
+tmp
+tests
 node_modules
-server
+*.test
+*.md
+.air.toml
+.vscode
+.idea
+Makefile
+justfile
+og-site
