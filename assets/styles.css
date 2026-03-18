@@ -500,6 +500,9 @@
   .right-6 {
     right: calc(var(--spacing) * 6);
   }
+  .right-full {
+    right: 100%;
+  }
   .bottom-0 {
     bottom: calc(var(--spacing) * 0);
   }
@@ -544,6 +547,9 @@
   }
   .left-5 {
     left: calc(var(--spacing) * 5);
+  }
+  .left-full {
+    left: 100%;
   }
   .z-10 {
     z-index: 10;
@@ -2426,6 +2432,9 @@
   .opacity-25 {
     opacity: 25%;
   }
+  .opacity-40 {
+    opacity: 40%;
+  }
   .opacity-50 {
     opacity: 50%;
   }
@@ -2557,6 +2566,10 @@
   .select-all {
     -webkit-user-select: all;
     user-select: all;
+  }
+  .select-none {
+    -webkit-user-select: none;
+    user-select: none;
   }
   .\*\:align-middle {
     :is(& > *) {
