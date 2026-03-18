@@ -145,6 +145,13 @@ func getSidebarItems(activeComponent string) []sidebar.Item {
 			Active: activeComponent == "alert",
 		},
 		{
+			ID:     "tabs",
+			Label:  "Tabs",
+			Href:   "/components/tabs",
+			Icon:   nil,
+			Active: activeComponent == "tabs",
+		},
+		{
 			ID:       "input",
 			Label:    "Input",
 			Href:     "#",
