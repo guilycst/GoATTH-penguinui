@@ -1,0 +1,155 @@
+package textarea
+
+import "fmt"
+
+// Textarea renders a textarea form element with optional label, validation states, and helper text.
+//
+// Usage:
+//
+//	@textarea.Textarea(textarea.Config{
+//	    ID:          "comment",
+//	    Name:        "comment",
+//	    Label:       "Comment",
+//	    Placeholder: "We'd love to hear from you...",
+//	    Rows:        3,
+//	})
+//
+//	// With error state
+//	@textarea.Textarea(textarea.Config{
+//	    ID:         "comment-error",
+//	    Name:       "comment",
+//	    Label:      "Comment",
+//	    State:      textarea.StateError,
+//	    HelperText: "Error: Please add some comments to your evaluation",
+//	})
+templ Textarea(cfg Config) {
+	<div class={ cfg.ContainerClasses() }>
+		if cfg.Label != "" {
+			@textareaLabel(cfg)
+		}
+		<textarea
+			id={ cfg.ID }
+			if cfg.Name != "" {
+				name={ cfg.Name }
+			}
+			class={ cfg.TextareaClasses() }
+			rows={ cfg.GetRows() }
+			if cfg.Placeholder != "" {
+				placeholder={ cfg.Placeholder }
+			}
+			if cfg.Disabled {
+				disabled
+			}
+			if cfg.ReadOnly {
+				readonly
+			}
+		>{ cfg.Value }</textarea>
+		if cfg.HelperText != "" {
+			<small class={ cfg.HelperTextClasses() }>{ cfg.HelperText }</small>
+		}
+	</div>
+}
+
+// TextareaWithActions renders a textarea with action buttons in a card-like container.
+// This matches the PenguinUI "textarea with actions" variant.
+templ TextareaWithActions(cfg Config) {
+	<div class={ fmt.Sprintf("flex w-full max-w-md flex-col overflow-hidden rounded-radius border border-outline text-on-surface dark:border-outline-dark dark:text-on-surface-dark%s", condClass(cfg.Class)) }>
+		<div class="bg-surface-alt/50 dark:bg-surface-dark-alt/50 p-2">
+			<textarea
+				id={ cfg.ID }
+				if cfg.Name != "" {
+					name={ cfg.Name }
+				}
+				class="scroll-on z-10 w-full resize-none bg-transparent p-4 text-sm focus:outline-hidden"
+				rows={ cfg.GetRows() }
+				if cfg.Placeholder != "" {
+					placeholder={ cfg.Placeholder }
+				}
+				if cfg.Disabled {
+					disabled
+				}
+				if cfg.ReadOnly {
+					readonly
+				}
+			>{ cfg.Value }</textarea>
+		</div>
+		<!-- Footer Container -->
+		<div class="flex w-full items-center justify-between border-t border-outline bg-surface-alt px-2.5 py-2 dark:border-outline-dark dark:bg-surface-dark-alt">
+			<!-- Action Buttons -->
+			<div class="flex items-center gap-2">
+				@actionButton("Emojis", emojiIcon())
+				@actionButton("Attach a file", attachIcon())
+				@actionButton("Send voice", micIcon())
+			</div>
+			<!-- Send Button -->
+			<button
+				class="whitespace-nowrap rounded-radius border border-primary bg-primary px-4 py-2 text-center text-xs font-medium tracking-wide text-on-primary transition hover:opacity-75 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:opacity-100 active:outline-offset-0 dark:bg-primary-dark dark:text-on-primary-dark dark:border-primary-dark dark:focus-visible:outline-primary-dark"
+				type="button"
+				aria-label="send"
+			>
+				Send
+			</button>
+		</div>
+	</div>
+}
+
+// textareaLabel renders the label with optional state icon
+templ textareaLabel(cfg Config) {
+	if cfg.State == StateError {
+		<label for={ cfg.ID } class={ cfg.LabelClasses() }>
+			<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" aria-hidden="true" fill="currentColor" class="w-4 h-4">
+				<path d="M5.28 4.22a.75.75 0 0 0-1.06 1.06L6.94 8l-2.72 2.72a.75.75 0 1 0 1.06 1.06L8 9.06l2.72 2.72a.75.75 0 1 0 1.06-1.06L9.06 8l2.72-2.72a.75.75 0 0 0-1.06-1.06L8 6.94 5.28 4.22Z"></path>
+			</svg>
+			{ cfg.Label }
+		</label>
+	} else if cfg.State == StateSuccess {
+		<label for={ cfg.ID } class={ cfg.LabelClasses() }>
+			<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" aria-hidden="true" fill="currentColor" class="w-4 h-4">
+				<path fill-rule="evenodd" d="M12.416 3.376a.75.75 0 0 1 .208 1.04l-5 7.5a.75.75 0 0 1-1.154.114l-3-3a.75.75 0 0 1 1.06-1.06l2.353 2.353 4.493-6.74a.75.75 0 0 1 1.04-.207Z" clip-rule="evenodd"></path>
+			</svg>
+			{ cfg.Label }
+		</label>
+	} else {
+		<label for={ cfg.ID } class={ cfg.LabelClasses() }>
+			{ cfg.Label }
+		</label>
+	}
+}
+
+// actionButton renders an icon button used in the actions footer
+templ actionButton(title string, icon templ.Component) {
+	<button
+		class="rounded-full p-1 text-on-surface/75 hover:bg-surface-dark/10 hover:text-on-surface focus:outline-hidden focus-visible:text-on-surface focus-visible:outline-offset-0 focus-visible:outline-primary active:bg-surface-dark/5 active:-outline-offset-2 dark:text-on-surface-dark/75 dark:hover:bg-surface/10 dark:hover:text-on-surface-dark dark:focus-visible:text-on-surface-dark dark:focus-visible:outline-primary-dark dark:active:bg-surface/5"
+		title={ title }
+		aria-label={ title }
+		type="button"
+	>
+		@icon
+	</button>
+}
+
+templ emojiIcon() {
+	<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" class="size-5">
+		<path fill-rule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25Zm-2.625 6c-.54 0-.828.419-.936.634a1.96 1.96 0 0 0-.189.866c0 .298.059.605.189.866.108.215.395.634.936.634.54 0 .828-.419.936-.634.13-.26.189-.568.189-.866 0-.298-.059-.605-.189-.866-.108-.215-.395-.634-.936-.634Zm4.314.634c.108-.215.395-.634.936-.634.54 0 .828.419.936.634.13.26.189.568.189.866 0 .298-.059.605-.189.866-.108.215-.395.634-.936.634-.54 0-.828-.419-.936-.634a1.96 1.96 0 0 1-.189-.866c0-.298.059-.605.189-.866Zm2.023 6.828a.75.75 0 1 0-1.06-1.06 3.75 3.75 0 0 1-5.304 0 .75.75 0 0 0-1.06 1.06 5.25 5.25 0 0 0 7.424 0Z" clip-rule="evenodd"></path>
+	</svg>
+}
+
+templ attachIcon() {
+	<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" class="size-5">
+		<path fill-rule="evenodd" d="M18.97 3.659a2.25 2.25 0 0 0-3.182 0l-10.94 10.94a3.75 3.75 0 1 0 5.304 5.303l7.693-7.693a.75.75 0 0 1 1.06 1.06l-7.693 7.693a5.25 5.25 0 1 1-7.424-7.424l10.939-10.94a3.75 3.75 0 1 1 5.303 5.304L9.097 18.835l-.008.008-.007.007-.002.002-.003.002A2.25 2.25 0 0 1 5.91 15.66l7.81-7.81a.75.75 0 0 1 1.061 1.06l-7.81 7.81a.75.75 0 0 0 1.054 1.068L18.97 6.84a2.25 2.25 0 0 0 0-3.182Z" clip-rule="evenodd"></path>
+	</svg>
+}
+
+templ micIcon() {
+	<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" class="size-5">
+		<path d="M8.25 4.5a3.75 3.75 0 1 1 7.5 0v8.25a3.75 3.75 0 1 1-7.5 0V4.5Z"></path>
+		<path d="M6 10.5a.75.75 0 0 1 .75.75v1.5a5.25 5.25 0 1 0 10.5 0v-1.5a.75.75 0 0 1 1.5 0v1.5a6.751 6.751 0 0 1-6 6.709v2.291h3a.75.75 0 0 1 0 1.5h-7.5a.75.75 0 0 1 0-1.5h3v-2.291a6.751 6.751 0 0 1-6-6.709v-1.5A.75.75 0 0 1 6 10.5Z"></path>
+	</svg>
+}
+
+func condClass(class string) string {
+	if class != "" {
+		return " " + class
+	}
+	return ""
+}
