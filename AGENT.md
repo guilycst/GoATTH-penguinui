@@ -12,6 +12,46 @@
 - HTMX integration for dynamic fragment reloading
 - Comprehensive E2E tests with Playwright
 
+## Current Status
+
+### Completed Components ✅
+1. **Button** - 8 variants, HTMX support, Alpine.js integration
+2. **Accordion** - Static & server-loaded content, multiple variants, visual tests
+3. **Sidebar** - Navigation component with collapsible sections
+4. **Avatar** - Image, initials, icon placeholders, status indicators, 5 sizes
+5. **Badge** - Solid & soft variants, icons, indicators, notification badges, 3 sizes
+6. **Banner** - Dismissible, CTA buttons, cookie consent, color variants
+7. **Card** - Vertical/horizontal layouts, product card, pricing card, testimonial
+8. **Combobox** - Single/multi-select, search, images, pre-selected values, disabled state
+
+### Pending Components ⏳
+- Modal
+- Alert
+- Input
+- Select
+- Checkbox
+- Radio
+- Toggle
+- Toast/Notification
+- Table
+- Tabs
+- Pagination
+- Progress
+- Skeleton
+- Spinner
+- Tooltip
+- Dropdown
+- Date Picker
+- File Input
+- Text Area
+- Range Slider
+- Rating/Stars
+- Steps/Wizard
+- Timeline
+- Chat/Message
+- Calendar
+- Charts (optional)
+
 ## Tech Stack
 
 | Technology | Version | Purpose |
@@ -70,6 +110,43 @@ make test-e2e              # Or: cd tests/e2e && go test -v
 ```
 
 ## Development Workflow
+
+### Component Development Workflow
+
+The established workflow for creating new components:
+
+1. **Reference Analysis**
+   - Read existing PenguinUI HTML reference files in `/combobox/`, `/accordion/`, etc.
+   - Check tks-console implementations for feature ideas (optional)
+   - Document visual design requirements (CSS classes, colors, spacing)
+
+2. **Create Component Files**
+   ```
+   components/<name>/
+   ├── <name>.templ    # Component template
+   ├── types.go        # Configuration types
+   └── <name>_templ.go # Generated (via make generate)
+   ```
+
+3. **Create Demo Page**
+   ```
+   internal/pages/demo/components/<name>.templ
+   ```
+
+4. **Update Server Routes**
+   - Add route handler in `internal/server/server.go`
+   - Add sidebar item in `internal/pages/demo/layout.templ`
+
+5. **Create E2E Tests**
+   ```
+   tests/e2e/<name>_test.go
+   ```
+
+6. **Generate and Test**
+   ```bash
+   make generate && make dev-air
+   # Test at http://localhost:8090/components/<name>
+   ```
 
 ### Starting Development
 
@@ -233,6 +310,139 @@ Standard grid for button previews:
 grid grid-cols-2 lg:grid-cols-4 gap-8 p-8 place-content-evenly place-items-center
 ```
 
+## Lessons Learned & Best Practices
+
+### Alpine.js Integration
+
+**Initialize arrays properly:**
+Always initialize Alpine.js arrays with `[]` not `null`:
+```go
+// BAD: selectedValues: null
+// GOOD: selectedValues: []
+
+selectedValuesData := selectedJSON
+if selectedValuesData == "null" {
+    selectedValuesData = "[]"
+}
+```
+
+**Computed properties need defensive checks:**
+```javascript
+get selectedOption() {
+    if (!this.selectedValues || this.selectedValues.length === 0) return null;
+    // ... rest of logic
+}
+```
+
+**Template rendering timing:**
+- Alpine.js renders options dynamically using `x-for`
+- Options may not exist in DOM immediately on page load
+- Wait for Alpine.js to initialize: `page.WaitForTimeout(800)` in E2E tests
+- Use `WaitForSelector` with timeout instead of immediate assertions
+
+### Component Structure Patterns
+
+**Types file structure:**
+```go
+package combobox
+
+// Config holds all component configuration
+type Config struct {
+    ID       string
+    Label    string
+    Options  []Option
+    Selected []string
+    // ... other fields
+}
+
+// Helper methods for CSS classes
+func (cfg Config) TriggerClasses() string { ... }
+func (cfg Config) DropdownClasses() string { ... }
+```
+
+**Template structure:**
+```templ
+// Single main component entry point
+templ Combobox(cfg Config) {
+    if cfg.IsMultiple() {
+        @multiSelectCombobox(cfg)
+    } else {
+        @singleSelectCombobox(cfg)
+    }
+}
+
+// Private helper templates
+templ singleSelectCombobox(cfg Config) { ... }
+templ multiSelectCombobox(cfg Config) { ... }
+```
+
+**Alpine.js data generation:**
+```go
+func singleSelectData(...) string {
+    // Convert Go data to JSON for Alpine.js
+    optsJSON, _ := json.Marshal(options)
+    selectedJSON, _ := json.Marshal(selected)
+    
+    // Ensure arrays are never null
+    if selectedJSON == "null" {
+        selectedJSON = "[]"
+    }
+    
+    return fmt.Sprintf(`{
+        allOptions: %s,
+        selectedValues: %s,
+        // ...
+    }`, optsJSON, selectedJSON)
+}
+```
+
+### E2E Testing Best Practices
+
+**Handle Alpine.js timing:**
+```go
+// Wait for Alpine.js to render
+trigger.Click()
+page.WaitForTimeout(800)  // Give Alpine.js time to update
+
+// Check state after waiting
+expanded, _ := trigger.GetAttribute("aria-expanded")
+```
+
+**Use page reloads for clean state:**
+```go
+// Each test gets a fresh page
+_, err := page.Reload(playwright.PageReloadOptions{
+    WaitUntil: playwright.WaitUntilStateNetworkidle,
+})
+```
+
+**Test for DOM presence, not just visibility:**
+```go
+// Element may exist but be hidden by x-show
+count, _ := dropdown.Count()
+if count > 0 {
+    t.Log("✓ Dropdown exists in DOM")
+}
+```
+
+### Component Patterns from Reference
+
+**Merging implementations:**
+When multiple reference implementations exist (e.g., tks-console + PenguinUI):
+1. Start with PenguinUI visual design (CSS classes, colors, spacing)
+2. Add tks-console features (search, multi-select, lazy loading)
+3. Ensure both work together visually
+
+**Event dispatching:**
+```javascript
+// Dispatch custom events for parent components
+this.$dispatch('combobox-change', { 
+    id: this.id, 
+    value: option.value,
+    values: this.selectedValues
+});
+```
+
 ## Common Issues
 
 ### Dark Mode Not Working
@@ -253,6 +463,24 @@ grid grid-cols-2 lg:grid-cols-4 gap-8 p-8 place-content-evenly place-items-cente
 2. Clear browser cache
 3. Restart server
 
+### Alpine.js Options Not Rendering
+
+**Symptom:** Dropdown opens but options are empty
+
+**Causes:**
+1. `selectedValues` initialized as `null` instead of `[]`
+2. `filteredOptions` getter fails due to null check
+3. `x-for` template not rendering because data is invalid
+
+**Fix:**
+```go
+// In Go code, ensure arrays are never null
+selectedJSON, _ := json.Marshal(cfg.Selected)
+if string(selectedJSON) == "null" {
+    selectedJSON = []byte("[]")
+}
+```
+
 ## Server Ports
 
 - **Default:** 7070
@@ -268,5 +496,6 @@ Same as PenguinUI (check original repository for license details)
 
 ---
 
-**Last Updated:** March 2026
+**Last Updated:** March 17, 2026
+**Status:** 8 components completed, 16+ pending
 **Maintainer:** Agentic Coding Agent
