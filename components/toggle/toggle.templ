@@ -1,0 +1,45 @@
+package toggle
+
+// Toggle renders a toggle/switch component based on PenguinUI
+// Usage:
+//
+//	// Simple toggle
+//	@toggle.Toggle(toggle.Config{
+//	    ID:    "myToggle",
+//	    Label: "Enable notifications",
+//	})
+//
+//	// Checked toggle with variant
+//	@toggle.Toggle(toggle.Config{
+//	    ID:      "darkMode",
+//	    Label:   "Dark mode",
+//	    Variant: toggle.Secondary,
+//	    Checked: true,
+//	})
+//
+//	// Toggle with container style
+//	@toggle.Toggle(toggle.Config{
+//	    ID:    "containerToggle",
+//	    Label: "Setting",
+//	    Style: toggle.StyleContainer,
+//	})
+templ Toggle(cfg Config) {
+	<label for={ cfg.ID } class={ cfg.LabelClasses() }>
+		if cfg.Checked && cfg.Disabled {
+			<input id={ cfg.ID } type="checkbox" class="peer sr-only" role="switch" checked disabled/>
+		} else if cfg.Checked {
+			<input id={ cfg.ID } type="checkbox" class="peer sr-only" role="switch" checked/>
+		} else if cfg.Disabled {
+			<input id={ cfg.ID } type="checkbox" class="peer sr-only" role="switch" disabled/>
+		} else {
+			<input id={ cfg.ID } type="checkbox" class="peer sr-only" role="switch"/>
+		}
+		if cfg.Name != "" {
+			<input type="hidden" name={ cfg.Name } value="off"/>
+		}
+		<span class="trancking-wide text-sm font-medium text-on-surface peer-checked:text-on-surface-strong peer-disabled:cursor-not-allowed peer-disabled:opacity-70 dark:text-on-surface-dark dark:peer-checked:text-on-surface-dark-strong">
+			{ cfg.Label }
+		</span>
+		<div class={ cfg.ToggleClasses() } aria-hidden="true"></div>
+	</label>
+}

@@ -1,0 +1,145 @@
+package components
+
+import (
+	"github.com/guilycst/GoATTH-penguinui/components/toggle"
+	"github.com/guilycst/GoATTH-penguinui/internal/pages/demo"
+)
+
+// ToggleDemoPage renders the Toggle component demo
+templ ToggleDemoPage() {
+	@demo.Layout("Toggle", "toggle", toggleDemoContent())
+}
+
+// toggleDemoContent renders the actual content inside the layout
+templ toggleDemoContent() {
+	@demo.ComponentDemo(
+		demo.ComponentDemoProps{
+			Title:         "Toggle",
+			Description:   "A toggle switch allows users to turn an option on or off. It provides a visual indicator of the current state and supports multiple color variants.",
+			OriginalURL:   "/original/toggle/default-toggle.html",
+			OriginalLabel: "Original PenguinUI",
+			GoATTHLabel:   "GoATTH Component",
+		},
+		toggleDemoPreview(),
+		`// Default Toggle
+@toggle.Toggle(toggle.Config{
+    ID:      "myToggle",
+    Label:   "Toggle",
+    Checked: true,
+})
+
+// Toggle with Variant
+@toggle.Toggle(toggle.Config{
+    ID:      "successToggle",
+    Label:   "success",
+    Variant: toggle.Success,
+    Checked: true,
+})
+
+// Toggle with Container
+@toggle.Toggle(toggle.Config{
+    ID:    "containerToggle",
+    Label: "Toggle",
+    Style: toggle.StyleContainer,
+    Checked: true,
+})
+
+// Disabled Toggle
+@toggle.Toggle(toggle.Config{
+    ID:       "disabledToggle",
+    Label:    "Disabled",
+    Disabled: true,
+})`,
+	)
+}
+
+// toggleDemoPreview renders the GoATTH toggle preview
+templ toggleDemoPreview() {
+	<div class="w-full max-w-4xl mx-auto space-y-8">
+		// Default Toggle
+		<div>
+			<h4 class="text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong">Default Toggle</h4>
+			<div class="flex flex-wrap gap-4">
+				@toggle.Toggle(toggle.Config{
+					ID:      "demoDefault",
+					Label:   "Toggle",
+					Checked: true,
+				})
+			</div>
+		</div>
+
+		// Toggle with Container
+		<div>
+			<h4 class="text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong">Toggle with Container</h4>
+			<div class="flex flex-wrap gap-4">
+				@toggle.Toggle(toggle.Config{
+					ID:      "demoContainer",
+					Label:   "Toggle",
+					Style:   toggle.StyleContainer,
+					Checked: true,
+				})
+			</div>
+		</div>
+
+		// Color Variations
+		<div>
+			<h4 class="text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong">Color Variations</h4>
+			<div class="flex flex-wrap gap-4">
+				@toggle.Toggle(toggle.Config{
+					ID:      "demoPrimary",
+					Label:   "primary",
+					Variant: toggle.Primary,
+					Checked: true,
+				})
+				@toggle.Toggle(toggle.Config{
+					ID:      "demoSecondary",
+					Label:   "secondary",
+					Variant: toggle.Secondary,
+					Checked: true,
+				})
+				@toggle.Toggle(toggle.Config{
+					ID:      "demoSuccess",
+					Label:   "success",
+					Variant: toggle.Success,
+					Checked: true,
+				})
+				@toggle.Toggle(toggle.Config{
+					ID:      "demoWarning",
+					Label:   "warning",
+					Variant: toggle.Warning,
+					Checked: true,
+				})
+				@toggle.Toggle(toggle.Config{
+					ID:      "demoDanger",
+					Label:   "danger",
+					Variant: toggle.Danger,
+					Checked: true,
+				})
+				@toggle.Toggle(toggle.Config{
+					ID:      "demoInfo",
+					Label:   "info",
+					Variant: toggle.Info,
+					Checked: true,
+				})
+			</div>
+		</div>
+
+		// Disabled States
+		<div>
+			<h4 class="text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong">Disabled States</h4>
+			<div class="flex flex-wrap gap-4">
+				@toggle.Toggle(toggle.Config{
+					ID:       "demoDisabledOff",
+					Label:    "Disabled (off)",
+					Disabled: true,
+				})
+				@toggle.Toggle(toggle.Config{
+					ID:       "demoDisabledOn",
+					Label:    "Disabled (on)",
+					Checked:  true,
+					Disabled: true,
+				})
+			</div>
+		</div>
+	</div>
+}
