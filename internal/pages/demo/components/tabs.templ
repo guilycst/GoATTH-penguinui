@@ -48,6 +48,16 @@ templ tabsDemoContent() {
         {ID: "groups", Label: "Groups", Icon: groupsIcon(), Badge: "2", Content: groupsContent()},
         {ID: "likes", Label: "Likes", Icon: likesIcon(), Badge: "3124", Content: likesContent()},
     },
+})
+
+// Tabs with HTMX Lazy Loading
+@tabs.Tabs(tabs.Config{
+    ID: "htmx-demo",
+    Tabs: []tabs.Tab{
+        {ID: "overview", Label: "Overview", Content: overviewContent()},
+        {ID: "details", Label: "Details", HTMX: &tabs.TabHTMX{Get: "/api/components/tab-content/details"}},
+        {ID: "activity", Label: "Activity", HTMX: &tabs.TabHTMX{Get: "/api/components/tab-content/activity"}},
+    },
 })`,
 	)
 }
@@ -93,6 +103,18 @@ templ tabsDemoPreview() {
 					{ID: "likes", Label: "Likes", Icon: likesIcon(), Badge: "3124", Content: tabContent("Likes")},
 					{ID: "comments", Label: "Comments", Icon: commentsIcon(), Badge: "243", Content: tabContent("Comments")},
 					{ID: "saved", Label: "Saved", Icon: savedIcon(), Badge: "32", Content: tabContent("Saved")},
+				},
+			})
+		</div>
+		<!-- Tabs with HTMX Lazy Loading -->
+		<div>
+			<h3 class="text-sm font-medium text-on-surface/60 dark:text-on-surface-dark/60 mb-4">Tabs with HTMX Lazy Loading</h3>
+			@tabs.Tabs(tabs.Config{
+				ID: "htmx",
+				Tabs: []tabs.Tab{
+					{ID: "overview", Label: "Overview", Content: tabContent("Overview")},
+					{ID: "details", Label: "Details", HTMX: &tabs.TabHTMX{Get: "/api/components/tab-content/details"}},
+					{ID: "activity", Label: "Activity", HTMX: &tabs.TabHTMX{Get: "/api/components/tab-content/activity"}},
 				},
 			})
 		</div>

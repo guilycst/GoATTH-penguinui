@@ -76,9 +76,18 @@ templ tabButton(containerID string, tab Tab) {
 	</button>
 }
 
-// tabPanel renders a single tab panel
+// tabPanel renders a single tab panel (static or HTMX lazy-loaded)
 templ tabPanel(containerID string, tab Tab) {
 	{{ panelID := fmt.Sprintf("tabpanel%s%s", containerID, tab.ID) }}
+	if tab.HTMX != nil {
+		@htmxTabPanel(panelID, tab)
+	} else {
+		@staticTabPanel(panelID, tab)
+	}
+}
+
+// staticTabPanel renders a tab panel with inline content
+templ staticTabPanel(panelID string, tab Tab) {
 	<div
 		x-cloak
 		x-show={ fmt.Sprintf("selectedTab === '%s'", jsEscapeSingle(tab.ID)) }
@@ -89,6 +98,34 @@ templ tabPanel(containerID string, tab Tab) {
 		if tab.Content != nil {
 			@tab.Content
 		}
+	</div>
+}
+
+// htmxTabPanel renders a tab panel that lazy-loads content via HTMX.
+// The panel fires hx-get once when it becomes visible (x-show + x-intersect).
+templ htmxTabPanel(panelID string, tab Tab) {
+	{{ swap := tab.HTMX.Swap }}
+	{{ if swap == "" { swap = "innerHTML" } }}
+	<div
+		x-cloak
+		x-show={ fmt.Sprintf("selectedTab === '%s'", jsEscapeSingle(tab.ID)) }
+		id={ panelID }
+		role="tabpanel"
+		aria-label={ tab.Label }
+		hx-get={ tab.HTMX.Get }
+		hx-trigger="intersect once"
+		hx-swap={ swap }
+		if tab.HTMX.Indicator != "" {
+			hx-indicator={ tab.HTMX.Indicator }
+		}
+	>
+		<div class="flex items-center gap-2 text-sm text-on-surface/60 dark:text-on-surface-dark/60">
+			<svg class="animate-spin size-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+				<circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+				<path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+			</svg>
+			Loading...
+		</div>
 	</div>
 }
 

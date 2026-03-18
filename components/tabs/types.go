@@ -12,8 +12,22 @@ type Tab struct {
 	Icon templ.Component
 	// Badge is an optional badge text (e.g., count) shown after the label
 	Badge string
-	// Content is the tab panel content
+	// Content is the tab panel content (used for static/inline content)
 	Content templ.Component
+	// HTMX enables lazy loading of tab content via an HTMX request.
+	// When set, the panel issues an hx-get on first activation instead of
+	// rendering Content inline.
+	HTMX *TabHTMX
+}
+
+// TabHTMX configures HTMX lazy loading for a single tab panel
+type TabHTMX struct {
+	// Get is the URL to fetch content from (hx-get)
+	Get string
+	// Swap controls how the response is inserted (hx-swap, default "innerHTML")
+	Swap string
+	// Indicator is a CSS selector for a loading indicator element (hx-indicator)
+	Indicator string
 }
 
 // Config holds configuration for the Tabs component
