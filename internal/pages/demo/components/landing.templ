@@ -1,0 +1,94 @@
+package components
+
+import "github.com/guilycst/GoATTH-penguinui/internal/pages/demo"
+
+templ LandingPage() {
+	@demo.Layout("Home", "", landingContent())
+}
+
+templ landingContent() {
+	<div class="space-y-16 py-8">
+		<!-- Hero -->
+		<div class="flex flex-col items-center text-center">
+			<img
+				src="/assets/images/goatth.png"
+				alt="GoATTH mascot — a Go gopher with ram horns by a campfire"
+				class="w-64 h-auto rounded-radius mb-8"
+			/>
+			<h1 class="text-4xl md:text-5xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong">
+				GoATTH
+			</h1>
+			<p class="mt-2 text-lg text-on-surface dark:text-on-surface-dark">
+				<strong>Go</strong> + <strong>A</strong>lpine.js + <strong>T</strong>ailwind CSS + <strong>T</strong>empl + <strong>H</strong>TMX
+			</p>
+			<p class="mt-4 max-w-2xl text-on-surface dark:text-on-surface-dark">
+				A UI component library that replicates
+				<a href="https://penguinui.com" target="_blank" class="text-primary dark:text-primary-dark underline underline-offset-2">PenguinUI</a>
+				components using Go's templating ecosystem. Ship server-rendered, interactive UIs without writing JavaScript build tooling.
+			</p>
+			<div class="mt-8 flex flex-wrap gap-4 justify-center">
+				<a href="/components/button" class="px-6 py-2.5 rounded-radius bg-primary text-on-primary dark:bg-primary-dark dark:text-on-primary-dark font-medium text-sm hover:opacity-90 transition-opacity">
+					Browse Components
+				</a>
+				<a href="/theme" class="px-6 py-2.5 rounded-radius border border-outline dark:border-outline-dark text-on-surface-strong dark:text-on-surface-dark-strong font-medium text-sm hover:bg-surface-alt dark:hover:bg-surface-dark-alt transition-colors">
+					Explore Themes
+				</a>
+				<a href="https://github.com/guilycst/GoATTH-penguinui" target="_blank" class="px-6 py-2.5 rounded-radius border border-outline dark:border-outline-dark text-on-surface dark:text-on-surface-dark font-medium text-sm hover:bg-surface-alt dark:hover:bg-surface-dark-alt transition-colors">
+					GitHub
+				</a>
+			</div>
+		</div>
+
+		<!-- The Stack -->
+		<div>
+			<h2 class="text-2xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong mb-6 text-center">The Stack</h2>
+			<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+				@stackCard("Go", "The backbone. Compiles to a single binary, serves HTML, handles routing. No Node.js, no bundlers, no package.json.", "go")
+				@stackCard("Templ", "Type-safe HTML templates that compile to Go code. Components are functions, not strings. Catch errors at build time.", "templ")
+				@stackCard("Tailwind CSS v4", "Utility-first styling with a CSS-first config. 13 built-in themes with design tokens that switch instantly.", "tailwind")
+				@stackCard("Alpine.js", "Lightweight reactivity where you need it — dropdowns, toggles, modals. No virtual DOM, no build step. Just HTML attributes.", "alpine")
+				@stackCard("HTMX", "Server-rendered partials over HTTP. Sort a table, paginate, filter — all without writing fetch calls or managing client state.", "htmx")
+				@stackCard("PenguinUI", "The design system. 22 components faithfully ported from PenguinUI's Tailwind originals, with 99.99% visual parity.", "penguin")
+			</div>
+		</div>
+
+		<!-- Why -->
+		<div class="max-w-3xl mx-auto">
+			<h2 class="text-2xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong mb-4 text-center">Why?</h2>
+			<div class="space-y-4 text-on-surface dark:text-on-surface-dark">
+				<p>
+					Modern frontend is complex. React, Next.js, Vite, npm, TypeScript, state management, hydration —
+					a mountain of tooling between you and shipping a page.
+				</p>
+				<p>
+					GoATTH takes a different path: <strong class="text-on-surface-strong dark:text-on-surface-dark-strong">the server renders HTML, the browser shows it.</strong>
+					When you need interactivity, HTMX swaps fragments and Alpine.js handles local state. No JavaScript bundle, no virtual DOM, no client-side routing.
+				</p>
+				<p>
+					The result is a <strong class="text-on-surface-strong dark:text-on-surface-dark-strong">single binary</strong> that serves a complete UI with
+					theme switching, dark mode, sortable tables, filterable data, collapsible sidebars, and 22 production-ready components —
+					all in a <strong class="text-on-surface-strong dark:text-on-surface-dark-strong">37MB Docker image</strong>.
+				</p>
+			</div>
+		</div>
+
+		<!-- Components count -->
+		<div class="text-center pb-8">
+			<p class="text-sm text-on-surface/60 dark:text-on-surface-dark/60">
+				22 components · 14 themes · 386 E2E tests ·
+				<a href="/components/button" class="text-primary dark:text-primary-dark underline underline-offset-2">Start exploring</a>
+			</p>
+		</div>
+	</div>
+}
+
+templ stackCard(title string, description string, id string) {
+	<div class="border border-outline dark:border-outline-dark rounded-radius p-6 bg-surface dark:bg-surface-dark">
+		<h3 class="text-lg font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong mb-2">
+			{ title }
+		</h3>
+		<p class="text-sm text-on-surface dark:text-on-surface-dark leading-relaxed">
+			{ description }
+		</p>
+	</div>
+}

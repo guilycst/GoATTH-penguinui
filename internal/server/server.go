@@ -51,10 +51,10 @@ func (s *Server) setupRoutes() {
 	// Theme page
 	s.mux.HandleFunc("/theme", s.handleThemePage)
 
-	// Root redirect to first component
+	// Landing page
 	s.mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		if r.URL.Path == "/" {
-			http.Redirect(w, r, "/components/button", http.StatusMovedPermanently)
+			components.LandingPage().Render(r.Context(), w)
 			return
 		}
 		http.NotFound(w, r)
