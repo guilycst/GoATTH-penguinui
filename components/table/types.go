@@ -1,6 +1,10 @@
 package table
 
-import "github.com/a-h/templ"
+import (
+	"fmt"
+
+	"github.com/a-h/templ"
+)
 
 // Variant represents table style variants
 type Variant string
@@ -64,6 +68,49 @@ type InfiniteScrollConfig struct {
 	HasMore bool
 }
 
+// FilterType represents the kind of filter control
+type FilterType string
+
+const (
+	FilterSearch FilterType = "search" // free-text input
+	FilterSelect FilterType = "select" // dropdown with options
+	FilterToggle FilterType = "toggle" // boolean switch
+)
+
+// FilterOption represents a single option in a select filter
+type FilterOption struct {
+	Value string
+	Label string
+}
+
+// Filter defines a single filter control in the filter bar
+type Filter struct {
+	// Key is the query parameter name sent to the server
+	Key string
+	// Label is the display text
+	Label string
+	// Type is the control type (search, select, toggle)
+	Type FilterType
+	// Placeholder for search/select inputs
+	Placeholder string
+	// Options for select-type filters (static)
+	Options []FilterOption
+	// HTMXOptionsURL loads select options dynamically via HTMX on load
+	HTMXOptionsURL string
+	// DefaultValue is the initial value
+	DefaultValue string
+}
+
+// FilterConfig holds the filter bar configuration
+type FilterConfig struct {
+	// Filters is the list of filter controls
+	Filters []Filter
+	// Collapsible enables a toggle to show/hide the filter bar
+	Collapsible bool
+	// InitiallyExpanded controls whether filters start visible (default: true)
+	InitiallyExpanded bool
+}
+
 // Config holds configuration for the table component
 type Config struct {
 	// ID is the table element ID
@@ -102,6 +149,10 @@ type Config struct {
 	// --- Infinite Scroll ---
 	// InfiniteScroll enables loading more rows on scroll
 	InfiniteScroll *InfiniteScrollConfig
+
+	// --- Filters ---
+	// Filters enables a filter bar above the table
+	Filters *FilterConfig
 }
 
 // GetID returns the table ID, defaulting to "table"
@@ -280,6 +331,99 @@ func StatusBadgeClasses(status string) string {
 	default:
 		return base
 	}
+}
+
+// HasFilters returns true if filter config has at least one filter
+func (cfg Config) HasFilters() bool {
+	return cfg.Filters != nil && len(cfg.Filters.Filters) > 0
+}
+
+// FilterBarID returns the ID for the filter bar container
+func (cfg Config) FilterBarID() string {
+	return cfg.GetID() + "-filters"
+}
+
+// filterAlpineInit generates a name for the Alpine.data registration
+func filterAlpineInit(cfg Config) string {
+	return cfg.GetID() + "Filters"
+}
+
+// filterScriptData generates a JS script block that registers an Alpine.data component.
+// This avoids templ's HTML attribute escaping that breaks & and quotes.
+func filterScriptData(cfg Config) string {
+	filters := "{"
+	for i, f := range cfg.Filters.Filters {
+		if i > 0 {
+			filters += ", "
+		}
+		filters += f.Key + ": '" + jsEscape(f.DefaultValue) + "'"
+	}
+	filters += "}"
+
+	expanded := "true"
+	if cfg.Filters.Collapsible && !cfg.Filters.InitiallyExpanded {
+		expanded = "false"
+	}
+
+	endpoint := cfg.HTMXEndpoint
+	perPage := ""
+	if cfg.Pagination != nil && cfg.Pagination.PerPage > 0 {
+		perPage = "&per_page=" + itoa(cfg.Pagination.PerPage)
+	}
+	tbodyID := cfg.TbodyID()
+	name := filterAlpineInit(cfg)
+
+	return fmt.Sprintf(`document.addEventListener('alpine:init', () => {
+		Alpine.data('%s', () => ({
+			filtersExpanded: %s,
+			filters: %s,
+			buildFilterURL() {
+				let url = '%s?_filter=1%s';
+				for (const [k, v] of Object.entries(this.filters)) {
+					if (v !== '' && v !== 'false') {
+						url += '&' + encodeURIComponent(k) + '=' + encodeURIComponent(v);
+					}
+				}
+				return url;
+			},
+			applyFilters() {
+				htmx.ajax('GET', this.buildFilterURL(), {target: '#%s', swap: 'innerHTML'});
+			}
+		}));
+	});
+	// Intercept all HTMX requests from this table to append filter params
+	document.addEventListener('htmx:configRequest', (evt) => {
+		var el = evt.detail.elt;
+		var wrapper = el.closest('[x-data="%s"]');
+		if (!wrapper) return;
+		var comp = Alpine.$data(wrapper);
+		if (!comp || !comp.filters) return;
+		for (const [k, v] of Object.entries(comp.filters)) {
+			if (v !== '' && v !== 'false') {
+				evt.detail.parameters[k] = v;
+			}
+		}
+	});`, name, expanded, filters, endpoint, perPage, tbodyID, name)
+}
+
+// jsEscape escapes a string for safe embedding in single-quoted JS literals
+func jsEscape(s string) string {
+	result := make([]byte, 0, len(s))
+	for i := 0; i < len(s); i++ {
+		switch s[i] {
+		case '\'':
+			result = append(result, '\\', '\'')
+		case '\\':
+			result = append(result, '\\', '\\')
+		case '\n':
+			result = append(result, '\\', 'n')
+		case '\r':
+			result = append(result, '\\', 'r')
+		default:
+			result = append(result, s[i])
+		}
+	}
+	return string(result)
 }
 
 // itoa converts an int to string without importing strconv

@@ -53,7 +53,7 @@ type Config struct {
 	Class string
 }
 
-// SizeClasses returns the CSS classes for the size
+// SizeClasses returns the CSS classes for the size (text + padding)
 func (cfg Config) SizeClasses() string {
 	switch cfg.Size {
 	case SizeSM:
@@ -62,6 +62,19 @@ func (cfg Config) SizeClasses() string {
 		return "text-sm px-3 py-1.5"
 	default:
 		return "text-xs px-2 py-1"
+	}
+}
+
+// SizeTextClass returns only the text size class (no padding),
+// used on the outer container of badgeWithInner so the inner span controls padding.
+func (cfg Config) SizeTextClass() string {
+	switch cfg.Size {
+	case SizeSM:
+		return "text-[10px]"
+	case SizeLG:
+		return "text-sm"
+	default:
+		return "text-xs"
 	}
 }
 
@@ -119,13 +132,13 @@ func (cfg Config) SoftInnerClasses() string {
 	case Secondary:
 		return "bg-secondary/10 dark:bg-secondary-dark/10"
 	case Info:
-		return "bg-info/10"
+		return "bg-info/10 dark:bg-info/10"
 	case Success:
-		return "bg-success/10"
+		return "bg-success/10 dark:bg-success/10"
 	case Warning:
-		return "bg-warning/10"
+		return "bg-warning/10 dark:bg-warning/10"
 	case Danger:
-		return "bg-danger/10"
+		return "bg-danger/10 dark:bg-danger/10"
 	default:
 		return "bg-surface-alt/10 dark:bg-surface-dark-alt/10"
 	}

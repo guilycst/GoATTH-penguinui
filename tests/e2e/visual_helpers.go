@@ -95,18 +95,17 @@ type ComparisonResult struct {
 func captureScreenshot(t *testing.T, browser playwright.Browser, url, savePath, label string) []byte {
 	t.Helper()
 
-	page, err := browser.NewPage()
-	require.NoError(t, err)
+	page := newPage(t, browser)
 	defer page.Close()
 
-	_, err = page.Goto(url, playwright.PageGotoOptions{
-		WaitUntil: playwright.WaitUntilStateNetworkidle,
-		Timeout:   playwright.Float(30000),
+	_, err := page.Goto(url, playwright.PageGotoOptions{
+		WaitUntil: playwright.WaitUntilStateDomcontentloaded,
+		Timeout:   playwright.Float(3000),
 	})
 	require.NoError(t, err, "failed to navigate to %s (%s)", url, label)
 
 	// Wait for any animations to complete
-	page.WaitForTimeout(500)
+	page.WaitForTimeout(50)
 
 	screenshot, err := page.Screenshot(playwright.PageScreenshotOptions{
 		Type:     playwright.ScreenshotTypePng,

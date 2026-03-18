@@ -1,0 +1,103 @@
+package e2e
+
+import (
+	"testing"
+
+	"github.com/playwright-community/playwright-go"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
+)
+
+func TestSidebar_AllComponentsPresent(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping E2E test in short mode")
+	}
+
+	cleanupServer := setupServer(t)
+	defer cleanupServer()
+
+	_, browser, cleanupPW := setupPlaywright(t)
+	defer cleanupPW()
+
+	page := newPage(t, browser)
+
+	_, err := page.Goto(baseURL+"/components/button", playwright.PageGotoOptions{
+		WaitUntil: playwright.WaitUntilStateDomcontentloaded,
+	})
+	require.NoError(t, err)
+
+	// Every component directory should have a sidebar link
+	expectedComponents := []struct {
+		href  string
+		label string
+	}{
+		{"/components/accordion", "Accordion"},
+		{"/components/alert", "Alert"},
+		{"/components/avatar", "Avatar"},
+		{"/components/badge", "Badge"},
+		{"/components/banner", "Banner"},
+		{"/components/button", "Buttons"},
+		{"/components/card", "Card"},
+		{"/components/checkbox", "Checkbox"},
+		{"/components/combobox", "Combobox"},
+		{"/components/dropdown", "Dropdown"},
+		{"/components/modal", "Modal"},
+		{"/components/pagination", "Pagination"},
+		{"/components/select", "Select"},
+		{"/components/sidebar", "Sidebar"},
+		{"/components/spinner", "Spinner"},
+		{"/components/table", "Table"},
+		{"/components/tabs", "Tabs"},
+		{"/components/text-input", "Text Input"},
+		{"/components/textarea", "Textarea"},
+		{"/components/toast", "Toast"},
+		{"/components/toggle", "Toggle"},
+		{"/components/tooltip", "Tooltip"},
+	}
+
+	for _, comp := range expectedComponents {
+		t.Run(comp.label, func(t *testing.T) {
+			link := page.Locator("a[href='" + comp.href + "']")
+			count, err := link.Count()
+			require.NoError(t, err)
+			assert.Equal(t, 1, count, "%s should have a sidebar link to %s", comp.label, comp.href)
+		})
+	}
+}
+
+func TestSidebar_LinksNavigate(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping E2E test in short mode")
+	}
+
+	cleanupServer := setupServer(t)
+	defer cleanupServer()
+
+	_, browser, cleanupPW := setupPlaywright(t)
+	defer cleanupPW()
+
+	page := newPage(t, browser)
+
+	// Pick a few components and verify clicking their sidebar link loads the page
+	testLinks := []struct {
+		href      string
+		titlePart string
+	}{
+		{"/components/accordion", "Accordion"},
+		{"/components/toggle", "Toggle"},
+		{"/components/checkbox", "Checkbox"},
+	}
+
+	for _, link := range testLinks {
+		t.Run(link.titlePart, func(t *testing.T) {
+			_, err := page.Goto(baseURL+link.href, playwright.PageGotoOptions{
+				WaitUntil: playwright.WaitUntilStateDomcontentloaded,
+			})
+			require.NoError(t, err)
+
+			title, err := page.Title()
+			require.NoError(t, err)
+			assert.Contains(t, title, link.titlePart, "page title should contain %s", link.titlePart)
+		})
+	}
+}

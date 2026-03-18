@@ -153,7 +153,7 @@ func badgeWithInner(cfg Config) templ.Component {
 			templ_7745c5c3_Var6 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		containerClasses := "w-fit inline-flex overflow-hidden rounded-radius font-medium " + cfg.SizeClasses() + " "
+		containerClasses := "w-fit inline-flex overflow-hidden rounded-radius font-medium " + cfg.SizeTextClass() + " "
 		if cfg.IsSoft() {
 			containerClasses = containerClasses + cfg.SoftVariantClasses()
 		} else {
@@ -182,7 +182,7 @@ func badgeWithInner(cfg Config) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var9 = []any{"flex items-center gap-1 px-2 py-1 " + cfg.SoftInnerClasses()}
+		var templ_7745c5c3_Var9 = []any{"flex items-center gap-1 " + cfg.SizeClasses() + " " + cfg.SoftInnerClasses()}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var9...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err

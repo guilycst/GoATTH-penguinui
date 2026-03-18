@@ -2,11 +2,13 @@ package e2e
 
 import (
 	"fmt"
+	"net"
 	"net/http"
 	"os"
 	"os/exec"
 	"path/filepath"
 	"strings"
+	"sync"
 	"syscall"
 	"testing"
 	"time"
@@ -16,80 +18,126 @@ import (
 )
 
 var (
-	baseURL       = "http://localhost:8090"
+	baseURL       = "" // set dynamically in TestMain
 	screenshotDir = "test-results/screenshots"
 )
 
-var serverCmd *exec.Cmd
+// Shared singleton state — initialized once in TestMain, shared across all tests.
+var (
+	sharedPW      *playwright.Playwright
+	sharedBrowser playwright.Browser
+	serverCmd     *exec.Cmd
+	serverOnce    sync.Once
+)
 
-// setupServer starts the GoATTH server for testing (singleton)
-func setupServer(t *testing.T) func() {
-	// Check if server is already running
-	resp, err := http.Get(baseURL)
-	if err == nil {
-		resp.Body.Close()
-		t.Logf("Server already running on %s", baseURL)
-		return func() {} // No cleanup needed, server was already running
+// freePort finds an available TCP port
+func freePort() (int, error) {
+	l, err := net.Listen("tcp", "127.0.0.1:0")
+	if err != nil {
+		return 0, err
 	}
-
-	// Build server if not exists
-	projectRoot, _ := filepath.Abs("../..")
-	serverBin := filepath.Join(projectRoot, "bin", "server")
-
-	if _, err := os.Stat(serverBin); os.IsNotExist(err) {
-		buildCmd := exec.Command("go", "build", "-o", "bin/server", "./cmd/server")
-		buildCmd.Dir = projectRoot
-		output, err := buildCmd.CombinedOutput()
-		require.NoError(t, err, "failed to build server: %s", string(output))
-	}
-
-	// Start server
-	serverCmd = exec.Command(serverBin, "-port", "8090")
-	serverCmd.Dir = projectRoot
-	serverCmd.SysProcAttr = &syscall.SysProcAttr{Setpgid: true}
-
-	if err := serverCmd.Start(); err != nil {
-		t.Fatalf("failed to start server: %v", err)
-	}
-
-	// Wait for server to be ready
-	require.Eventually(t, func() bool {
-		resp, err := http.Get(baseURL)
-		if err != nil {
-			return false
-		}
-		defer resp.Body.Close()
-		return resp.StatusCode == http.StatusOK
-	}, 10*time.Second, 100*time.Millisecond, "server did not start")
-
-	t.Logf("Server started on %s", baseURL)
-
-	// Return cleanup function
-	return func() {
-		if serverCmd != nil && serverCmd.Process != nil {
-			syscall.Kill(-serverCmd.Process.Pid, syscall.SIGTERM)
-			serverCmd.Wait()
-			serverCmd = nil
-		}
-	}
+	port := l.Addr().(*net.TCPAddr).Port
+	l.Close()
+	return port, nil
 }
 
-// setupPlaywright initializes Playwright and returns browser
-func setupPlaywright(t *testing.T) (*playwright.Playwright, playwright.Browser, func()) {
+func TestMain(m *testing.M) {
+	// Build server
+	projectRoot, _ := filepath.Abs("../..")
+	buildCmd := exec.Command("go", "build", "-o", "bin/server", "./cmd/server")
+	buildCmd.Dir = projectRoot
+	if output, err := buildCmd.CombinedOutput(); err != nil {
+		fmt.Fprintf(os.Stderr, "failed to build server: %s\n%s\n", err, output)
+		os.Exit(1)
+	}
+
+	// Pick a random free port so tests don't conflict with manual dev server on 8090
+	port, err := freePort()
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "failed to find free port: %v\n", err)
+		os.Exit(1)
+	}
+	baseURL = fmt.Sprintf("http://localhost:%d", port)
+
+	// Start server
+	serverBin := filepath.Join(projectRoot, "bin", "server")
+	serverCmd = exec.Command(serverBin, "-port", fmt.Sprintf("%d", port))
+	serverCmd.Dir = projectRoot
+	serverCmd.SysProcAttr = &syscall.SysProcAttr{Setpgid: true}
+	if err := serverCmd.Start(); err != nil {
+		fmt.Fprintf(os.Stderr, "failed to start server: %v\n", err)
+		os.Exit(1)
+	}
+	// Wait for ready
+	deadline := time.Now().Add(10 * time.Second)
+	for time.Now().Before(deadline) {
+		if resp, err := http.Get(baseURL); err == nil {
+			resp.Body.Close()
+			break
+		}
+		time.Sleep(100 * time.Millisecond)
+	}
+
+	// Launch shared Playwright + browser
 	pw, err := playwright.Run()
-	require.NoError(t, err, "failed to start playwright")
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "failed to start playwright: %v\n", err)
+		os.Exit(1)
+	}
+	sharedPW = pw
 
 	browser, err := pw.Chromium.Launch(playwright.BrowserTypeLaunchOptions{
 		Headless: playwright.Bool(true),
 	})
-	require.NoError(t, err, "failed to launch browser")
-
-	cleanup := func() {
-		browser.Close()
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "failed to launch browser: %v\n", err)
 		pw.Stop()
+		os.Exit(1)
+	}
+	sharedBrowser = browser
+
+	// Run all tests
+	code := m.Run()
+
+	// Cleanup
+	browser.Close()
+	pw.Stop()
+	if serverCmd != nil && serverCmd.Process != nil {
+		syscall.Kill(-serverCmd.Process.Pid, syscall.SIGTERM)
+		serverCmd.Wait()
 	}
 
-	return pw, browser, cleanup
+	os.Exit(code)
+}
+
+// setupServer is now a no-op since TestMain handles it.
+// Kept for backward compatibility with existing tests.
+func setupServer(t *testing.T) func() {
+	return func() {}
+}
+
+// setupPlaywright returns the shared browser. The cleanup func is a no-op
+// since the browser lives for the entire test run.
+// Kept for backward compatibility with existing tests.
+func setupPlaywright(t *testing.T) (*playwright.Playwright, playwright.Browser, func()) {
+	return sharedPW, sharedBrowser, func() {}
+}
+
+// newPage creates a new page (tab) in the shared browser with short timeouts.
+// The caller should defer page.Close() to clean up the tab.
+func newPage(t *testing.T, browser playwright.Browser, opts ...playwright.BrowserNewPageOptions) playwright.Page {
+	var page playwright.Page
+	var err error
+	if len(opts) > 0 {
+		page, err = browser.NewPage(opts[0])
+	} else {
+		page, err = browser.NewPage()
+	}
+	require.NoError(t, err)
+	page.SetDefaultTimeout(2000)
+	page.SetDefaultNavigationTimeout(3000)
+	t.Cleanup(func() { page.Close() })
+	return page
 }
 
 // takeScreenshot captures a screenshot for debugging
@@ -109,11 +157,8 @@ func takeScreenshot(t *testing.T, page playwright.Page, name string) {
 
 // normalizeHTMLSimple normalizes HTML for comparison (simple version)
 func normalizeHTMLSimple(html string) string {
-	// Remove extra whitespace
 	html = strings.ReplaceAll(html, ">\n<", "><")
 	html = strings.ReplaceAll(html, ">  <", "><")
-
-	// Normalize spaces
 	fields := strings.Fields(html)
 	return strings.Join(fields, " ")
 }

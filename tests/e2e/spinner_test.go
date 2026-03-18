@@ -20,11 +20,10 @@ func TestSpinner_PageLoads(t *testing.T) {
 	_, browser, cleanupPW := setupPlaywright(t)
 	defer cleanupPW()
 
-	page, err := browser.NewPage()
-	require.NoError(t, err)
+	page := newPage(t, browser)
 
-	_, err = page.Goto(baseURL+"/components/spinner", playwright.PageGotoOptions{
-		WaitUntil: playwright.WaitUntilStateNetworkidle,
+	_, err := page.Goto(baseURL+"/components/spinner", playwright.PageGotoOptions{
+		WaitUntil: playwright.WaitUntilStateDomcontentloaded,
 	})
 	require.NoError(t, err)
 
@@ -37,7 +36,7 @@ func TestSpinner_PageLoads(t *testing.T) {
 
 	t.Run("Spinner_SVGs_Are_Rendered", func(t *testing.T) {
 		// Wait for Alpine.js
-		page.WaitForTimeout(800)
+		page.WaitForTimeout(150)
 
 		// Check that spinner SVGs exist on the page
 		spinners := page.Locator("svg.motion-safe\\:animate-spin")
@@ -48,7 +47,7 @@ func TestSpinner_PageLoads(t *testing.T) {
 	})
 
 	t.Run("Spinner_Has_Correct_Attributes", func(t *testing.T) {
-		page.WaitForTimeout(800)
+		page.WaitForTimeout(150)
 
 		// Check first spinner has correct attributes
 		firstSpinner := page.Locator("svg.motion-safe\\:animate-spin").First()
@@ -64,7 +63,7 @@ func TestSpinner_PageLoads(t *testing.T) {
 	})
 
 	t.Run("Spinner_Color_Variants_Exist", func(t *testing.T) {
-		page.WaitForTimeout(800)
+		page.WaitForTimeout(150)
 
 		// Check for color variant classes
 		variants := []string{
@@ -86,7 +85,7 @@ func TestSpinner_PageLoads(t *testing.T) {
 	})
 
 	t.Run("Spinner_Size_Variants_Exist", func(t *testing.T) {
-		page.WaitForTimeout(800)
+		page.WaitForTimeout(150)
 
 		// Check for size variant classes
 		sizes := []string{"size-4", "size-5", "size-8", "size-12"}

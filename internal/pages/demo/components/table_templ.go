@@ -254,7 +254,48 @@ func tableDemoPreview() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "</div><div><h4 class=\"text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong\">Infinite Scroll Table</h4><p class=\"text-xs text-on-surface/60 dark:text-on-surface-dark/60 mb-2\">Scroll down to automatically load more rows via HTMX.</p>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "</div><div><h4 class=\"text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong\">Filtered Table</h4><p class=\"text-xs text-on-surface/60 dark:text-on-surface-dark/60 mb-2\">Search and filter table data with HTMX-powered filter controls.</p>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = table.Table(table.Config{
+			ID:           "filtered-table",
+			HTMXEndpoint: "/api/components/table/rows",
+			Columns: []table.Column{
+				{Key: "id", Label: "CustomerID", Sortable: true},
+				{Key: "name", Label: "Name", Sortable: true},
+				{Key: "email", Label: "Email"},
+				{Key: "membership", Label: "Membership", Sortable: true},
+			},
+			Rows:       paginatedRows(1),
+			Pagination: &table.PaginationConfig{CurrentPage: 1, TotalPages: 4, PerPage: 3},
+			Filters: &table.FilterConfig{
+				Collapsible:       true,
+				InitiallyExpanded: true,
+				Filters: []table.Filter{
+					{
+						Key:         "search",
+						Label:       "Search",
+						Type:        table.FilterSearch,
+						Placeholder: "Search by name or email...",
+					},
+					{
+						Key:   "membership",
+						Label: "Membership",
+						Type:  table.FilterSelect,
+						Options: []table.FilterOption{
+							{Value: "", Label: "All Memberships"},
+							{Value: "Gold", Label: "Gold"},
+							{Value: "Silver", Label: "Silver"},
+						},
+					},
+				},
+			},
+		}).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "</div><div><h4 class=\"text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong\">Infinite Scroll Table</h4><p class=\"text-xs text-on-surface/60 dark:text-on-surface-dark/60 mb-2\">Scroll down to automatically load more rows via HTMX.</p>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -268,7 +309,7 @@ func tableDemoPreview() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "</div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "</div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

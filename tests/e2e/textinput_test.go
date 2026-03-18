@@ -18,11 +18,10 @@ func TestTextInput_GoATTHComponent(t *testing.T) {
 	_, browser, cleanupPW := setupPlaywright(t)
 	defer cleanupPW()
 
-	page, err := browser.NewPage()
-	require.NoError(t, err)
+	page := newPage(t, browser)
 
-	_, err = page.Goto(baseURL+"/components/text-input", playwright.PageGotoOptions{
-		WaitUntil: playwright.WaitUntilStateNetworkidle,
+	_, err := page.Goto(baseURL+"/components/text-input", playwright.PageGotoOptions{
+		WaitUntil: playwright.WaitUntilStateDomcontentloaded,
 	})
 	require.NoError(t, err)
 
@@ -136,7 +135,7 @@ func TestTextInput_GoATTHComponent(t *testing.T) {
 	})
 
 	t.Run("PasswordToggleWorks", func(t *testing.T) {
-		page.WaitForTimeout(800) // Wait for Alpine.js
+		page.WaitForTimeout(150) // Wait for Alpine.js
 
 		input := page.Locator("#passwordInput")
 
@@ -150,7 +149,7 @@ func TestTextInput_GoATTHComponent(t *testing.T) {
 		err = toggleBtn.Click()
 		require.NoError(t, err)
 
-		page.WaitForTimeout(300)
+		page.WaitForTimeout(50)
 
 		// Should now be text type
 		inputType, err = input.GetAttribute("type")
@@ -161,7 +160,7 @@ func TestTextInput_GoATTHComponent(t *testing.T) {
 		err = toggleBtn.Click()
 		require.NoError(t, err)
 
-		page.WaitForTimeout(300)
+		page.WaitForTimeout(50)
 
 		// Should be back to password
 		inputType, err = input.GetAttribute("type")

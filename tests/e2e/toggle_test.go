@@ -20,11 +20,10 @@ func TestToggle_PageLoads(t *testing.T) {
 	_, browser, cleanupPW := setupPlaywright(t)
 	defer cleanupPW()
 
-	page, err := browser.NewPage()
-	require.NoError(t, err)
+	page := newPage(t, browser)
 
-	_, err = page.Goto(baseURL+"/components/toggle", playwright.PageGotoOptions{
-		WaitUntil: playwright.WaitUntilStateNetworkidle,
+	_, err := page.Goto(baseURL+"/components/toggle", playwright.PageGotoOptions{
+		WaitUntil: playwright.WaitUntilStateDomcontentloaded,
 	})
 	require.NoError(t, err)
 
@@ -56,11 +55,10 @@ func TestToggle_DefaultToggle(t *testing.T) {
 	_, browser, cleanupPW := setupPlaywright(t)
 	defer cleanupPW()
 
-	page, err := browser.NewPage()
-	require.NoError(t, err)
+	page := newPage(t, browser)
 
-	_, err = page.Goto(baseURL+"/components/toggle", playwright.PageGotoOptions{
-		WaitUntil: playwright.WaitUntilStateNetworkidle,
+	_, err := page.Goto(baseURL+"/components/toggle", playwright.PageGotoOptions{
+		WaitUntil: playwright.WaitUntilStateDomcontentloaded,
 	})
 	require.NoError(t, err)
 
@@ -118,11 +116,10 @@ func TestToggle_ColorVariants(t *testing.T) {
 	_, browser, cleanupPW := setupPlaywright(t)
 	defer cleanupPW()
 
-	page, err := browser.NewPage()
-	require.NoError(t, err)
+	page := newPage(t, browser)
 
-	_, err = page.Goto(baseURL+"/components/toggle", playwright.PageGotoOptions{
-		WaitUntil: playwright.WaitUntilStateNetworkidle,
+	_, err := page.Goto(baseURL+"/components/toggle", playwright.PageGotoOptions{
+		WaitUntil: playwright.WaitUntilStateDomcontentloaded,
 	})
 	require.NoError(t, err)
 
@@ -173,11 +170,10 @@ func TestToggle_ContainerStyle(t *testing.T) {
 	_, browser, cleanupPW := setupPlaywright(t)
 	defer cleanupPW()
 
-	page, err := browser.NewPage()
-	require.NoError(t, err)
+	page := newPage(t, browser)
 
-	_, err = page.Goto(baseURL+"/components/toggle", playwright.PageGotoOptions{
-		WaitUntil: playwright.WaitUntilStateNetworkidle,
+	_, err := page.Goto(baseURL+"/components/toggle", playwright.PageGotoOptions{
+		WaitUntil: playwright.WaitUntilStateDomcontentloaded,
 	})
 	require.NoError(t, err)
 
@@ -204,11 +200,10 @@ func TestToggle_DisabledStates(t *testing.T) {
 	_, browser, cleanupPW := setupPlaywright(t)
 	defer cleanupPW()
 
-	page, err := browser.NewPage()
-	require.NoError(t, err)
+	page := newPage(t, browser)
 
-	_, err = page.Goto(baseURL+"/components/toggle", playwright.PageGotoOptions{
-		WaitUntil: playwright.WaitUntilStateNetworkidle,
+	_, err := page.Goto(baseURL+"/components/toggle", playwright.PageGotoOptions{
+		WaitUntil: playwright.WaitUntilStateDomcontentloaded,
 	})
 	require.NoError(t, err)
 
@@ -251,11 +246,10 @@ func TestToggle_Accessibility(t *testing.T) {
 	_, browser, cleanupPW := setupPlaywright(t)
 	defer cleanupPW()
 
-	page, err := browser.NewPage()
-	require.NoError(t, err)
+	page := newPage(t, browser)
 
-	_, err = page.Goto(baseURL+"/components/toggle", playwright.PageGotoOptions{
-		WaitUntil: playwright.WaitUntilStateNetworkidle,
+	_, err := page.Goto(baseURL+"/components/toggle", playwright.PageGotoOptions{
+		WaitUntil: playwright.WaitUntilStateDomcontentloaded,
 	})
 	require.NoError(t, err)
 

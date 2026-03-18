@@ -20,11 +20,10 @@ func TestDropdown_ClickVariant(t *testing.T) {
 	_, browser, cleanupPW := setupPlaywright(t)
 	defer cleanupPW()
 
-	page, err := browser.NewPage()
-	require.NoError(t, err)
+	page := newPage(t, browser)
 
-	_, err = page.Goto(baseURL+"/components/dropdown", playwright.PageGotoOptions{
-		WaitUntil: playwright.WaitUntilStateNetworkidle,
+	_, err := page.Goto(baseURL+"/components/dropdown", playwright.PageGotoOptions{
+		WaitUntil: playwright.WaitUntilStateDomcontentloaded,
 	})
 	require.NoError(t, err)
 
@@ -32,26 +31,31 @@ func TestDropdown_ClickVariant(t *testing.T) {
 		// Find the click dropdown trigger button
 		button := page.Locator("#dropdown-click button").First()
 
-		// Initially menu should not be visible
-		menu := page.Locator("#dropdown-click [role='menu']")
-		visible, err := menu.IsVisible()
+		// Wait for Alpine.js to process x-show/x-cloak
+		page.WaitForFunction("() => { const m = document.querySelector('#dropdown-click [role=\"menu\"]'); return m && (m.style.display === 'none' || m.offsetParent === null); }", nil, playwright.PageWaitForFunctionOptions{
+			Timeout: playwright.Float(3000),
+		})
+
+		// Check visibility via JS (more reliable than Playwright for Alpine.js x-show)
+		hidden, err := page.Evaluate("() => { const m = document.querySelector('#dropdown-click [role=\"menu\"]'); return m ? m.offsetParent === null : true; }", nil)
 		require.NoError(t, err)
-		assert.False(t, visible, "dropdown menu should be hidden initially")
+		assert.True(t, hidden.(bool), "dropdown menu should be hidden initially")
 
 		// Click to open
 		err = button.Click()
 		require.NoError(t, err)
-		page.WaitForTimeout(300)
+		page.WaitForTimeout(150)
 
 		// Menu should now be visible
-		visible, err = menu.IsVisible()
+		menu := page.Locator("#dropdown-click [role='menu']")
+		visible, err := menu.IsVisible()
 		require.NoError(t, err)
 		assert.True(t, visible, "dropdown menu should be visible after click")
 
 		// Click again to close
 		err = button.Click()
 		require.NoError(t, err)
-		page.WaitForTimeout(300)
+		page.WaitForTimeout(150)
 
 		visible, err = menu.IsVisible()
 		require.NoError(t, err)
@@ -64,7 +68,7 @@ func TestDropdown_ClickVariant(t *testing.T) {
 		button := page.Locator("#dropdown-click button").First()
 		err := button.Click()
 		require.NoError(t, err)
-		page.WaitForTimeout(300)
+		page.WaitForTimeout(50)
 
 		// Check menu items
 		items := page.Locator("#dropdown-click [role='menuitem']")
@@ -80,32 +84,33 @@ func TestDropdown_ClickVariant(t *testing.T) {
 		// Close
 		err = button.Click()
 		require.NoError(t, err)
-		page.WaitForTimeout(200)
+		page.WaitForTimeout(50)
 
 		t.Log("Click dropdown has correct menu items")
 	})
 
 	t.Run("Aria_Expanded_Updates", func(t *testing.T) {
 		button := page.Locator("#dropdown-click button").First()
+		page.WaitForTimeout(150) // Wait for Alpine.js hydration
 
-		// Initially aria-expanded should be false
-		expanded, err := button.GetAttribute("aria-expanded")
+		// Initially aria-expanded should be false (Alpine.js binding)
+		expanded, err := button.Evaluate("el => el.getAttribute('aria-expanded')", nil)
 		require.NoError(t, err)
 		assert.Equal(t, "false", expanded)
 
 		// Click to open
 		err = button.Click()
 		require.NoError(t, err)
-		page.WaitForTimeout(300)
+		page.WaitForTimeout(150)
 
-		expanded, err = button.GetAttribute("aria-expanded")
+		expanded, err = button.Evaluate("el => el.getAttribute('aria-expanded')", nil)
 		require.NoError(t, err)
 		assert.Equal(t, "true", expanded)
 
 		// Close
 		err = button.Click()
 		require.NoError(t, err)
-		page.WaitForTimeout(200)
+		page.WaitForTimeout(50)
 
 		t.Log("aria-expanded updates correctly")
 	})
@@ -123,11 +128,10 @@ func TestDropdown_WithDividers(t *testing.T) {
 	_, browser, cleanupPW := setupPlaywright(t)
 	defer cleanupPW()
 
-	page, err := browser.NewPage()
-	require.NoError(t, err)
+	page := newPage(t, browser)
 
-	_, err = page.Goto(baseURL+"/components/dropdown", playwright.PageGotoOptions{
-		WaitUntil: playwright.WaitUntilStateNetworkidle,
+	_, err := page.Goto(baseURL+"/components/dropdown", playwright.PageGotoOptions{
+		WaitUntil: playwright.WaitUntilStateDomcontentloaded,
 	})
 	require.NoError(t, err)
 
@@ -135,7 +139,7 @@ func TestDropdown_WithDividers(t *testing.T) {
 		button := page.Locator("#dropdown-divider button").First()
 		err := button.Click()
 		require.NoError(t, err)
-		page.WaitForTimeout(300)
+		page.WaitForTimeout(50)
 
 		// Should have dividers (divide-y class on menu)
 		menu := page.Locator("#dropdown-divider [role='menu']")
@@ -152,7 +156,7 @@ func TestDropdown_WithDividers(t *testing.T) {
 		// Close
 		err = button.Click()
 		require.NoError(t, err)
-		page.WaitForTimeout(200)
+		page.WaitForTimeout(50)
 
 		t.Log("Divider dropdown has correct sections")
 	})
@@ -170,11 +174,10 @@ func TestDropdown_WithIcons(t *testing.T) {
 	_, browser, cleanupPW := setupPlaywright(t)
 	defer cleanupPW()
 
-	page, err := browser.NewPage()
-	require.NoError(t, err)
+	page := newPage(t, browser)
 
-	_, err = page.Goto(baseURL+"/components/dropdown", playwright.PageGotoOptions{
-		WaitUntil: playwright.WaitUntilStateNetworkidle,
+	_, err := page.Goto(baseURL+"/components/dropdown", playwright.PageGotoOptions{
+		WaitUntil: playwright.WaitUntilStateDomcontentloaded,
 	})
 	require.NoError(t, err)
 
@@ -182,7 +185,7 @@ func TestDropdown_WithIcons(t *testing.T) {
 		button := page.Locator("#dropdown-icons button").First()
 		err := button.Click()
 		require.NoError(t, err)
-		page.WaitForTimeout(300)
+		page.WaitForTimeout(50)
 
 		// Items should contain SVG icons
 		firstItem := page.Locator("#dropdown-icons [role='menuitem']").First()
@@ -194,7 +197,7 @@ func TestDropdown_WithIcons(t *testing.T) {
 		// Close
 		err = button.Click()
 		require.NoError(t, err)
-		page.WaitForTimeout(200)
+		page.WaitForTimeout(50)
 
 		t.Log("Icon dropdown has correct icons")
 	})
@@ -212,11 +215,10 @@ func TestDropdown_ContextMenu(t *testing.T) {
 	_, browser, cleanupPW := setupPlaywright(t)
 	defer cleanupPW()
 
-	page, err := browser.NewPage()
-	require.NoError(t, err)
+	page := newPage(t, browser)
 
-	_, err = page.Goto(baseURL+"/components/dropdown", playwright.PageGotoOptions{
-		WaitUntil: playwright.WaitUntilStateNetworkidle,
+	_, err := page.Goto(baseURL+"/components/dropdown", playwright.PageGotoOptions{
+		WaitUntil: playwright.WaitUntilStateDomcontentloaded,
 	})
 	require.NoError(t, err)
 
@@ -224,7 +226,7 @@ func TestDropdown_ContextMenu(t *testing.T) {
 		button := page.Locator("#dropdown-context button").First()
 		err := button.Click()
 		require.NoError(t, err)
-		page.WaitForTimeout(300)
+		page.WaitForTimeout(50)
 
 		// Menu should be visible
 		menu := page.Locator("#dropdown-context [role='menu']")
@@ -241,7 +243,7 @@ func TestDropdown_ContextMenu(t *testing.T) {
 		// Close
 		err = button.Click()
 		require.NoError(t, err)
-		page.WaitForTimeout(200)
+		page.WaitForTimeout(50)
 
 		t.Log("Context menu opens and shows items correctly")
 	})
@@ -250,7 +252,7 @@ func TestDropdown_ContextMenu(t *testing.T) {
 		button := page.Locator("#dropdown-context button").First()
 		err := button.Click()
 		require.NoError(t, err)
-		page.WaitForTimeout(300)
+		page.WaitForTimeout(50)
 
 		// Should show shortcut labels
 		undoItem := page.Locator("#dropdown-context [role='menuitem']").First()
@@ -262,7 +264,7 @@ func TestDropdown_ContextMenu(t *testing.T) {
 		// Close
 		err = button.Click()
 		require.NoError(t, err)
-		page.WaitForTimeout(200)
+		page.WaitForTimeout(50)
 
 		t.Log("Context menu shows keyboard shortcuts")
 	})
@@ -280,11 +282,10 @@ func TestDropdown_PageLoads(t *testing.T) {
 	_, browser, cleanupPW := setupPlaywright(t)
 	defer cleanupPW()
 
-	page, err := browser.NewPage()
-	require.NoError(t, err)
+	page := newPage(t, browser)
 
-	_, err = page.Goto(baseURL+"/components/dropdown", playwright.PageGotoOptions{
-		WaitUntil: playwright.WaitUntilStateNetworkidle,
+	_, err := page.Goto(baseURL+"/components/dropdown", playwright.PageGotoOptions{
+		WaitUntil: playwright.WaitUntilStateDomcontentloaded,
 	})
 	require.NoError(t, err)
 

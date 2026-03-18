@@ -19,11 +19,10 @@ func TestCheckbox(t *testing.T) {
 	_, browser, cleanupPW := setupPlaywright(t)
 	defer cleanupPW()
 
-	page, err := browser.NewPage()
-	require.NoError(t, err)
+	page := newPage(t, browser)
 
-	_, err = page.Goto(baseURL+"/components/checkbox", playwright.PageGotoOptions{
-		WaitUntil: playwright.WaitUntilStateNetworkidle,
+	_, err := page.Goto(baseURL+"/components/checkbox", playwright.PageGotoOptions{
+		WaitUntil: playwright.WaitUntilStateDomcontentloaded,
 	})
 	require.NoError(t, err)
 
@@ -61,7 +60,7 @@ func TestCheckbox(t *testing.T) {
 		// Click to check
 		err := input.Click()
 		require.NoError(t, err)
-		page.WaitForTimeout(200)
+		page.WaitForTimeout(50)
 
 		checked, err := input.IsChecked()
 		require.NoError(t, err)
@@ -70,7 +69,7 @@ func TestCheckbox(t *testing.T) {
 		// Click to uncheck
 		err = input.Click()
 		require.NoError(t, err)
-		page.WaitForTimeout(200)
+		page.WaitForTimeout(50)
 
 		checked, err = input.IsChecked()
 		require.NoError(t, err)

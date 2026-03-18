@@ -1,6 +1,7 @@
 package server
 
 import (
+	"fmt"
 	"net/http"
 	"sort"
 	"strconv"
@@ -78,6 +79,27 @@ func sortRecords(recs []tableRecord, orderBy string, orderDir string) {
 	})
 }
 
+func filterRecords(recs []tableRecord, search string, membership string) []tableRecord {
+	if search == "" && membership == "" {
+		return recs
+	}
+	search = strings.ToLower(search)
+	var filtered []tableRecord
+	for _, rec := range recs {
+		if membership != "" && !strings.EqualFold(rec.Membership, membership) {
+			continue
+		}
+		if search != "" &&
+			!strings.Contains(strings.ToLower(rec.Name), search) &&
+			!strings.Contains(strings.ToLower(rec.Email), search) &&
+			!strings.Contains(rec.ID, search) {
+			continue
+		}
+		filtered = append(filtered, rec)
+	}
+	return filtered
+}
+
 func (s *Server) handleTableRows(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/html")
 
@@ -87,8 +109,13 @@ func (s *Server) handleTableRows(w http.ResponseWriter, r *http.Request) {
 	orderDir := q.Get("order_dir")
 	pageStr := q.Get("page")
 	perPageStr := q.Get("per_page")
+	search := q.Get("search")
+	membership := q.Get("membership")
 
 	records := allRecords()
+
+	// Apply filtering
+	records = filterRecords(records, search, membership)
 
 	// Apply sorting
 	if orderBy != "" {
@@ -160,17 +187,28 @@ func (s *Server) handleTableRows(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// For pagination, render rows as tbody inner HTML
+	cfg.HTMXEndpoint = "/api/components/table/rows"
+
+	// For pagination, render rows as tbody inner HTML + OOB pagination update
 	if pageStr != "" || variant == "" {
 		cfg.Pagination = &table.PaginationConfig{
 			CurrentPage: page,
 			TotalPages:  totalPages,
 			PerPage:     perPage,
 		}
+		cfg.ID = "paginated-table"
 	}
 
 	// Render just the table rows (tbody inner content)
 	for _, row := range rows {
 		table.TableRow(cfg, row).Render(r.Context(), w)
+	}
+
+	// OOB swap: update pagination controls so active page, prev/next states refresh
+	if cfg.Pagination != nil && cfg.Pagination.TotalPages > 1 {
+		fmt.Fprintf(w, `<div id="%s" hx-swap-oob="true" class="flex items-center justify-between border-t border-outline px-4 py-3 dark:border-outline-dark">`, cfg.PaginationID())
+		fmt.Fprintf(w, `<div class="text-sm text-on-surface/70 dark:text-on-surface-dark/70">Page %d of %d</div>`, page, totalPages)
+		table.TablePaginationNav(cfg).Render(r.Context(), w)
+		fmt.Fprintf(w, `</div>`)
 	}
 }

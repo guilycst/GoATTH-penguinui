@@ -20,11 +20,10 @@ func TestTooltip_DefaultHover(t *testing.T) {
 	_, browser, cleanupPW := setupPlaywright(t)
 	defer cleanupPW()
 
-	page, err := browser.NewPage()
-	require.NoError(t, err)
+	page := newPage(t, browser)
 
-	_, err = page.Goto(baseURL+"/components/tooltip", playwright.PageGotoOptions{
-		WaitUntil: playwright.WaitUntilStateNetworkidle,
+	_, err := page.Goto(baseURL+"/components/tooltip", playwright.PageGotoOptions{
+		WaitUntil: playwright.WaitUntilStateDomcontentloaded,
 	})
 	require.NoError(t, err)
 
@@ -68,7 +67,7 @@ func TestTooltip_DefaultHover(t *testing.T) {
 		trigger := page.Locator("[aria-describedby='demoTop']")
 		err := trigger.Hover()
 		require.NoError(t, err)
-		page.WaitForTimeout(500)
+		page.WaitForTimeout(50)
 
 		// Tooltip should become visible via peer-hover
 		tooltip := page.Locator("#demoTop")
@@ -91,11 +90,10 @@ func TestTooltip_RichTooltip(t *testing.T) {
 	_, browser, cleanupPW := setupPlaywright(t)
 	defer cleanupPW()
 
-	page, err := browser.NewPage()
-	require.NoError(t, err)
+	page := newPage(t, browser)
 
-	_, err = page.Goto(baseURL+"/components/tooltip", playwright.PageGotoOptions{
-		WaitUntil: playwright.WaitUntilStateNetworkidle,
+	_, err := page.Goto(baseURL+"/components/tooltip", playwright.PageGotoOptions{
+		WaitUntil: playwright.WaitUntilStateDomcontentloaded,
 	})
 	require.NoError(t, err)
 
@@ -132,14 +130,13 @@ func TestTooltip_ClickTooltip(t *testing.T) {
 	_, browser, cleanupPW := setupPlaywright(t)
 	defer cleanupPW()
 
-	page, err := browser.NewPage()
-	require.NoError(t, err)
+	page := newPage(t, browser)
 
-	_, err = page.Goto(baseURL+"/components/tooltip", playwright.PageGotoOptions{
-		WaitUntil: playwright.WaitUntilStateNetworkidle,
+	_, err := page.Goto(baseURL+"/components/tooltip", playwright.PageGotoOptions{
+		WaitUntil: playwright.WaitUntilStateDomcontentloaded,
 	})
 	require.NoError(t, err)
-	page.WaitForTimeout(800) // Wait for Alpine.js
+	page.WaitForTimeout(150) // Wait for Alpine.js
 
 	t.Run("Click_Tooltip_Initially_Hidden", func(t *testing.T) {
 		tooltip := page.Locator("#clickTop")
@@ -154,7 +151,7 @@ func TestTooltip_ClickTooltip(t *testing.T) {
 		trigger := page.Locator("[aria-describedby='clickTop']")
 		err := trigger.Click()
 		require.NoError(t, err)
-		page.WaitForTimeout(500)
+		page.WaitForTimeout(50)
 
 		// Tooltip should be visible
 		tooltip := page.Locator("#clickTop")
@@ -169,11 +166,13 @@ func TestTooltip_ClickTooltip(t *testing.T) {
 		trigger := page.Locator("[aria-describedby='clickTop']")
 		err := trigger.Click()
 		require.NoError(t, err)
-		page.WaitForTimeout(500)
+		page.WaitForTimeout(150)
 
-		// Click outside
-		page.Locator("h1").Click()
-		page.WaitForTimeout(500)
+		// Click outside (use body to ensure it's a valid target)
+		page.Locator("body").Click(playwright.LocatorClickOptions{
+			Position: &playwright.Position{X: 10, Y: 10},
+		})
+		page.WaitForTimeout(150)
 
 		// Tooltip should be hidden
 		tooltip := page.Locator("#clickTop")
@@ -196,11 +195,10 @@ func TestTooltip_Positions(t *testing.T) {
 	_, browser, cleanupPW := setupPlaywright(t)
 	defer cleanupPW()
 
-	page, err := browser.NewPage()
-	require.NoError(t, err)
+	page := newPage(t, browser)
 
-	_, err = page.Goto(baseURL+"/components/tooltip", playwright.PageGotoOptions{
-		WaitUntil: playwright.WaitUntilStateNetworkidle,
+	_, err := page.Goto(baseURL+"/components/tooltip", playwright.PageGotoOptions{
+		WaitUntil: playwright.WaitUntilStateDomcontentloaded,
 	})
 	require.NoError(t, err)
 
