@@ -92,6 +92,8 @@ func (s *Server) handleComponent(w http.ResponseWriter, r *http.Request) {
 		components.TabsDemoPage().Render(r.Context(), w)
 	case "table":
 		components.TableDemoPage().Render(r.Context(), w)
+	case "dropdown":
+		components.DropdownDemoPage().Render(r.Context(), w)
 	default:
 		http.NotFound(w, r)
 	}
