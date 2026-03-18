@@ -285,13 +285,11 @@ func getSidebarItems(activeComponent string) []sidebar.Item {
 			Active:   activeComponent == "input",
 		},
 		{
-			ID:       "select",
-			Label:    "Select",
-			Href:     "#",
-			Icon:     nil,
-			Disabled: true,
-			Badge:    "Soon",
-			Active:   activeComponent == "select",
+			ID:     "select",
+			Label:  "Select",
+			Href:   "/components/select",
+			Icon:   nil,
+			Active: activeComponent == "select",
 		},
 		{
 			ID:     "checkbox",

@@ -100,6 +100,8 @@ func (s *Server) handleComponent(w http.ResponseWriter, r *http.Request) {
 		components.CheckboxDemoPage().Render(r.Context(), w)
 	case "dropdown":
 		components.DropdownDemoPage().Render(r.Context(), w)
+	case "select":
+		components.SelectDemoPage().Render(r.Context(), w)
 	default:
 		http.NotFound(w, r)
 	}
