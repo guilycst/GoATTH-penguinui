@@ -168,6 +168,11 @@ func (cfg Config) TbodyID() string {
 	return cfg.GetID() + "-tbody"
 }
 
+// TheadID returns the ID for the thead element
+func (cfg Config) TheadID() string {
+	return cfg.GetID() + "-thead"
+}
+
 // PaginationID returns the ID for the pagination container
 func (cfg Config) PaginationID() string {
 	return cfg.GetID() + "-pagination"
@@ -219,13 +224,13 @@ func (cfg Config) NextSortDir(key string) SortDir {
 func (cfg Config) SortURL(key string) string {
 	dir := cfg.NextSortDir(key)
 	if dir == SortNone {
-		url := cfg.HTMXEndpoint + "?"
+		url := cfg.HTMXEndpoint + "?table_id=" + cfg.GetID()
 		if cfg.Pagination != nil {
-			url += "per_page=" + itoa(cfg.Pagination.PerPage)
+			url += "&per_page=" + itoa(cfg.Pagination.PerPage)
 		}
 		return url
 	}
-	url := cfg.HTMXEndpoint + "?order_by=" + key + "&order_dir=" + string(dir)
+	url := cfg.HTMXEndpoint + "?table_id=" + cfg.GetID() + "&order_by=" + key + "&order_dir=" + string(dir)
 	if cfg.Pagination != nil {
 		url += "&per_page=" + itoa(cfg.Pagination.PerPage)
 	}
@@ -352,9 +357,33 @@ func (cfg Config) FilterBarID() string {
 	return cfg.GetID() + "-filters"
 }
 
-// filterAlpineInit generates a name for the Alpine.data registration
+// filterAlpineInit generates a name for the Alpine.data registration.
+// Converts hyphens to camelCase since Alpine evaluates x-data as JS expressions.
 func filterAlpineInit(cfg Config) string {
-	return cfg.GetID() + "Filters"
+	return hyphenToCamel(cfg.GetID()) + "Filters"
+}
+
+// hyphenToCamel converts a hyphenated string to camelCase (e.g. "filtered-table" → "filteredTable").
+func hyphenToCamel(s string) string {
+	result := make([]byte, 0, len(s))
+	upper := false
+	for i := 0; i < len(s); i++ {
+		if s[i] == '-' {
+			upper = true
+			continue
+		}
+		if upper {
+			if s[i] >= 'a' && s[i] <= 'z' {
+				result = append(result, s[i]-32)
+			} else {
+				result = append(result, s[i])
+			}
+			upper = false
+		} else {
+			result = append(result, s[i])
+		}
+	}
+	return string(result)
 }
 
 // filterScriptData generates a JS script block that registers an Alpine.data component.
