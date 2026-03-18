@@ -88,7 +88,7 @@ func (cfg Config) IsContextMenu() bool {
 
 // MenuClasses returns the CSS classes for the dropdown menu container
 func (cfg Config) MenuClasses() string {
-	base := "absolute left-0 flex w-fit min-w-48 flex-col overflow-hidden rounded-radius border border-outline bg-surface-alt dark:border-outline-dark dark:bg-surface-dark-alt"
+	base := "absolute left-0 z-30 flex w-fit min-w-48 flex-col overflow-hidden rounded-radius border border-outline bg-surface-alt shadow-md dark:border-outline-dark dark:bg-surface-dark-alt"
 	if cfg.IsContextMenu() {
 		return "top-8 " + base
 	}
