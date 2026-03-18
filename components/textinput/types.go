@@ -1,0 +1,125 @@
+package textinput
+
+// State represents the validation state of the input
+type State string
+
+const (
+	StateDefault State = ""
+	StateError   State = "error"
+	StateSuccess State = "success"
+)
+
+// InputType represents the HTML input type
+type InputType string
+
+const (
+	TypeText     InputType = "text"
+	TypePassword InputType = "password"
+	TypeSearch   InputType = "search"
+	TypeEmail    InputType = "email"
+	TypeTel      InputType = "tel"
+	TypeURL      InputType = "url"
+	TypeNumber   InputType = "number"
+)
+
+// Config holds configuration for the text input component
+type Config struct {
+	// ID is a unique identifier for the input
+	ID string
+	// Name is the form field name
+	Name string
+	// Label is the label text shown above the input
+	Label string
+	// Placeholder text when input is empty
+	Placeholder string
+	// Value is the current input value
+	Value string
+	// Type is the HTML input type (default: "text")
+	Type InputType
+	// State represents validation state (error, success, or default)
+	State State
+	// HelperText is optional text shown below the input (used for error/success messages)
+	HelperText string
+	// Disabled disables the input
+	Disabled bool
+	// Required marks the input as required
+	Required bool
+	// Autocomplete is the HTML autocomplete attribute value
+	Autocomplete string
+	// Mask is an Alpine.js x-mask pattern (e.g. "(999) 999-9999")
+	Mask string
+	// Class allows additional CSS classes on the container
+	Class string
+}
+
+// GetType returns the input type, defaulting to "text"
+func (cfg Config) GetType() InputType {
+	if cfg.Type != "" {
+		return cfg.Type
+	}
+	return TypeText
+}
+
+// InputClasses returns the CSS classes for the input element
+func (cfg Config) InputClasses() string {
+	base := "w-full rounded-radius border bg-surface-alt px-2 py-2 text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:cursor-not-allowed disabled:opacity-75 dark:bg-surface-dark-alt/50 dark:focus-visible:outline-primary-dark"
+
+	switch cfg.State {
+	case StateError:
+		return base + " border-danger"
+	case StateSuccess:
+		return base + " border-success"
+	default:
+		return base + " border-outline dark:border-outline-dark"
+	}
+}
+
+// LabelClasses returns the CSS classes for the label element
+func (cfg Config) LabelClasses() string {
+	base := "w-fit pl-0.5 text-sm"
+
+	switch cfg.State {
+	case StateError:
+		return "flex " + base + " items-center gap-1 text-danger"
+	case StateSuccess:
+		return "flex " + base + " items-center gap-1 text-success"
+	default:
+		return base
+	}
+}
+
+// HelperTextClasses returns the CSS classes for the helper text
+func (cfg Config) HelperTextClasses() string {
+	switch cfg.State {
+	case StateError:
+		return "pl-0.5 text-xs text-danger"
+	case StateSuccess:
+		return "pl-0.5 text-xs text-success"
+	default:
+		return "pl-0.5 text-xs text-on-surface/60 dark:text-on-surface-dark/60"
+	}
+}
+
+// ContainerClasses returns the CSS classes for the outer container
+func (cfg Config) ContainerClasses() string {
+	base := "flex w-full max-w-xs flex-col gap-1 text-on-surface dark:text-on-surface-dark"
+	if cfg.Class != "" {
+		return base + " " + cfg.Class
+	}
+	return base
+}
+
+// IsPassword returns true if the input type is password
+func (cfg Config) IsPassword() bool {
+	return cfg.Type == TypePassword
+}
+
+// IsSearch returns true if the input type is search
+func (cfg Config) IsSearch() bool {
+	return cfg.Type == TypeSearch
+}
+
+// HasMask returns true if a mask pattern is set
+func (cfg Config) HasMask() bool {
+	return cfg.Mask != ""
+}

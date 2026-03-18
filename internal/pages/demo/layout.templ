@@ -283,13 +283,11 @@ func getSidebarItems(activeComponent string) []sidebar.Item {
 			Active: activeComponent == "spinner",
 		},
 		{
-			ID:       "input",
-			Label:    "Input",
-			Href:     "#",
-			Icon:     nil,
-			Disabled: true,
-			Badge:    "Soon",
-			Active:   activeComponent == "input",
+			ID:     "text-input",
+			Label:  "Text Input",
+			Href:   "/components/text-input",
+			Icon:   nil,
+			Active: activeComponent == "text-input",
 		},
 		{
 			ID:     "select",

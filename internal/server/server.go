@@ -104,6 +104,8 @@ func (s *Server) handleComponent(w http.ResponseWriter, r *http.Request) {
 		components.SelectDemoPage().Render(r.Context(), w)
 	case "spinner":
 		components.SpinnerDemoPage().Render(r.Context(), w)
+	case "text-input":
+		components.TextInputDemoPage().Render(r.Context(), w)
 	default:
 		http.NotFound(w, r)
 	}
