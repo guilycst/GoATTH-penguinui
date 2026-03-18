@@ -82,6 +82,8 @@ func (s *Server) handleComponent(w http.ResponseWriter, r *http.Request) {
 		components.CardDemoPage().Render(r.Context(), w)
 	case "combobox":
 		components.ComboboxDemoPage().Render(r.Context(), w)
+	case "alert":
+		components.AlertDemoPage().Render(r.Context(), w)
 	default:
 		http.NotFound(w, r)
 	}
