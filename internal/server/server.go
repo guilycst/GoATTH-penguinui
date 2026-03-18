@@ -48,6 +48,9 @@ func (s *Server) setupRoutes() {
 	s.mux.HandleFunc("/api/components/table/rows", s.handleTableRows)
 	s.mux.HandleFunc("/api/components/toast", s.handleToastOOB)
 
+	// Theme page
+	s.mux.HandleFunc("/theme", s.handleThemePage)
+
 	// Root redirect to first component
 	s.mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		if r.URL.Path == "/" {
@@ -208,6 +211,10 @@ func (s *Server) handleTabContent(w http.ResponseWriter, r *http.Request) {
 	default:
 		fmt.Fprintf(w, `<div class="text-sm text-on-surface dark:text-on-surface-dark">Unknown tab content: %s</div>`, tabID)
 	}
+}
+
+func (s *Server) handleThemePage(w http.ResponseWriter, r *http.Request) {
+	components.ThemeDemoPage().Render(r.Context(), w)
 }
 
 // ServeHTTP implements http.Handler

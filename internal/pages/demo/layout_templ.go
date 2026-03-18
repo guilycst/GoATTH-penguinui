@@ -111,6 +111,12 @@ func Layout(title string, activeComponent string, content templ.Component) templ
 func getSidebarSections(activeComponent string) []sidebar.Section {
 	return []sidebar.Section{
 		{
+			Title: "",
+			Items: []sidebar.Item{
+				{ID: "theme", Label: "Theme", Href: "/theme", Active: activeComponent == "theme"},
+			},
+		},
+		{
 			Title: "Display",
 			Items: []sidebar.Item{
 				{ID: "accordion", Label: "Accordion", Href: "/components/accordion", Active: activeComponent == "accordion"},

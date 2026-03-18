@@ -1,0 +1,701 @@
+package components
+
+import (
+	"fmt"
+	"strings"
+
+	"github.com/guilycst/GoATTH-penguinui/internal/pages/demo"
+)
+
+type ThemeInfo struct {
+	Key            string
+	Label          string
+	PrimaryClass   string
+	SecondaryClass string
+}
+
+func getThemeInfos() []ThemeInfo {
+	return []ThemeInfo{
+		{Key: "arctic", Label: "Arctic", PrimaryClass: "bg-blue-700", SecondaryClass: "bg-indigo-700"},
+		{Key: "high-contrast", Label: "High Contrast", PrimaryClass: "bg-sky-900", SecondaryClass: "bg-indigo-900"},
+		{Key: "minimal", Label: "Minimal", PrimaryClass: "bg-black", SecondaryClass: "bg-neutral-800"},
+		{Key: "modern", Label: "Modern", PrimaryClass: "bg-black", SecondaryClass: "bg-neutral-800"},
+		{Key: "neo-brutalism", Label: "Neo Brutalism", PrimaryClass: "bg-violet-500", SecondaryClass: "bg-lime-400"},
+		{Key: "halloween", Label: "Halloween", PrimaryClass: "bg-orange-400", SecondaryClass: "bg-purple-600"},
+		{Key: "zombie", Label: "Halloween II", PrimaryClass: "bg-orange-400", SecondaryClass: "bg-purple-600"},
+		{Key: "pastel", Label: "Pastel", PrimaryClass: "bg-rose-400", SecondaryClass: "bg-orange-200"},
+		{Key: "90s", Label: "90s", PrimaryClass: "bg-purple-500", SecondaryClass: "bg-sky-500"},
+		{Key: "christmas", Label: "Christmas", PrimaryClass: "bg-red-600", SecondaryClass: "bg-emerald-700"},
+		{Key: "prototype", Label: "Prototype", PrimaryClass: "bg-black", SecondaryClass: "bg-neutral-700"},
+		{Key: "news", Label: "News", PrimaryClass: "bg-sky-700", SecondaryClass: "bg-black"},
+		{Key: "industrial", Label: "Industrial", PrimaryClass: "bg-amber-500", SecondaryClass: "bg-stone-900"},
+	}
+}
+
+func getThemeCSSBlocks() map[string]string {
+	return map[string]string{
+		"arctic": `[data-theme=arctic] {
+    --font-body: 'Inter', sans-serif;
+    --font-title: 'Inter', sans-serif;
+    --color-surface: var(--color-white);
+    --color-surface-alt: var(--color-slate-100);
+    --color-on-surface: var(--color-slate-700);
+    --color-on-surface-strong: var(--color-black);
+    --color-primary: var(--color-blue-700);
+    --color-on-primary: var(--color-slate-100);
+    --color-secondary: var(--color-indigo-700);
+    --color-on-secondary: var(--color-slate-100);
+    --color-outline: var(--color-slate-300);
+    --color-outline-strong: var(--color-slate-800);
+    --color-surface-dark: var(--color-slate-900);
+    --color-surface-dark-alt: var(--color-slate-800);
+    --color-on-surface-dark: var(--color-slate-300);
+    --color-on-surface-dark-strong: var(--color-white);
+    --color-primary-dark: var(--color-blue-600);
+    --color-on-primary-dark: var(--color-slate-100);
+    --color-secondary-dark: var(--color-indigo-600);
+    --color-on-secondary-dark: var(--color-slate-100);
+    --color-outline-dark: var(--color-slate-700);
+    --color-outline-dark-strong: var(--color-slate-300);
+    --color-info: var(--color-sky-600);
+    --color-on-info: var(--color-white);
+    --color-success: var(--color-green-600);
+    --color-on-success: var(--color-white);
+    --color-warning: var(--color-amber-500);
+    --color-on-warning: var(--color-white);
+    --color-danger: var(--color-red-600);
+    --color-on-danger: var(--color-white);
+    --radius-radius: var(--radius-lg);
+}`,
+		"minimal": `[data-theme=minimal] {
+    --font-body: 'Montserrat', sans-serif;
+    --font-title: 'Montserrat', sans-serif;
+    --color-surface: var(--color-white);
+    --color-surface-alt: var(--color-neutral-100);
+    --color-on-surface: var(--color-neutral-600);
+    --color-on-surface-strong: var(--color-neutral-900);
+    --color-primary: var(--color-black);
+    --color-on-primary: var(--color-neutral-100);
+    --color-secondary: var(--color-neutral-800);
+    --color-on-secondary: var(--color-white);
+    --color-outline: var(--color-neutral-300);
+    --color-outline-strong: var(--color-neutral-800);
+    --color-surface-dark: var(--color-neutral-950);
+    --color-surface-dark-alt: var(--color-neutral-800);
+    --color-on-surface-dark: var(--color-neutral-400);
+    --color-on-surface-dark-strong: var(--color-neutral-100);
+    --color-primary-dark: var(--color-white);
+    --color-on-primary-dark: var(--color-black);
+    --color-secondary-dark: var(--color-neutral-300);
+    --color-on-secondary-dark: var(--color-black);
+    --color-outline-dark: var(--color-neutral-700);
+    --color-outline-dark-strong: var(--color-neutral-300);
+    --color-info: var(--color-sky-500);
+    --color-on-info: var(--color-white);
+    --color-success: var(--color-green-300);
+    --color-on-success: var(--color-slate-900);
+    --color-warning: var(--color-amber-300);
+    --color-on-warning: var(--color-amber-900);
+    --color-danger: var(--color-red-500);
+    --color-on-danger: var(--color-white);
+    --radius-radius: var(--radius-none);
+}`,
+		"modern": `[data-theme=modern] {
+    --font-body: 'Lato', sans-serif;
+    --font-title: 'Lato', sans-serif;
+    --color-surface: var(--color-white);
+    --color-surface-alt: var(--color-neutral-50);
+    --color-on-surface: var(--color-neutral-600);
+    --color-on-surface-strong: var(--color-neutral-900);
+    --color-primary: var(--color-black);
+    --color-on-primary: var(--color-neutral-100);
+    --color-secondary: var(--color-neutral-800);
+    --color-on-secondary: var(--color-white);
+    --color-outline: var(--color-neutral-300);
+    --color-outline-strong: var(--color-neutral-800);
+    --color-surface-dark: var(--color-neutral-950);
+    --color-surface-dark-alt: var(--color-neutral-900);
+    --color-on-surface-dark: var(--color-neutral-300);
+    --color-on-surface-dark-strong: var(--color-white);
+    --color-primary-dark: var(--color-white);
+    --color-on-primary-dark: var(--color-black);
+    --color-secondary-dark: var(--color-neutral-300);
+    --color-on-secondary-dark: var(--color-black);
+    --color-outline-dark: var(--color-neutral-700);
+    --color-outline-dark-strong: var(--color-neutral-300);
+    --color-info: var(--color-sky-500);
+    --color-on-info: var(--color-white);
+    --color-success: var(--color-green-500);
+    --color-on-success: var(--color-white);
+    --color-warning: var(--color-amber-500);
+    --color-on-warning: var(--color-white);
+    --color-danger: var(--color-red-500);
+    --color-on-danger: var(--color-white);
+    --radius-radius: var(--radius-sm);
+}`,
+		"high-contrast": `[data-theme=high-contrast] {
+    --font-body: 'Inter', sans-serif;
+    --font-title: 'Inter', sans-serif;
+    --color-surface: var(--color-gray-50);
+    --color-surface-alt: var(--color-gray-200);
+    --color-on-surface: var(--color-gray-800);
+    --color-on-surface-strong: var(--color-gray-950);
+    --color-primary: var(--color-sky-900);
+    --color-on-primary: var(--color-white);
+    --color-secondary: var(--color-indigo-900);
+    --color-on-secondary: var(--color-white);
+    --color-outline: var(--color-gray-500);
+    --color-outline-strong: var(--color-gray-900);
+    --color-surface-dark: var(--color-gray-900);
+    --color-surface-dark-alt: var(--color-gray-800);
+    --color-on-surface-dark: var(--color-gray-300);
+    --color-on-surface-dark-strong: var(--color-gray-100);
+    --color-primary-dark: var(--color-sky-400);
+    --color-on-primary-dark: var(--color-black);
+    --color-secondary-dark: var(--color-indigo-400);
+    --color-on-secondary-dark: var(--color-black);
+    --color-outline-dark: var(--color-gray-500);
+    --color-outline-dark-strong: var(--color-gray-300);
+    --color-info: var(--color-sky-500);
+    --color-on-info: var(--color-black);
+    --color-success: var(--color-green-500);
+    --color-on-success: var(--color-black);
+    --color-warning: var(--color-yellow-500);
+    --color-on-warning: var(--color-black);
+    --color-danger: var(--color-red-500);
+    --color-on-danger: var(--color-black);
+    --radius-radius: var(--radius-sm);
+}`,
+		"neo-brutalism": `[data-theme=neo-brutalism] {
+    --font-body: 'Space Mono', monospace;
+    --font-title: 'Montserrat', sans-serif;
+    --color-surface: var(--color-white);
+    --color-surface-alt: var(--color-neutral-50);
+    --color-on-surface: var(--color-black);
+    --color-on-surface-strong: var(--color-black);
+    --color-primary: var(--color-violet-500);
+    --color-on-primary: var(--color-white);
+    --color-secondary: var(--color-lime-400);
+    --color-on-secondary: var(--color-black);
+    --color-outline: var(--color-black);
+    --color-outline-strong: var(--color-black);
+    --color-surface-dark: var(--color-neutral-950);
+    --color-surface-dark-alt: var(--color-neutral-800);
+    --color-on-surface-dark: var(--color-neutral-200);
+    --color-on-surface-dark-strong: var(--color-white);
+    --color-primary-dark: var(--color-violet-400);
+    --color-on-primary-dark: var(--color-black);
+    --color-secondary-dark: var(--color-lime-300);
+    --color-on-secondary-dark: var(--color-black);
+    --color-outline-dark: var(--color-neutral-300);
+    --color-outline-dark-strong: var(--color-white);
+    --color-info: var(--color-sky-600);
+    --color-on-info: var(--color-black);
+    --color-success: var(--color-green-600);
+    --color-on-success: var(--color-black);
+    --color-warning: var(--color-amber-500);
+    --color-on-warning: var(--color-black);
+    --color-danger: var(--color-red-500);
+    --color-on-danger: var(--color-black);
+    --radius-radius: var(--radius-none);
+}`,
+		"halloween": `[data-theme=halloween] {
+    --font-body: 'Poppins', sans-serif;
+    --font-title: 'Denk One', sans-serif;
+    --color-surface: var(--color-white);
+    --color-surface-alt: var(--color-gray-100);
+    --color-on-surface: var(--color-slate-600);
+    --color-on-surface-strong: var(--color-purple-800);
+    --color-primary: var(--color-orange-400);
+    --color-on-primary: var(--color-slate-100);
+    --color-secondary: var(--color-purple-600);
+    --color-on-secondary: var(--color-slate-100);
+    --color-outline: var(--color-gray-200);
+    --color-outline-strong: var(--color-orange-500);
+    --color-surface-dark: var(--color-black);
+    --color-surface-dark-alt: var(--color-gray-900);
+    --color-on-surface-dark: var(--color-violet-100);
+    --color-on-surface-dark-strong: var(--color-white);
+    --color-primary-dark: var(--color-lime-400);
+    --color-on-primary-dark: var(--color-black);
+    --color-secondary-dark: var(--color-fuchsia-600);
+    --color-on-secondary-dark: var(--color-white);
+    --color-outline-dark: var(--color-slate-700);
+    --color-outline-dark-strong: var(--color-purple-600);
+    --color-info: var(--color-sky-500);
+    --color-on-info: var(--color-slate-100);
+    --color-success: var(--color-green-400);
+    --color-on-success: var(--color-slate-900);
+    --color-warning: var(--color-amber-500);
+    --color-on-warning: var(--color-slate-900);
+    --color-danger: var(--color-red-500);
+    --color-on-danger: var(--color-slate-100);
+    --radius-radius: var(--radius-xl);
+}`,
+		"zombie": `[data-theme=zombie] {
+    --font-body: 'Montserrat', sans-serif;
+    --font-title: 'Denk One', sans-serif;
+    --color-surface: var(--color-violet-50);
+    --color-surface-alt: var(--color-violet-100);
+    --color-on-surface: var(--color-slate-600);
+    --color-on-surface-strong: var(--color-purple-800);
+    --color-primary: var(--color-orange-400);
+    --color-on-primary: var(--color-slate-100);
+    --color-secondary: var(--color-purple-600);
+    --color-on-secondary: var(--color-slate-100);
+    --color-outline: var(--color-gray-200);
+    --color-outline-strong: var(--color-slate-800);
+    --color-surface-dark: var(--color-indigo-950);
+    --color-surface-dark-alt: var(--color-violet-950);
+    --color-on-surface-dark: var(--color-violet-100);
+    --color-on-surface-dark-strong: var(--color-white);
+    --color-primary-dark: var(--color-orange-600);
+    --color-on-primary-dark: var(--color-slate-100);
+    --color-secondary-dark: var(--color-lime-500);
+    --color-on-secondary-dark: var(--color-black);
+    --color-outline-dark: var(--color-slate-700);
+    --color-outline-dark-strong: var(--color-slate-400);
+    --color-info: var(--color-sky-500);
+    --color-on-info: var(--color-slate-100);
+    --color-success: var(--color-green-400);
+    --color-on-success: var(--color-slate-900);
+    --color-warning: var(--color-amber-500);
+    --color-on-warning: var(--color-slate-900);
+    --color-danger: var(--color-red-500);
+    --color-on-danger: var(--color-slate-100);
+    --radius-radius: var(--radius-xl);
+}`,
+		"pastel": `[data-theme=pastel] {
+    --font-body: 'Playpen Sans', cursive;
+    --font-title: 'Playpen Sans', cursive;
+    --color-surface: var(--color-amber-50);
+    --color-surface-alt: var(--color-amber-100);
+    --color-on-surface: var(--color-neutral-500);
+    --color-on-surface-strong: var(--color-neutral-700);
+    --color-primary: var(--color-rose-400);
+    --color-on-primary: var(--color-white);
+    --color-secondary: var(--color-orange-200);
+    --color-on-secondary: var(--color-neutral-800);
+    --color-outline: var(--color-neutral-200);
+    --color-outline-strong: var(--color-neutral-500);
+    --color-surface-dark: var(--color-neutral-900);
+    --color-surface-dark-alt: var(--color-neutral-800);
+    --color-on-surface-dark: var(--color-violet-100);
+    --color-on-surface-dark-strong: var(--color-white);
+    --color-primary-dark: var(--color-rose-400);
+    --color-on-primary-dark: var(--color-white);
+    --color-secondary-dark: var(--color-orange-200);
+    --color-on-secondary-dark: var(--color-neutral-800);
+    --color-outline-dark: var(--color-neutral-700);
+    --color-outline-dark-strong: var(--color-neutral-600);
+    --color-info: var(--color-blue-300);
+    --color-on-info: var(--color-sky-800);
+    --color-success: var(--color-green-300);
+    --color-on-success: var(--color-green-800);
+    --color-warning: var(--color-amber-300);
+    --color-on-warning: var(--color-amber-700);
+    --color-danger: var(--color-red-300);
+    --color-on-danger: var(--color-red-800);
+    --radius-radius: var(--radius-xl);
+}`,
+		"90s": `[data-theme=90s] {
+    --font-body: 'Poppins', sans-serif;
+    --font-title: 'Oswald', sans-serif;
+    --color-surface: var(--color-neutral-100);
+    --color-surface-alt: var(--color-neutral-200);
+    --color-on-surface: var(--color-neutral-800);
+    --color-on-surface-strong: var(--color-black);
+    --color-primary: var(--color-purple-500);
+    --color-on-primary: var(--color-white);
+    --color-secondary: var(--color-sky-500);
+    --color-on-secondary: var(--color-white);
+    --color-outline: var(--color-neutral-300);
+    --color-outline-strong: var(--color-neutral-800);
+    --color-surface-dark: var(--color-neutral-800);
+    --color-surface-dark-alt: var(--color-neutral-900);
+    --color-on-surface-dark: var(--color-neutral-300);
+    --color-on-surface-dark-strong: var(--color-neutral-100);
+    --color-primary-dark: var(--color-purple-400);
+    --color-on-primary-dark: var(--color-black);
+    --color-secondary-dark: var(--color-blue-400);
+    --color-on-secondary-dark: var(--color-black);
+    --color-outline-dark: var(--color-neutral-700);
+    --color-outline-dark-strong: var(--color-neutral-300);
+    --color-info: var(--color-cyan-500);
+    --color-on-info: var(--color-black);
+    --color-success: var(--color-teal-400);
+    --color-on-success: var(--color-black);
+    --color-warning: var(--color-yellow-300);
+    --color-on-warning: var(--color-black);
+    --color-danger: var(--color-pink-500);
+    --color-on-danger: var(--color-black);
+    --radius-radius: var(--radius-xl);
+}`,
+		"christmas": `[data-theme=christmas] {
+    --font-body: 'Lato', sans-serif;
+    --font-title: 'Jost', sans-serif;
+    --color-surface: var(--color-white);
+    --color-surface-alt: var(--color-emerald-50);
+    --color-on-surface: var(--color-neutral-700);
+    --color-on-surface-strong: var(--color-emerald-800);
+    --color-primary: var(--color-red-600);
+    --color-on-primary: var(--color-white);
+    --color-secondary: var(--color-emerald-700);
+    --color-on-secondary: var(--color-white);
+    --color-outline: var(--color-neutral-300);
+    --color-outline-strong: var(--color-neutral-800);
+    --color-surface-dark: var(--color-emerald-950);
+    --color-surface-dark-alt: var(--color-emerald-800);
+    --color-on-surface-dark: var(--color-neutral-200);
+    --color-on-surface-dark-strong: var(--color-amber-100);
+    --color-primary-dark: var(--color-red-600);
+    --color-on-primary-dark: var(--color-white);
+    --color-secondary-dark: var(--color-emerald-600);
+    --color-on-secondary-dark: var(--color-white);
+    --color-outline-dark: var(--color-emerald-900);
+    --color-outline-dark-strong: var(--color-white);
+    --color-info: var(--color-cyan-500);
+    --color-on-info: var(--color-black);
+    --color-success: var(--color-emerald-500);
+    --color-on-success: var(--color-black);
+    --color-warning: var(--color-amber-500);
+    --color-on-warning: var(--color-black);
+    --color-danger: var(--color-red-500);
+    --color-on-danger: var(--color-black);
+    --radius-radius: var(--radius-md);
+}`,
+		"prototype": `[data-theme=prototype] {
+    --font-body: 'Playpen Sans', cursive;
+    --font-title: 'Playpen Sans', cursive;
+    --color-surface: var(--color-white);
+    --color-surface-alt: var(--color-neutral-100);
+    --color-on-surface: var(--color-black);
+    --color-on-surface-strong: var(--color-black);
+    --color-primary: var(--color-black);
+    --color-on-primary: var(--color-white);
+    --color-secondary: var(--color-neutral-700);
+    --color-on-secondary: var(--color-white);
+    --color-outline: var(--color-black);
+    --color-outline-strong: var(--color-black);
+    --color-surface-dark: var(--color-black);
+    --color-surface-dark-alt: var(--color-neutral-900);
+    --color-on-surface-dark: var(--color-white);
+    --color-on-surface-dark-strong: var(--color-white);
+    --color-primary-dark: var(--color-white);
+    --color-on-primary-dark: var(--color-black);
+    --color-secondary-dark: var(--color-neutral-300);
+    --color-on-secondary-dark: var(--color-black);
+    --color-outline-dark: var(--color-white);
+    --color-outline-dark-strong: var(--color-white);
+    --color-info: var(--color-sky-300);
+    --color-on-info: var(--color-black);
+    --color-success: var(--color-green-300);
+    --color-on-success: var(--color-black);
+    --color-warning: var(--color-yellow-200);
+    --color-on-warning: var(--color-black);
+    --color-danger: var(--color-red-300);
+    --color-on-danger: var(--color-black);
+    --radius-radius: var(--radius-none);
+}`,
+		"news": `[data-theme=news] {
+    --font-body: 'Inter', sans-serif;
+    --font-title: 'Merriweather', serif;
+    --color-surface: var(--color-zinc-50);
+    --color-surface-alt: var(--color-zinc-100);
+    --color-on-surface: var(--color-neutral-600);
+    --color-on-surface-strong: var(--color-neutral-900);
+    --color-primary: var(--color-sky-700);
+    --color-on-primary: var(--color-white);
+    --color-secondary: var(--color-black);
+    --color-on-secondary: var(--color-white);
+    --color-outline: var(--color-zinc-300);
+    --color-outline-strong: var(--color-zinc-500);
+    --color-surface-dark: var(--color-zinc-900);
+    --color-surface-dark-alt: var(--color-zinc-800);
+    --color-on-surface-dark: var(--color-zinc-200);
+    --color-on-surface-dark-strong: var(--color-zinc-50);
+    --color-primary-dark: var(--color-sky-600);
+    --color-on-primary-dark: var(--color-white);
+    --color-secondary-dark: var(--color-white);
+    --color-on-secondary-dark: var(--color-black);
+    --color-outline-dark: var(--color-zinc-700);
+    --color-outline-dark-strong: var(--color-zinc-500);
+    --color-info: var(--color-sky-700);
+    --color-on-info: var(--color-slate-100);
+    --color-success: var(--color-green-700);
+    --color-on-success: var(--color-white);
+    --color-warning: var(--color-amber-600);
+    --color-on-warning: var(--color-amber-50);
+    --color-danger: var(--color-red-700);
+    --color-on-danger: var(--color-slate-100);
+    --radius-radius: var(--radius-sm);
+}`,
+		"industrial": `[data-theme=industrial] {
+    --font-body: 'Poppins', sans-serif;
+    --font-title: 'Oswald', sans-serif;
+    --color-surface: var(--color-stone-50);
+    --color-surface-alt: var(--color-stone-200);
+    --color-on-surface: var(--color-stone-800);
+    --color-on-surface-strong: var(--color-black);
+    --color-primary: var(--color-amber-500);
+    --color-on-primary: var(--color-black);
+    --color-secondary: var(--color-stone-900);
+    --color-on-secondary: var(--color-stone-50);
+    --color-outline: var(--color-stone-300);
+    --color-outline-strong: var(--color-blue-600);
+    --color-surface-dark: var(--color-stone-950);
+    --color-surface-dark-alt: var(--color-stone-900);
+    --color-on-surface-dark: var(--color-stone-300);
+    --color-on-surface-dark-strong: var(--color-white);
+    --color-primary-dark: var(--color-amber-400);
+    --color-on-primary-dark: var(--color-black);
+    --color-secondary-dark: var(--color-stone-700);
+    --color-on-secondary-dark: var(--color-white);
+    --color-outline-dark: var(--color-stone-700);
+    --color-outline-dark-strong: var(--color-blue-500);
+    --color-info: var(--color-sky-600);
+    --color-on-info: var(--color-slate-100);
+    --color-success: var(--color-green-600);
+    --color-on-success: var(--color-white);
+    --color-warning: var(--color-amber-500);
+    --color-on-warning: var(--color-black);
+    --color-danger: var(--color-red-600);
+    --color-on-danger: var(--color-white);
+    --radius-radius: var(--radius-none);
+}`,
+	}
+}
+
+func themeCSSScript() string {
+	blocks := getThemeCSSBlocks()
+	var sb strings.Builder
+	sb.WriteString("document.addEventListener('alpine:init', () => {\n")
+	sb.WriteString("  Alpine.data('themeCssOutput', () => ({\n")
+	sb.WriteString("    copied: false,\n")
+	sb.WriteString("    currentCSS: '',\n")
+	sb.WriteString("    init() {\n")
+	sb.WriteString("      const update = () => {\n")
+	sb.WriteString("        const t = document.documentElement.getAttribute('data-theme') || 'minimal';\n")
+	sb.WriteString("        this.currentCSS = this.blocks[t] || 'Theme not found';\n")
+	sb.WriteString("      };\n")
+	sb.WriteString("      update();\n")
+	sb.WriteString("      new MutationObserver(update).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });\n")
+	sb.WriteString("    },\n")
+	sb.WriteString("    copyCSS() {\n")
+	sb.WriteString("      navigator.clipboard.writeText(this.currentCSS).then(() => {\n")
+	sb.WriteString("        this.copied = true;\n")
+	sb.WriteString("        setTimeout(() => this.copied = false, 2000);\n")
+	sb.WriteString("      });\n")
+	sb.WriteString("    },\n")
+	sb.WriteString("    blocks: {\n")
+	for key, css := range blocks {
+		sb.WriteString(fmt.Sprintf("      '%s': `%s`,\n", key, css))
+	}
+	sb.WriteString("    }\n")
+	sb.WriteString("  }));\n")
+	sb.WriteString("});\n")
+	return sb.String()
+}
+
+templ themeCSSOutputScript() {
+	@templ.Raw("<script>" + themeCSSScript() + "</script>")
+}
+
+templ ThemeDemoPage() {
+	@demo.Layout("Theme", "theme", themeDemoContent())
+}
+
+templ themeDemoContent() {
+	@themeCSSOutputScript()
+	<div class="space-y-12 max-w-6xl">
+		<!-- Page header -->
+		<div>
+			<h1 class="text-3xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong">Theme Settings</h1>
+			<p class="mt-2 text-on-surface dark:text-on-surface-dark">Browse ready-to-use themes. Click a theme to apply it across the site.</p>
+		</div>
+		<!-- Section 1: Theme Grid -->
+		<div>
+			<h2 class="text-2xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong mb-4">Themes</h2>
+			@themeGrid()
+		</div>
+		<!-- Section 2: Live Showcase -->
+		<div>
+			<h2 class="text-2xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong mb-4">Theme Showcase</h2>
+			@themeShowcase()
+		</div>
+		<!-- Section 3: CSS Output -->
+		<div x-data="themeCssOutput">
+			<h2 class="text-2xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong mb-4">CSS Code</h2>
+			@themeCSSOutput()
+		</div>
+	</div>
+}
+
+templ themeGrid() {
+	<div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+		for _, t := range getThemeInfos() {
+			<button
+				data-theme-key={ t.Key }
+				@click="setTheme($el.dataset.themeKey)"
+				class="relative rounded-radius border border-outline dark:border-outline-dark bg-surface dark:bg-surface-dark p-4 text-left transition-all cursor-pointer"
+				:class={ fmt.Sprintf("theme === '%s' ? 'ring-2 ring-primary dark:ring-primary-dark' : 'hover:border-on-surface/30 dark:hover:border-on-surface-dark/30'", t.Key) }
+			>
+				<!-- Radio indicator + name row -->
+				<div class="flex items-center gap-2 mb-2">
+					<div class="size-4 rounded-full border-2 border-outline dark:border-outline-dark flex items-center justify-center">
+						<div
+							class="size-2 rounded-full bg-primary dark:bg-primary-dark"
+							:class={ fmt.Sprintf("theme === '%s' ? '' : 'hidden'", t.Key) }
+						></div>
+					</div>
+					<span class="text-sm font-semibold text-on-surface-strong dark:text-on-surface-dark-strong">{ t.Label }</span>
+				</div>
+				<!-- Color dots -->
+				<div class="flex items-center gap-1.5 mb-1">
+					<span class={ t.PrimaryClass + " size-3 rounded-full" }></span>
+					<span class={ t.SecondaryClass + " size-3 rounded-full" }></span>
+				</div>
+				<!-- Mini preview -->
+				<div class="mt-3 flex gap-2">
+					<!-- Left section: text lines -->
+					<div class="flex-1 space-y-1.5">
+						<div class="h-2 w-3/4 rounded bg-on-surface/10 dark:bg-on-surface-dark/10"></div>
+						<div class="h-2 w-full rounded bg-on-surface/10 dark:bg-on-surface-dark/10"></div>
+						<div class="h-2 w-2/3 rounded bg-on-surface/10 dark:bg-on-surface-dark/10"></div>
+					</div>
+					<!-- Right section: content block -->
+					<div class="flex-1 rounded bg-on-surface/5 dark:bg-on-surface-dark/5"></div>
+				</div>
+				<!-- Primary color bar -->
+				<div class={ "mt-2 h-4 w-12 rounded " + t.PrimaryClass }></div>
+			</button>
+		}
+	</div>
+}
+
+templ themeShowcase() {
+	<!-- Window chrome card -->
+	<div class="border border-outline dark:border-outline-dark rounded-radius overflow-hidden">
+		<div class="flex items-center gap-1.5 bg-surface-alt dark:bg-surface-dark-alt px-3 py-2 border-b border-outline dark:border-outline-dark">
+			<span class="size-3 rounded-full bg-red-400"></span>
+			<span class="size-3 rounded-full bg-yellow-400"></span>
+			<span class="size-3 rounded-full bg-green-400"></span>
+		</div>
+		<div class="bg-surface dark:bg-surface-dark p-6 space-y-8">
+			<!-- Color Palette -->
+			<div>
+				<h3 class="text-sm font-semibold text-on-surface-strong dark:text-on-surface-dark-strong mb-3">Color Palette</h3>
+				<div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3">
+					<div class="rounded-radius overflow-hidden">
+						<div class="h-12 bg-primary dark:bg-primary-dark"></div>
+						<div class="px-2 py-1.5 bg-surface-alt dark:bg-surface-dark-alt text-xs text-on-surface dark:text-on-surface-dark">Primary</div>
+					</div>
+					<div class="rounded-radius overflow-hidden">
+						<div class="h-12 bg-secondary dark:bg-secondary-dark"></div>
+						<div class="px-2 py-1.5 bg-surface-alt dark:bg-surface-dark-alt text-xs text-on-surface dark:text-on-surface-dark">Secondary</div>
+					</div>
+					<div class="rounded-radius overflow-hidden">
+						<div class="h-12 bg-info"></div>
+						<div class="px-2 py-1.5 bg-surface-alt dark:bg-surface-dark-alt text-xs text-on-surface dark:text-on-surface-dark">Info</div>
+					</div>
+					<div class="rounded-radius overflow-hidden">
+						<div class="h-12 bg-danger"></div>
+						<div class="px-2 py-1.5 bg-surface-alt dark:bg-surface-dark-alt text-xs text-on-surface dark:text-on-surface-dark">Danger</div>
+					</div>
+					<div class="rounded-radius overflow-hidden">
+						<div class="h-12 bg-warning"></div>
+						<div class="px-2 py-1.5 bg-surface-alt dark:bg-surface-dark-alt text-xs text-on-surface dark:text-on-surface-dark">Warning</div>
+					</div>
+					<div class="rounded-radius overflow-hidden">
+						<div class="h-12 bg-success"></div>
+						<div class="px-2 py-1.5 bg-surface-alt dark:bg-surface-dark-alt text-xs text-on-surface dark:text-on-surface-dark">Success</div>
+					</div>
+				</div>
+			</div>
+			<!-- Buttons -->
+			<div>
+				<h3 class="text-sm font-semibold text-on-surface-strong dark:text-on-surface-dark-strong mb-3">Buttons</h3>
+				<div class="flex flex-wrap gap-3">
+					<button class="px-4 py-2 rounded-radius bg-primary text-on-primary dark:bg-primary-dark dark:text-on-primary-dark font-medium text-sm hover:opacity-90 transition-opacity">
+						Primary
+					</button>
+					<button class="px-4 py-2 rounded-radius bg-secondary text-on-secondary dark:bg-secondary-dark dark:text-on-secondary-dark font-medium text-sm hover:opacity-90 transition-opacity">
+						Secondary
+					</button>
+					<button class="px-4 py-2 rounded-radius border border-outline dark:border-outline-dark text-on-surface-strong dark:text-on-surface-dark-strong font-medium text-sm hover:bg-surface-alt dark:hover:bg-surface-dark-alt transition-colors">
+						Outline
+					</button>
+				</div>
+			</div>
+			<!-- Card -->
+			<div>
+				<h3 class="text-sm font-semibold text-on-surface-strong dark:text-on-surface-dark-strong mb-3">Card</h3>
+				<div class="max-w-sm rounded-radius border border-outline dark:border-outline-dark bg-surface-alt dark:bg-surface-dark-alt p-5">
+					<div class="flex items-center gap-3 mb-3">
+						<div class="size-10 rounded-full bg-primary dark:bg-primary-dark flex items-center justify-center text-on-primary dark:text-on-primary-dark font-bold text-sm">JD</div>
+						<div>
+							<p class="text-sm font-semibold text-on-surface-strong dark:text-on-surface-dark-strong">Jane Doe</p>
+							<p class="text-xs text-on-surface dark:text-on-surface-dark">Product Designer</p>
+						</div>
+					</div>
+					<p class="text-sm text-on-surface dark:text-on-surface-dark">
+						This is a sample card component that adapts to the current theme. The colors, borders, and radius all respond to CSS variables.
+					</p>
+				</div>
+			</div>
+			<!-- Toggles -->
+			<div x-data="{ on1: true, on2: false }">
+				<h3 class="text-sm font-semibold text-on-surface-strong dark:text-on-surface-dark-strong mb-3">Toggles</h3>
+				<div class="flex items-center gap-6">
+					<button
+						@click="on1 = !on1"
+						class="relative inline-flex h-6 w-11 items-center rounded-full transition-colors"
+						:class="on1 ? 'bg-primary dark:bg-primary-dark' : 'bg-on-surface/20 dark:bg-on-surface-dark/20'"
+					>
+						<span
+							class="inline-block size-4 transform rounded-full bg-white transition-transform"
+							:class="on1 ? 'translate-x-6' : 'translate-x-1'"
+						></span>
+					</button>
+					<button
+						@click="on2 = !on2"
+						class="relative inline-flex h-6 w-11 items-center rounded-full transition-colors"
+						:class="on2 ? 'bg-primary dark:bg-primary-dark' : 'bg-on-surface/20 dark:bg-on-surface-dark/20'"
+					>
+						<span
+							class="inline-block size-4 transform rounded-full bg-white transition-transform"
+							:class="on2 ? 'translate-x-6' : 'translate-x-1'"
+						></span>
+					</button>
+				</div>
+			</div>
+			<!-- Step Indicators -->
+			<div>
+				<h3 class="text-sm font-semibold text-on-surface-strong dark:text-on-surface-dark-strong mb-3">Steps</h3>
+				<div class="flex items-center gap-3">
+					<div class="size-8 rounded-full bg-primary dark:bg-primary-dark text-on-primary dark:text-on-primary-dark flex items-center justify-center text-sm font-bold">1</div>
+					<div class="size-8 rounded-full bg-primary dark:bg-primary-dark text-on-primary dark:text-on-primary-dark flex items-center justify-center text-sm font-bold">2</div>
+					<div class="size-8 rounded-full bg-secondary dark:bg-secondary-dark text-on-secondary dark:text-on-secondary-dark flex items-center justify-center text-sm font-bold">3</div>
+					<div class="size-8 rounded-full bg-on-surface/10 dark:bg-on-surface-dark/10 text-on-surface dark:text-on-surface-dark flex items-center justify-center text-sm font-bold">4</div>
+				</div>
+			</div>
+		</div>
+	</div>
+}
+
+templ themeCSSOutput() {
+	<div class="border border-outline dark:border-outline-dark rounded-radius overflow-hidden">
+		<div class="flex items-center justify-between px-4 py-3 border-b border-outline dark:border-outline-dark bg-surface-alt dark:bg-surface-dark-alt">
+			<span class="text-sm font-medium text-on-surface-strong dark:text-on-surface-dark-strong">
+				CSS Variables
+			</span>
+			<button
+				@click="copyCSS()"
+				class="flex items-center gap-1.5 rounded-radius px-3 py-1.5 text-xs font-medium bg-primary text-on-primary dark:bg-primary-dark dark:text-on-primary-dark hover:opacity-90 transition-opacity"
+			>
+				<span x-text="copied ? 'Copied!' : 'Copy CSS'">Copy CSS</span>
+			</button>
+		</div>
+		<pre class="p-4 text-sm bg-neutral-950 text-neutral-200 overflow-x-auto max-h-96 overflow-y-auto"><code x-text="currentCSS"></code></pre>
+	</div>
+}
