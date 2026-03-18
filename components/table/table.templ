@@ -1,0 +1,319 @@
+package table
+
+import "fmt"
+
+// Table renders a table component based on PenguinUI
+// Supports static content, sorting, lazy loading, pagination, and infinite scroll.
+//
+// Usage:
+//
+//	// Static table
+//	@table.Table(table.Config{
+//	    Columns: []table.Column{{Key: "name", Label: "Name"}},
+//	    Rows:    []table.Row{{ID: "1", Cells: map[string]table.Cell{"name": {Text: "Alice"}}}},
+//	})
+//
+//	// Sortable table with HTMX
+//	@table.Table(table.Config{
+//	    ID:           "users",
+//	    HTMXEndpoint: "/api/components/table/rows",
+//	    Columns:      []table.Column{{Key: "name", Label: "Name", Sortable: true}},
+//	    Rows:         rows,
+//	})
+//
+//	// Lazy-loaded table
+//	@table.Table(table.Config{
+//	    ID:           "lazy",
+//	    HTMXEndpoint: "/api/components/table/rows",
+//	    LazyLoad:     true,
+//	    Columns:      []table.Column{{Key: "name", Label: "Name"}},
+//	})
+//
+//	// Paginated table
+//	@table.Table(table.Config{
+//	    ID:           "paged",
+//	    HTMXEndpoint: "/api/components/table/rows",
+//	    Columns:      columns,
+//	    Rows:         rows,
+//	    Pagination:   &table.PaginationConfig{CurrentPage: 1, TotalPages: 5, PerPage: 3},
+//	})
+//
+//	// Infinite scroll table
+//	@table.Table(table.Config{
+//	    ID:             "scroll",
+//	    HTMXEndpoint:   "/api/components/table/rows",
+//	    Columns:        columns,
+//	    Rows:           rows,
+//	    InfiniteScroll: &table.InfiniteScrollConfig{NextPage: 2, HasMore: true},
+//	})
+templ Table(cfg Config) {
+	if cfg.ShowCheckbox {
+		<div x-data="{ checkAll: false }" class={ cfg.ContainerClasses() }>
+			@tableInner(cfg)
+		</div>
+	} else {
+		<div class={ cfg.ContainerClasses() }>
+			@tableInner(cfg)
+		</div>
+	}
+	if cfg.Pagination != nil {
+		@Pagination(cfg)
+	}
+}
+
+templ tableInner(cfg Config) {
+	<table class={ cfg.TableClasses() } id={ cfg.GetID() }>
+		<thead class={ cfg.TheadClasses() }>
+			<tr>
+				if cfg.ShowCheckbox {
+					<th scope="col" class={ cfg.HeaderCellClasses() }>
+						@checkboxLabel(cfg, "checkAll", true)
+					</th>
+				}
+				for _, col := range cfg.Columns {
+					if col.Sortable && cfg.HTMXEndpoint != "" {
+						@sortableHeader(cfg, col)
+					} else {
+						<th scope="col" class={ cfg.HeaderCellClasses() }>{ col.Label }</th>
+					}
+				}
+			</tr>
+		</thead>
+		if cfg.LazyLoad && cfg.HTMXEndpoint != "" {
+			<tbody
+				id={ cfg.TbodyID() }
+				class={ cfg.TbodyClasses() }
+				hx-get={ cfg.HTMXEndpoint }
+				hx-trigger="load"
+				hx-swap="innerHTML"
+			>
+				<tr>
+					<td colspan={ fmt.Sprintf("%d", len(cfg.Columns) + boolToInt(cfg.ShowCheckbox)) } class="p-8 text-center">
+						@loadingIndicator()
+					</td>
+				</tr>
+			</tbody>
+		} else {
+			@TableBody(cfg)
+		}
+	</table>
+}
+
+// TableBody renders just the tbody element. Use this for HTMX fragment responses.
+templ TableBody(cfg Config) {
+	<tbody id={ cfg.TbodyID() } class={ cfg.TbodyClasses() }>
+		for _, row := range cfg.Rows {
+			@TableRow(cfg, row)
+		}
+		if cfg.InfiniteScroll != nil && cfg.InfiniteScroll.HasMore && cfg.HTMXEndpoint != "" {
+			@scrollSentinel(cfg)
+		}
+	</tbody>
+}
+
+// TableRows renders just the row elements without the tbody wrapper.
+// Use this for infinite scroll append responses.
+templ TableRows(cfg Config) {
+	for _, row := range cfg.Rows {
+		@TableRow(cfg, row)
+	}
+	if cfg.InfiniteScroll != nil && cfg.InfiniteScroll.HasMore && cfg.HTMXEndpoint != "" {
+		@scrollSentinel(cfg)
+	}
+}
+
+// TableRow renders a single table row
+templ TableRow(cfg Config, row Row) {
+	<tr class={ cfg.RowClasses() }>
+		if cfg.ShowCheckbox {
+			<td class={ cfg.CellClasses() }>
+				@checkboxLabel(cfg, fmt.Sprintf("user%s", row.ID), false)
+			</td>
+		}
+		for _, col := range cfg.Columns {
+			<td class={ cfg.CellClasses() }>
+				if cell, ok := row.Cells[col.Key]; ok {
+					if cell.Component != nil {
+						@cell.Component
+					} else {
+						{ cell.Text }
+					}
+				}
+			</td>
+		}
+	</tr>
+}
+
+templ sortableHeader(cfg Config, col Column) {
+	<th
+		scope="col"
+		class={ cfg.SortableHeaderClasses(col.Key) }
+		hx-get={ cfg.SortURL(col.Key) }
+		hx-target={ "#" + cfg.TbodyID() }
+		hx-swap="innerHTML"
+	>
+		<div class="flex items-center gap-1">
+			<span>{ col.Label }</span>
+			@sortIcon(cfg, col.Key)
+		</div>
+	</th>
+}
+
+templ sortIcon(cfg Config, key string) {
+	if cfg.IsSortedBy(key) && cfg.SortDir == SortAsc {
+		// Sort ascending arrow
+		<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-4">
+			<path fill-rule="evenodd" d="M10 17a.75.75 0 01-.75-.75V5.612L5.29 9.77a.75.75 0 01-1.08-1.04l5.25-5.5a.75.75 0 011.08 0l5.25 5.5a.75.75 0 11-1.08 1.04l-3.96-4.158V16.25A.75.75 0 0110 17z" clip-rule="evenodd"></path>
+		</svg>
+	} else if cfg.IsSortedBy(key) && cfg.SortDir == SortDesc {
+		// Sort descending arrow
+		<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-4">
+			<path fill-rule="evenodd" d="M10 3a.75.75 0 01.75.75v10.638l3.96-4.158a.75.75 0 111.08 1.04l-5.25 5.5a.75.75 0 01-1.08 0l-5.25-5.5a.75.75 0 111.08-1.04l3.96 4.158V3.75A.75.75 0 0110 3z" clip-rule="evenodd"></path>
+		</svg>
+	} else {
+		// Unsorted (both arrows)
+		<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-4 opacity-40">
+			<path fill-rule="evenodd" d="M10 3a.75.75 0 01.53.22l3.25 3.25a.75.75 0 01-1.06 1.06L10 4.81 7.28 7.53a.75.75 0 01-1.06-1.06l3.25-3.25A.75.75 0 0110 3zm-3.72 9.47a.75.75 0 011.06 0L10 15.19l2.72-2.72a.75.75 0 111.06 1.06l-3.25 3.25a.75.75 0 01-1.06 0l-3.25-3.25a.75.75 0 010-1.06z" clip-rule="evenodd"></path>
+		</svg>
+	}
+}
+
+templ scrollSentinel(cfg Config) {
+	<tr
+		hx-get={ cfg.NextPageURL() }
+		hx-trigger="revealed"
+		hx-swap="outerHTML"
+		hx-target="this"
+	>
+		<td colspan={ fmt.Sprintf("%d", len(cfg.Columns) + boolToInt(cfg.ShowCheckbox)) } class="p-4 text-center">
+			@loadingIndicator()
+		</td>
+	</tr>
+}
+
+// Pagination renders page navigation controls below the table
+templ Pagination(cfg Config) {
+	if cfg.Pagination != nil && cfg.Pagination.TotalPages > 1 {
+		<nav id={ cfg.PaginationID() } aria-label="Table pagination" class="flex items-center justify-between border-t border-outline px-4 py-3 dark:border-outline-dark">
+			<div class="text-sm text-on-surface/70 dark:text-on-surface-dark/70">
+				Page { itoa(cfg.Pagination.CurrentPage) } of { itoa(cfg.Pagination.TotalPages) }
+			</div>
+			<div class="flex items-center gap-1">
+				// Previous button
+				if cfg.Pagination.CurrentPage > 1 {
+					<button
+						type="button"
+						class="rounded-radius px-3 py-1.5 text-sm font-medium text-on-surface hover:bg-surface-alt dark:text-on-surface-dark dark:hover:bg-surface-dark-alt transition-colors"
+						hx-get={ cfg.PageURL(cfg.Pagination.CurrentPage - 1) }
+						hx-target={ "#" + cfg.TbodyID() }
+						hx-swap="innerHTML"
+					>
+						Prev
+					</button>
+				} else {
+					<button
+						type="button"
+						class="rounded-radius px-3 py-1.5 text-sm font-medium text-on-surface/40 dark:text-on-surface-dark/40 cursor-not-allowed"
+						disabled
+					>
+						Prev
+					</button>
+				}
+				// Page numbers
+				for _, page := range cfg.Pagination.PaginationPages() {
+					if page == cfg.Pagination.CurrentPage {
+						<button
+							type="button"
+							class="rounded-radius px-3 py-1.5 text-sm font-medium bg-primary text-on-primary dark:bg-primary-dark dark:text-on-primary-dark"
+						>
+							{ itoa(page) }
+						</button>
+					} else {
+						<button
+							type="button"
+							class="rounded-radius px-3 py-1.5 text-sm font-medium text-on-surface hover:bg-surface-alt dark:text-on-surface-dark dark:hover:bg-surface-dark-alt transition-colors"
+							hx-get={ cfg.PageURL(page) }
+							hx-target={ "#" + cfg.TbodyID() }
+							hx-swap="innerHTML"
+						>
+							{ itoa(page) }
+						</button>
+					}
+				}
+				// Next button
+				if cfg.Pagination.CurrentPage < cfg.Pagination.TotalPages {
+					<button
+						type="button"
+						class="rounded-radius px-3 py-1.5 text-sm font-medium text-on-surface hover:bg-surface-alt dark:text-on-surface-dark dark:hover:bg-surface-dark-alt transition-colors"
+						hx-get={ cfg.PageURL(cfg.Pagination.CurrentPage + 1) }
+						hx-target={ "#" + cfg.TbodyID() }
+						hx-swap="innerHTML"
+					>
+						Next
+					</button>
+				} else {
+					<button
+						type="button"
+						class="rounded-radius px-3 py-1.5 text-sm font-medium text-on-surface/40 dark:text-on-surface-dark/40 cursor-not-allowed"
+						disabled
+					>
+						Next
+					</button>
+				}
+			</div>
+		</nav>
+	}
+}
+
+templ loadingIndicator() {
+	<div class="flex items-center justify-center gap-2 text-on-surface/60 dark:text-on-surface-dark/60">
+		<svg class="size-5 animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+			<circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+			<path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+		</svg>
+		<span class="text-sm">Loading...</span>
+	</div>
+}
+
+templ checkboxLabel(cfg Config, id string, isHeader bool) {
+	<label for={ id } class="flex items-center text-on-surface dark:text-on-surface-dark">
+		<div class="relative flex items-center">
+			if isHeader {
+				<input type="checkbox" x-model="checkAll" id={ id } class={ cfg.CheckboxClasses() }/>
+			} else {
+				<input type="checkbox" id={ id } class={ cfg.CheckboxClasses() } x-bind:checked="checkAll"/>
+			}
+			<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" stroke="currentColor" fill="none" stroke-width="4" class="pointer-events-none invisible absolute left-1/2 top-1/2 size-3 -translate-x-1/2 -translate-y-1/2 text-on-primary peer-checked:visible dark:text-on-primary-dark">
+				<path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"></path>
+			</svg>
+		</div>
+	</label>
+}
+
+// ActionButton renders an action button for table rows
+templ ActionButton(label string) {
+	<button type="button" class={ ActionButtonClasses() }>{ label }</button>
+}
+
+// StatusBadge renders a status badge for table cells
+templ StatusBadge(label string, status string) {
+	<span class={ StatusBadgeClasses(status) }>{ label }</span>
+}
+
+// UserCell renders a user cell with avatar, name, and email
+templ UserCell(avatarURL string, name string, email string) {
+	<div class="flex w-max items-center gap-2">
+		<img class="size-10 rounded-full object-cover" src={ avatarURL } alt="user avatar"/>
+		<div class="flex flex-col">
+			<span class="text-neutral-900 dark:text-white">{ name }</span>
+			<span class="text-sm text-neutral-600 opacity-85 dark:text-neutral-300">{ email }</span>
+		</div>
+	</div>
+}
+
+func boolToInt(b bool) int {
+	if b {
+		return 1
+	}
+	return 0
+}
