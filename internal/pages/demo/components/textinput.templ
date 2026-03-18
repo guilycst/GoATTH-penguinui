@@ -1,0 +1,173 @@
+package components
+
+import (
+	"github.com/guilycst/GoATTH-penguinui/components/textinput"
+	"github.com/guilycst/GoATTH-penguinui/internal/pages/demo"
+)
+
+// TextInputDemoPage renders the Text Input component demo
+templ TextInputDemoPage() {
+	@demo.Layout("Text Input", "text-input", textInputDemoContent())
+}
+
+// textInputDemoContent renders the actual content inside the layout
+templ textInputDemoContent() {
+	@demo.ComponentDemo(
+		demo.ComponentDemoProps{
+			Title:         "Text Input",
+			Description:   "Text inputs allow users to enter and edit text. Supports various types including password with toggle, search with icon, validation states, and input masks.",
+			OriginalURL:   "/original/text-input/default-text-input.html",
+			OriginalLabel: "Original PenguinUI",
+			GoATTHLabel:   "GoATTH Component",
+		},
+		textInputDemoPreview(),
+		`// Default text input
+@textinput.TextInput(textinput.Config{
+    ID:          "name",
+    Name:        "name",
+    Label:       "Name",
+    Placeholder: "Enter your name",
+})
+
+// Password input with toggle
+@textinput.TextInput(textinput.Config{
+    ID:           "password",
+    Name:         "password",
+    Label:        "Password",
+    Type:         textinput.TypePassword,
+    Placeholder:  "Enter your password",
+    Autocomplete: "current-password",
+})
+
+// Input with error state
+@textinput.TextInput(textinput.Config{
+    ID:         "email-error",
+    Name:       "email",
+    Label:      "Email",
+    State:      textinput.StateError,
+    HelperText: "Error: Email is required",
+})
+
+// Input with success state
+@textinput.TextInput(textinput.Config{
+    ID:         "name-success",
+    Name:       "name",
+    Label:      "Name",
+    State:      textinput.StateSuccess,
+    Value:      "John",
+})
+
+// Search input
+@textinput.TextInput(textinput.Config{
+    Name:        "search",
+    Type:        textinput.TypeSearch,
+    Placeholder: "Search",
+})
+
+// Input with mask
+@textinput.TextInput(textinput.Config{
+    ID:           "phone",
+    Name:         "phone",
+    Label:        "Phone",
+    Mask:         "(999) 999-9999",
+    Placeholder:  "(999) 999-9999",
+    Autocomplete: "tel-national",
+})`,
+	)
+}
+
+// textInputDemoPreview renders the GoATTH text input preview
+templ textInputDemoPreview() {
+	<div class="w-full max-w-4xl mx-auto space-y-8">
+		// Default Text Input
+		<div>
+			<h4 class="text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong">Default Text Input</h4>
+			<div class="flex flex-wrap gap-4">
+				@textinput.TextInput(textinput.Config{
+					ID:           "textInputDefault",
+					Name:         "name",
+					Label:        "Name",
+					Placeholder:  "Enter your name",
+					Autocomplete: "name",
+				})
+			</div>
+		</div>
+
+		// Validation States
+		<div>
+			<h4 class="text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong">Validation States</h4>
+			<div class="flex flex-wrap gap-4">
+				@textinput.TextInput(textinput.Config{
+					ID:         "inputError",
+					Name:       "inputStates",
+					Label:      "Name",
+					State:      textinput.StateError,
+					HelperText: "Error: Name field is required",
+				})
+				@textinput.TextInput(textinput.Config{
+					ID:    "inputSuccess",
+					Name:  "inputStates",
+					Label: "Name",
+					State: textinput.StateSuccess,
+					Value: "John",
+				})
+			</div>
+		</div>
+
+		// Password Input
+		<div>
+			<h4 class="text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong">Password Input</h4>
+			<div class="flex flex-wrap gap-4">
+				@textinput.TextInput(textinput.Config{
+					ID:           "passwordInput",
+					Name:         "password",
+					Label:        "Password",
+					Type:         textinput.TypePassword,
+					Placeholder:  "Enter your password",
+					Autocomplete: "current-password",
+				})
+			</div>
+		</div>
+
+		// Search Input
+		<div>
+			<h4 class="text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong">Search Input</h4>
+			<div class="flex flex-wrap gap-4">
+				@textinput.TextInput(textinput.Config{
+					Name:        "search",
+					Type:        textinput.TypeSearch,
+					Placeholder: "Search",
+				})
+			</div>
+		</div>
+
+		// Input with Mask
+		<div>
+			<h4 class="text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong">Input with Mask</h4>
+			<div class="flex flex-wrap gap-4">
+				@textinput.TextInput(textinput.Config{
+					ID:           "phoneInput",
+					Name:         "phone",
+					Label:        "Phone",
+					Mask:         "(999) 999-9999",
+					Placeholder:  "(999) 999-9999",
+					Autocomplete: "tel-national",
+				})
+			</div>
+		</div>
+
+		// Disabled Input
+		<div>
+			<h4 class="text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong">Disabled Input</h4>
+			<div class="flex flex-wrap gap-4">
+				@textinput.TextInput(textinput.Config{
+					ID:          "disabledInput",
+					Name:        "disabled",
+					Label:       "Disabled",
+					Placeholder: "Cannot edit",
+					Disabled:    true,
+				})
+			</div>
+		</div>
+	</div>
+}
