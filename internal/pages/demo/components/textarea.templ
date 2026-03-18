@@ -1,0 +1,144 @@
+package components
+
+import (
+	"github.com/guilycst/GoATTH-penguinui/components/textarea"
+	"github.com/guilycst/GoATTH-penguinui/internal/pages/demo"
+)
+
+// TextareaDemoPage renders the Textarea component demo
+templ TextareaDemoPage() {
+	@demo.Layout("Textarea", "textarea", textareaDemoContent())
+}
+
+// textareaDemoContent renders the actual content inside the layout
+templ textareaDemoContent() {
+	@demo.ComponentDemo(
+		demo.ComponentDemoProps{
+			Title:         "Textarea",
+			Description:   "A textarea is a multi-line text input field for longer form content like comments, messages, and descriptions.",
+			OriginalURL:   "/original/text-area/default-textarea.html",
+			OriginalLabel: "Original PenguinUI",
+			GoATTHLabel:   "GoATTH Component",
+		},
+		textareaDemoPreview(),
+		`// Default Textarea
+@textarea.Textarea(textarea.Config{
+    ID:          "comment",
+    Name:        "comment",
+    Label:       "Comment",
+    Placeholder: "We'd love to hear from you...",
+    Rows:        3,
+})
+
+// Error State
+@textarea.Textarea(textarea.Config{
+    ID:         "comment-error",
+    Name:       "comment",
+    Label:      "Comment",
+    State:      textarea.StateError,
+    HelperText: "Error: Please add some comments to your evaluation",
+    Rows:       3,
+})
+
+// Success State
+@textarea.Textarea(textarea.Config{
+    ID:    "comment-success",
+    Name:  "comment",
+    Label: "Comment",
+    State: textarea.StateSuccess,
+    Rows:  3,
+})
+
+// Disabled Textarea
+@textarea.Textarea(textarea.Config{
+    ID:          "comment-disabled",
+    Name:        "comment",
+    Label:       "Comment",
+    Placeholder: "This textarea is disabled",
+    Disabled:    true,
+})
+
+// Textarea with Actions
+@textarea.TextareaWithActions(textarea.Config{
+    ID:          "message",
+    Name:        "message",
+    Placeholder: "Type your message here...",
+    Rows:        6,
+})`,
+	)
+}
+
+// textareaDemoPreview renders the GoATTH textarea preview
+templ textareaDemoPreview() {
+	<div class="w-full max-w-5xl mx-auto space-y-12">
+		// Default Textarea
+		<div>
+			<h4 class="text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong">Default Textarea</h4>
+			<div class="flex flex-wrap gap-6">
+				@textarea.Textarea(textarea.Config{
+					ID:          "demo-default",
+					Name:        "comment",
+					Label:       "Comment",
+					Placeholder: "We'd love to hear from you...",
+					Rows:        3,
+				})
+			</div>
+		</div>
+
+		// Error State
+		<div>
+			<h4 class="text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong">Error State</h4>
+			<div class="flex flex-wrap gap-6">
+				@textarea.Textarea(textarea.Config{
+					ID:         "demo-error",
+					Name:       "comment",
+					Label:      "Comment",
+					State:      textarea.StateError,
+					HelperText: "Error: Please add some comments to your evaluation",
+					Rows:       3,
+				})
+			</div>
+		</div>
+
+		// Success State
+		<div>
+			<h4 class="text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong">Success State</h4>
+			<div class="flex flex-wrap gap-6">
+				@textarea.Textarea(textarea.Config{
+					ID:    "demo-success",
+					Name:  "comment",
+					Label: "Comment",
+					State: textarea.StateSuccess,
+					Rows:  3,
+				})
+			</div>
+		</div>
+
+		// Disabled
+		<div>
+			<h4 class="text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong">Disabled Textarea</h4>
+			<div class="flex flex-wrap gap-6">
+				@textarea.Textarea(textarea.Config{
+					ID:          "demo-disabled",
+					Name:        "comment",
+					Label:       "Comment",
+					Placeholder: "This textarea is disabled",
+					Disabled:    true,
+				})
+			</div>
+		</div>
+
+		// Textarea with Actions
+		<div>
+			<h4 class="text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong">Textarea with Actions</h4>
+			<div class="flex flex-wrap gap-6">
+				@textarea.TextareaWithActions(textarea.Config{
+					ID:          "demo-actions",
+					Name:        "message",
+					Placeholder: "Type your message here...",
+					Rows:        6,
+				})
+			</div>
+		</div>
+	</div>
+}
