@@ -48,8 +48,8 @@ func (s *Server) setupRoutes() {
 	s.mux.HandleFunc("/api/components/table/rows", s.handleTableRows)
 	s.mux.HandleFunc("/api/components/toast", s.handleToastOOB)
 
-	// Theme page
-	s.mux.HandleFunc("/theme", s.handleThemePage)
+	// Docs pages
+	s.mux.HandleFunc("/docs/theme", s.handleThemePage)
 
 	// Landing page
 	s.mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {

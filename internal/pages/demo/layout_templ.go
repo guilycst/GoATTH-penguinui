@@ -113,7 +113,7 @@ func Layout(title string, activeComponent string, content templ.Component) templ
 func getSidebarTopItems(activeComponent string) []sidebar.Item {
 	return []sidebar.Item{
 		{ID: "home", Label: "Getting Started", Href: "/", Icon: sidebarHomeIcon(), Active: activeComponent == ""},
-		{ID: "theme", Label: "Theme", Href: "/theme", Icon: sidebarThemeIcon(), Active: activeComponent == "theme"},
+		{ID: "theme", Label: "Theme", Href: "/docs/theme", Icon: sidebarThemeIcon(), Active: activeComponent == "theme"},
 	}
 }
 
