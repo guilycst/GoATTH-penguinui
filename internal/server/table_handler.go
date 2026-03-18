@@ -206,15 +206,19 @@ func (s *Server) handleTableRows(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	// OOB swap: update sort headers so icons and next-sort URLs reflect current state.
-	// Must come before tbody content to ensure HTMX processes it as OOB.
-	if tableID != "" {
-		table.TableHeadOOB(cfg).Render(r.Context(), w)
-	}
-
 	// Render just the table rows (tbody inner content)
 	for _, row := range rows {
 		table.TableRow(cfg, row).Render(r.Context(), w)
+	}
+
+	// OOB swap: update sort headers so icons and next-sort URLs reflect current state.
+	// Wrapped in <template> so the HTML parser doesn't strip <thead>/<tr> elements
+	// when they appear alongside tbody <tr> rows in the response.
+	if tableID != "" {
+		fmt.Fprintf(w, `<template><thead id="%s" hx-swap-oob="outerHTML" class="%s">`,
+			cfg.TheadID(), cfg.TheadClasses())
+		table.TableHeadContent(cfg).Render(r.Context(), w)
+		fmt.Fprintf(w, `</thead></template>`)
 	}
 
 	// OOB swap: update pagination controls so active page, prev/next states refresh

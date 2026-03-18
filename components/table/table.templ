@@ -226,11 +226,10 @@ templ TableHead(cfg Config) {
 	</thead>
 }
 
-// TableHeadOOB renders the thead element with hx-swap-oob for HTMX out-of-band updates.
-templ TableHeadOOB(cfg Config) {
-	<thead id={ cfg.TheadID() } hx-swap-oob="true" class={ cfg.TheadClasses() }>
-		@tableHeadRow(cfg)
-	</thead>
+// TableHeadContent renders just the thead row content (without the <thead> wrapper).
+// Used by the handler for OOB innerHTML swaps targeting the thead element.
+templ TableHeadContent(cfg Config) {
+	@tableHeadRow(cfg)
 }
 
 templ tableInner(cfg Config) {
