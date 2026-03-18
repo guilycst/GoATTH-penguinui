@@ -13,9 +13,10 @@ import (
 	"github.com/guilycst/GoATTH-penguinui/components/table"
 )
 
-// Page renders the dog breeds page using the GoATTH table component
-// with Alpine.js filter bar and HTMX-powered sorting.
-func Page(cols []table.Column, rows []table.Row) templ.Component {
+// Page renders the dog breeds page using the GoATTH table component.
+// Filtering, sorting, and pagination are all built into the component —
+// just configure them via table.Config.
+func Page(cfg table.Config) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -44,18 +45,11 @@ func Page(cols []table.Column, rows []table.Row) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</head><body class=\"min-h-screen bg-gray-50 text-gray-800 font-sans\"><div class=\"max-w-5xl mx-auto px-6 py-12\"><h1 class=\"text-3xl font-bold mb-2\">Dog Breeds</h1><p class=\"text-gray-500 mb-8\">A filterable, sortable table built with <a href=\"https://github.com/guilycst/GoATTH-penguinui\" class=\"underline\">GoATTH</a> — Go + Alpine.js + Tailwind CSS + Templ + HTMX.</p><!-- Alpine.js filter bar --><div x-data=\"{ search: '', group: '', buildURL() { let u = '/api/breeds?'; if (this.search) u += 'search=' + encodeURIComponent(this.search) + '&'; if (this.group) u += 'group=' + encodeURIComponent(this.group); return u; } }\" class=\"flex flex-wrap gap-4 mb-6\"><div class=\"flex-1 min-w-[200px]\"><label class=\"block text-sm font-medium text-gray-600 mb-1\">Search</label> <input type=\"search\" x-model=\"search\" @input.debounce.300ms=\"htmx.ajax('GET', buildURL(), {target: '#breeds-tbody', swap: 'innerHTML'})\" placeholder=\"Search breeds, origins, temperaments...\" class=\"w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500\"></div><div><label class=\"block text-sm font-medium text-gray-600 mb-1\">Group</label> <select x-model=\"group\" @change=\"htmx.ajax('GET', buildURL(), {target: '#breeds-tbody', swap: 'innerHTML'})\" class=\"border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500\"><option value=\"\">All Groups</option> <option value=\"Sporting\">Sporting</option> <option value=\"Herding\">Herding</option> <option value=\"Hound\">Hound</option> <option value=\"Working\">Working</option> <option value=\"Non-Sporting\">Non-Sporting</option> <option value=\"Toy\">Toy</option></select></div></div><!-- GoATTH Table Component -->")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</head><body class=\"min-h-screen bg-gray-50 text-gray-800 font-sans\"><div class=\"max-w-5xl mx-auto px-6 py-12\"><h1 class=\"text-3xl font-bold mb-2\">Dog Breeds</h1><p class=\"text-gray-500 mb-8\">A filterable, sortable, paginated table built with <a href=\"https://github.com/guilycst/GoATTH-penguinui\" class=\"underline\">GoATTH</a> — Go + Alpine.js + Tailwind CSS + Templ + HTMX.</p>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = table.Table(table.Config{
-			ID:           "breeds",
-			HTMXEndpoint: "/api/breeds",
-			Columns:      cols,
-			Rows:         rows,
-			SortBy:       "breed",
-			SortDir:      table.SortAsc,
-		}).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = table.Table(cfg).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

@@ -1,9 +1,11 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 	"sort"
+	"strconv"
 	"strings"
 
 	"github.com/guilycst/GoATTH-penguinui/components/table"
@@ -41,7 +43,7 @@ var breeds = []Dog{
 	{Breed: "Chihuahua", Group: "Toy", Origin: "Mexico", Size: "Small", Temperament: "Charming"},
 }
 
-// columns defines the table headers — sortable columns get click-to-sort via HTMX
+// columns defines the table headers
 func columns() []table.Column {
 	return []table.Column{
 		{Key: "breed", Label: "Breed", Sortable: true},
@@ -52,7 +54,37 @@ func columns() []table.Column {
 	}
 }
 
-// dogsToRows converts a slice of Dogs into table.Row for the component
+// filters defines the built-in filter bar controls
+func filters() *table.FilterConfig {
+	return &table.FilterConfig{
+		Collapsible:       true,
+		InitiallyExpanded: true,
+		Filters: []table.Filter{
+			{
+				Key:         "search",
+				Label:       "Search",
+				Type:        table.FilterSearch,
+				Placeholder: "Search breeds, origins, temperaments...",
+			},
+			{
+				Key:   "group",
+				Label: "Group",
+				Type:  table.FilterSelect,
+				Options: []table.FilterOption{
+					{Value: "", Label: "All Groups"},
+					{Value: "Sporting", Label: "Sporting"},
+					{Value: "Herding", Label: "Herding"},
+					{Value: "Hound", Label: "Hound"},
+					{Value: "Working", Label: "Working"},
+					{Value: "Non-Sporting", Label: "Non-Sporting"},
+					{Value: "Toy", Label: "Toy"},
+				},
+			},
+		},
+	}
+}
+
+// dogsToRows converts Dogs into table.Row
 func dogsToRows(dogs []Dog) []table.Row {
 	rows := make([]table.Row, len(dogs))
 	for i, d := range dogs {
@@ -109,33 +141,92 @@ func filterAndSort(search, group, orderBy, orderDir string) []Dog {
 }
 
 func main() {
+	const perPage = 5
+
 	mux := http.NewServeMux()
 
-	// Serve the main page with the full table
+	// Main page — renders the full table with filters, sorting, and pagination
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		if r.URL.Path != "/" {
 			http.NotFound(w, r)
 			return
 		}
 		dogs := filterAndSort("", "", "breed", "asc")
-		Page(columns(), dogsToRows(dogs)).Render(r.Context(), w)
+		totalPages := (len(dogs) + perPage - 1) / perPage
+		pageRows := dogsToRows(dogs[:min(perPage, len(dogs))])
+
+		Page(table.Config{
+			ID:           "breeds",
+			HTMXEndpoint: "/api/breeds",
+			Columns:      columns(),
+			Rows:         pageRows,
+			SortBy:       "breed",
+			SortDir:      table.SortAsc,
+			Pagination:   &table.PaginationConfig{CurrentPage: 1, TotalPages: totalPages, PerPage: perPage},
+			Filters:      filters(),
+		}).Render(r.Context(), w)
 	})
 
-	// HTMX endpoint: returns filtered/sorted table rows
+	// HTMX endpoint — returns filtered/sorted/paginated table rows
 	mux.HandleFunc("/api/breeds", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "text/html")
+
 		q := r.URL.Query()
-		dogs := filterAndSort(q.Get("search"), q.Get("group"), q.Get("order_by"), q.Get("order_dir"))
+		search := q.Get("search")
+		group := q.Get("group")
+		orderBy := q.Get("order_by")
+		orderDir := q.Get("order_dir")
+		if orderDir == "" {
+			orderDir = "asc"
+		}
+
+		dogs := filterAndSort(search, group, orderBy, orderDir)
+
+		// Pagination
+		page := 1
+		pp := perPage
+		if v := q.Get("page"); v != "" {
+			if p, err := strconv.Atoi(v); err == nil && p > 0 {
+				page = p
+			}
+		}
+		if v := q.Get("per_page"); v != "" {
+			if p, err := strconv.Atoi(v); err == nil && p > 0 {
+				pp = p
+			}
+		}
+		totalPages := (len(dogs) + pp - 1) / pp
+		start := (page - 1) * pp
+		if start >= len(dogs) {
+			start = 0
+			page = 1
+		}
+		end := start + pp
+		if end > len(dogs) {
+			end = len(dogs)
+		}
+
 		cfg := table.Config{
 			ID:           "breeds",
 			Columns:      columns(),
-			Rows:         dogsToRows(dogs),
+			Rows:         dogsToRows(dogs[start:end]),
 			HTMXEndpoint: "/api/breeds",
-			SortBy:       q.Get("order_by"),
-			SortDir:      table.SortDir(q.Get("order_dir")),
+			SortBy:       orderBy,
+			SortDir:      table.SortDir(orderDir),
+			Pagination:   &table.PaginationConfig{CurrentPage: page, TotalPages: totalPages, PerPage: pp},
 		}
+
+		// Render table rows
 		for _, row := range cfg.Rows {
 			table.TableRow(cfg, row).Render(r.Context(), w)
+		}
+
+		// OOB: update pagination controls
+		if totalPages > 1 {
+			fmt.Fprintf(w, `<div id="%s" hx-swap-oob="true" class="flex items-center justify-between border-t border-gray-200 px-4 py-3">`, cfg.PaginationID())
+			fmt.Fprintf(w, `<div class="text-sm text-gray-500">Page %d of %d</div>`, page, totalPages)
+			table.TablePaginationNav(cfg).Render(r.Context(), w)
+			fmt.Fprintf(w, `</div>`)
 		}
 	})
 
