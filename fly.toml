@@ -4,9 +4,6 @@ primary_region = "gru"
 [build]
 dockerfile = "Dockerfile"
 
-[processes]
-app = "/app/server -port 8090"
-
 [http_service]
 auto_start_machines = true
 auto_stop_machines = true
