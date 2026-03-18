@@ -93,6 +93,18 @@ templ actionAlert(cfg Config) {
 						if cfg.Action.PrimaryOnClick != "" {
 							@click={ cfg.Action.PrimaryOnClick }
 						}
+						if cfg.Action.PrimaryHxGet != "" {
+							hx-get={ cfg.Action.PrimaryHxGet }
+						}
+						if cfg.Action.PrimaryHxPost != "" {
+							hx-post={ cfg.Action.PrimaryHxPost }
+						}
+						if cfg.Action.PrimaryHxTarget != "" {
+							hx-target={ cfg.Action.PrimaryHxTarget }
+						}
+						if cfg.Action.PrimaryHxSwap != "" {
+							hx-swap={ cfg.Action.PrimaryHxSwap }
+						}
 					>
 						{ cfg.Action.PrimaryText }
 					</button>

@@ -24,6 +24,14 @@ type ActionConfig struct {
 	PrimaryText string
 	// PrimaryOnClick is the Alpine.js action for the primary button
 	PrimaryOnClick string
+	// PrimaryHxGet triggers an HTMX GET request on the primary button
+	PrimaryHxGet string
+	// PrimaryHxPost triggers an HTMX POST request on the primary button
+	PrimaryHxPost string
+	// PrimaryHxTarget is the HTMX target selector for the primary button
+	PrimaryHxTarget string
+	// PrimaryHxSwap is the HTMX swap strategy for the primary button
+	PrimaryHxSwap string
 	// DismissText is the secondary dismiss button label (defaults to "Dismiss")
 	DismissText string
 }

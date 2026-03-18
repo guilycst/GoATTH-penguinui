@@ -84,6 +84,8 @@ func (s *Server) handleComponent(w http.ResponseWriter, r *http.Request) {
 		components.ComboboxDemoPage().Render(r.Context(), w)
 	case "alert":
 		components.AlertDemoPage().Render(r.Context(), w)
+	case "modal":
+		components.ModalDemoPage().Render(r.Context(), w)
 	default:
 		http.NotFound(w, r)
 	}
