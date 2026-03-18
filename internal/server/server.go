@@ -96,6 +96,8 @@ func (s *Server) handleComponent(w http.ResponseWriter, r *http.Request) {
 		components.ToggleDemoPage().Render(r.Context(), w)
 	case "pagination":
 		components.PaginationDemoPage().Render(r.Context(), w)
+	case "checkbox":
+		components.CheckboxDemoPage().Render(r.Context(), w)
 	default:
 		http.NotFound(w, r)
 	}
