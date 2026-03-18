@@ -11,8 +11,10 @@ bin/
 # Output of the go coverage tool
 *.out
 
-# Dependency directories
+# Dependency directories (Go vendor)
 vendor/
+# Keep bundled JS vendor assets (Alpine.js, HTMX)
+!assets/js/vendor/
 
 # Go workspace file
 go.work
