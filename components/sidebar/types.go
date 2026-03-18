@@ -26,6 +26,8 @@ type Item struct {
 type Config struct {
 	// Items are the navigation items
 	Items []Item
+	// Sections are grouped navigation sections with titles
+	Sections []Section
 	// Logo is the logo component (optional)
 	Logo templ.Component
 	// LogoText is the text-only logo if no component provided
@@ -46,6 +48,8 @@ type Section struct {
 	Title string
 	// Items are the navigation items in this section
 	Items []Item
+	// Collapsible enables collapse/expand with Alpine.js
+	Collapsible bool
 }
 
 // ContainerClasses returns the container CSS classes

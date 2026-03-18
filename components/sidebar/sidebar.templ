@@ -52,14 +52,27 @@ templ Sidebar(cfg Config) {
 			</div>
 		}
 		
-		<!-- Navigation Items -->
-		<div class={ cfg.NavClasses() }>
-			<div class="flex flex-col gap-1">
-				for _, item := range cfg.Items {
-					@sidebarItem(item)
-				}
+		<!-- Navigation Items (flat list, backward compatible) -->
+		if len(cfg.Items) > 0 {
+			<div class={ cfg.NavClasses() }>
+				<div class="flex flex-col gap-1">
+					for _, item := range cfg.Items {
+						@sidebarItem(item)
+					}
+				</div>
 			</div>
-		</div>
+		}
+
+		<!-- Navigation Sections (grouped with titles) -->
+		if len(cfg.Sections) > 0 {
+			<div class={ cfg.NavClasses() }>
+				<div class="flex flex-col gap-6">
+					for i, section := range cfg.Sections {
+						@sidebarSection(section, i)
+					}
+				</div>
+			</div>
+		}
 	</nav>
 }
 
@@ -112,4 +125,20 @@ templ sidebarItem(item Item) {
 			}
 		</div>
 	}
+}
+
+// sidebarSection renders a grouped section of navigation items
+templ sidebarSection(section Section, index int) {
+	<div>
+		if section.Title != "" {
+			<h3 class="mb-2 px-2 text-xs font-semibold uppercase tracking-wider text-on-surface/50 dark:text-on-surface-dark/50">
+				{ section.Title }
+			</h3>
+		}
+		<div class="flex flex-col gap-1">
+			for _, item := range section.Items {
+				@sidebarItem(item)
+			}
+		</div>
+	</div>
 }
