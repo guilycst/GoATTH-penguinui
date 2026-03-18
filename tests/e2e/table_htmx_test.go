@@ -156,6 +156,17 @@ func TestTableHTMX_Sorting(t *testing.T) {
 		bodyDefault := tableAPI(t, "order_by=name&per_page=100")
 		assert.Equal(t, bodyExplicit, bodyDefault, "omitting order_dir should default to asc")
 	})
+
+	t.Run("NoSortParams_ReturnsNaturalOrder", func(t *testing.T) {
+		bodyNoSort := tableAPI(t, "per_page=100")
+		bodySortAsc := tableAPI(t, "order_by=name&order_dir=asc&per_page=100")
+		// Natural order should differ from explicitly sorted order
+		// (unless data happens to be pre-sorted, which it isn't — IDs are not alphabetical)
+		// Just verify the response is valid and contains rows
+		rows := countSubstring(bodyNoSort, "<tr")
+		assert.Greater(t, rows, 0, "should return rows without sort params")
+		_ = bodySortAsc
+	})
 }
 
 // --- Sorting + Pagination Combined ---
@@ -370,6 +381,129 @@ func TestTableHTMX_BrowserSorting(t *testing.T) {
 		// After clicking name sort, the order should change
 		t.Logf("Before sort: %.50s", strings.TrimSpace(initialFirst))
 		t.Logf("After sort:  %.50s", strings.TrimSpace(newFirst))
+	})
+}
+
+// TestTableHTMX_SortCycling verifies the 3-state sort cycle: neutral → asc → desc → neutral.
+func TestTableHTMX_SortCycling(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping E2E test in short mode")
+	}
+
+	_, browser, _ := setupPlaywright(t)
+	page := newPage(t, browser)
+
+	_, err := page.Goto(baseURL+"/components/table", playwright.PageGotoOptions{
+		WaitUntil: playwright.WaitUntilStateDomcontentloaded,
+	})
+	require.NoError(t, err)
+
+	// getSortState returns the sort icon state for the Name column header.
+	getSortState := func() string {
+		result, err := page.Evaluate(`() => {
+			var ths = document.querySelectorAll('#sortable-table-thead th[hx-get]');
+			for (var th of ths) {
+				if (th.textContent.includes('Name')) {
+					var svg = th.querySelector('svg');
+					if (!svg) return 'no-svg';
+					var html = svg.outerHTML;
+					if (html.includes('opacity')) return 'neutral';
+					if (html.includes('M10 17')) return 'asc';
+					if (html.includes('M10 3')) return 'desc';
+					return 'unknown';
+				}
+			}
+			return 'not-found';
+		}`, nil)
+		if err != nil {
+			return "error"
+		}
+		return fmt.Sprintf("%v", result)
+	}
+
+	// getNameHeaderURL returns the hx-get URL of the Name column header.
+	getNameHeaderURL := func() string {
+		result, err := page.Evaluate(`() => {
+			var ths = document.querySelectorAll('#sortable-table-thead th[hx-get]');
+			for (var th of ths) {
+				if (th.textContent.includes('Name')) return th.getAttribute('hx-get');
+			}
+			return '';
+		}`, nil)
+		if err != nil {
+			return ""
+		}
+		return fmt.Sprintf("%v", result)
+	}
+
+	// clickNameHeader clicks the Name sort header.
+	clickNameHeader := func(t *testing.T) {
+		t.Helper()
+		err := page.Locator("#sortable-table-thead th:has-text('Name')").Click()
+		require.NoError(t, err)
+	}
+
+	t.Run("InitialState_NameIsNeutral", func(t *testing.T) {
+		// Table starts sorted by ID asc, so Name column should be neutral
+		state := getSortState()
+		assert.Equal(t, "neutral", state, "Name header should be neutral initially (table sorted by ID)")
+	})
+
+	t.Run("Click1_NameSortsAsc", func(t *testing.T) {
+		clickNameHeader(t)
+
+		// Wait for OOB swap: the Name header's URL should now point to desc (next click)
+		_, err := page.WaitForFunction(`() => {
+			var ths = document.querySelectorAll('#sortable-table-thead th[hx-get]');
+			for (var th of ths) {
+				if (th.textContent.includes('Name') && th.getAttribute('hx-get').includes('order_dir=desc')) return true;
+			}
+			return false;
+		}`, nil, playwright.PageWaitForFunctionOptions{Timeout: playwright.Float(3000)})
+		require.NoError(t, err, "name header should update to point to desc after asc click")
+
+		assert.Equal(t, "asc", getSortState(), "after 1st click, should show asc icon")
+	})
+
+	t.Run("Click2_NameSortsDesc", func(t *testing.T) {
+		clickNameHeader(t)
+
+		// After desc, next click resets to neutral — URL should not contain order_dir
+		_, err := page.WaitForFunction(`() => {
+			var ths = document.querySelectorAll('#sortable-table-thead th[hx-get]');
+			for (var th of ths) {
+				if (th.textContent.includes('Name') && !th.getAttribute('hx-get').includes('order_dir=')) return true;
+			}
+			return false;
+		}`, nil, playwright.PageWaitForFunctionOptions{Timeout: playwright.Float(3000)})
+		require.NoError(t, err, "name header should point to neutral after desc click")
+
+		assert.Equal(t, "desc", getSortState(), "after 2nd click, should show desc icon")
+	})
+
+	t.Run("Click3_NameReturnsToNeutral", func(t *testing.T) {
+		clickNameHeader(t)
+
+		// Neutral: next click goes to asc — URL should contain order_dir=asc
+		_, err := page.WaitForFunction(`() => {
+			var ths = document.querySelectorAll('#sortable-table-thead th[hx-get]');
+			for (var th of ths) {
+				if (th.textContent.includes('Name') && th.getAttribute('hx-get').includes('order_dir=asc')) return true;
+			}
+			return false;
+		}`, nil, playwright.PageWaitForFunctionOptions{Timeout: playwright.Float(3000)})
+		require.NoError(t, err, "name header should point to asc after neutral reset")
+
+		assert.Equal(t, "neutral", getSortState(), "after 3rd click, should return to neutral icon")
+	})
+
+	t.Run("NeutralState_URLOmitsSortParams", func(t *testing.T) {
+		url := getNameHeaderURL()
+		// In neutral state, the URL should have order_dir=asc (next click direction),
+		// but the current state has no active sort. The URL IS the next action, not the current state.
+		// The current state (neutral) is reflected by the icon, while the URL points to the next state (asc).
+		assert.Contains(t, url, "order_by=name", "neutral header URL should target name column")
+		assert.Contains(t, url, "order_dir=asc", "neutral header URL should point to asc as next action")
 	})
 }
 

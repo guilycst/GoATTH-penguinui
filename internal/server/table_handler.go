@@ -111,6 +111,7 @@ func (s *Server) handleTableRows(w http.ResponseWriter, r *http.Request) {
 	perPageStr := q.Get("per_page")
 	search := q.Get("search")
 	membership := q.Get("membership")
+	tableID := q.Get("table_id")
 
 	records := allRecords()
 
@@ -164,10 +165,10 @@ func (s *Server) handleTableRows(w http.ResponseWriter, r *http.Request) {
 
 	cfg := table.Config{
 		Columns: []table.Column{
-			{Key: "id", Label: "CustomerID"},
-			{Key: "name", Label: "Name"},
+			{Key: "id", Label: "CustomerID", Sortable: true},
+			{Key: "name", Label: "Name", Sortable: true},
 			{Key: "email", Label: "Email"},
-			{Key: "membership", Label: "Membership"},
+			{Key: "membership", Label: "Membership", Sortable: true},
 		},
 		Rows:    rows,
 		SortBy:  orderBy,
@@ -189,6 +190,10 @@ func (s *Server) handleTableRows(w http.ResponseWriter, r *http.Request) {
 
 	cfg.HTMXEndpoint = "/api/components/table/rows"
 
+	if tableID != "" {
+		cfg.ID = tableID
+	}
+
 	// For pagination, render rows as tbody inner HTML + OOB pagination update
 	if pageStr != "" || variant == "" {
 		cfg.Pagination = &table.PaginationConfig{
@@ -196,7 +201,15 @@ func (s *Server) handleTableRows(w http.ResponseWriter, r *http.Request) {
 			TotalPages:  totalPages,
 			PerPage:     perPage,
 		}
-		cfg.ID = "paginated-table"
+		if tableID == "" {
+			cfg.ID = "paginated-table"
+		}
+	}
+
+	// OOB swap: update sort headers so icons and next-sort URLs reflect current state.
+	// Must come before tbody content to ensure HTMX processes it as OOB.
+	if tableID != "" {
+		table.TableHeadOOB(cfg).Render(r.Context(), w)
 	}
 
 	// Render just the table rows (tbody inner content)
