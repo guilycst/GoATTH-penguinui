@@ -60,33 +60,121 @@ func gettingStartedContent() templ.Component {
 			templ_7745c5c3_Var2 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"space-y-10 max-w-3xl\"><div><h1 class=\"text-3xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong\">Getting Started</h1><p class=\"mt-2 text-on-surface dark:text-on-surface-dark\">Build a filterable, sortable table of dog breeds in under 100 lines of Go. No Node.js, no bundlers — just Go + Templ + HTMX + Alpine.js.</p></div><!-- Step 1 --><div><h2 class=\"text-xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong mb-3\">1. Create your project</h2><pre class=\"rounded-radius bg-neutral-900 text-neutral-200 p-4 text-sm overflow-x-auto\"><code>mkdir dog-breeds && cd dog-breeds go mod init dog-breeds go get github.com/a-h/templ@latest</code></pre></div><!-- Step 2 --><div><h2 class=\"text-xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong mb-3\">2. Create your page template</h2><p class=\"text-on-surface dark:text-on-surface-dark mb-3\">Create <code class=\"bg-surface-alt dark:bg-surface-dark-alt px-1.5 py-0.5 rounded text-sm\">page.templ</code> — a single file that renders the full page with Alpine.js for the filter bar and HTMX for loading data:</p><pre class=\"rounded-radius bg-neutral-900 text-neutral-200 p-4 text-sm overflow-x-auto max-h-96 overflow-y-auto\"><code>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"space-y-10\"><div><h1 class=\"text-3xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong\">Getting Started</h1><p class=\"mt-2 text-on-surface dark:text-on-surface-dark\">Build a filterable, sortable table of dog breeds in under 100 lines of Go. No Node.js, no bundlers — just Go + Templ + HTMX + Alpine.js.</p></div><!-- Step 1 --><div><h2 class=\"text-xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong mb-3\">1. Create your project</h2>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var3 string
-		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(getPageTemplCode())
-		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/components/getting_started.templ`, Line: 33, Col: 142}
-		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
+		templ_7745c5c3_Err = codeBlock("bash", `mkdir dog-breeds && cd dog-breeds
+go mod init dog-breeds
+go get github.com/a-h/templ@latest`).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</code></pre></div><!-- Step 3 --><div><h2 class=\"text-xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong mb-3\">3. Create the server</h2><p class=\"text-on-surface dark:text-on-surface-dark mb-3\">Create <code class=\"bg-surface-alt dark:bg-surface-dark-alt px-1.5 py-0.5 rounded text-sm\">main.go</code> — serves the page and handles the HTMX API for filtering, searching, and sorting:</p><pre class=\"rounded-radius bg-neutral-900 text-neutral-200 p-4 text-sm overflow-x-auto max-h-96 overflow-y-auto\"><code>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</div><!-- Step 2 --><div><h2 class=\"text-xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong mb-3\">2. Create your page template</h2><p class=\"text-on-surface dark:text-on-surface-dark mb-3\">Create <code class=\"bg-surface-alt dark:bg-surface-dark-alt px-1.5 py-0.5 rounded text-sm font-mono\">page.templ</code> — a single file that renders the full page with Alpine.js for the filter bar and HTMX for loading data:</p>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = codeBlock("go", getPageTemplCode()).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "</div><!-- Step 3 --><div><h2 class=\"text-xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong mb-3\">3. Create the server</h2><p class=\"text-on-surface dark:text-on-surface-dark mb-3\">Create <code class=\"bg-surface-alt dark:bg-surface-dark-alt px-1.5 py-0.5 rounded text-sm font-mono\">main.go</code> — serves the page and handles the HTMX API for filtering, searching, and sorting:</p>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = codeBlock("go", getMainGoCode()).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "</div><!-- Step 4 --><div><h2 class=\"text-xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong mb-3\">4. Generate and run</h2>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = codeBlock("bash", `templ generate
+go run .
+# Open http://localhost:3000`).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "</div><!-- What you get --><div><h2 class=\"text-xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong mb-3\">What you get</h2><ul class=\"space-y-2 text-on-surface dark:text-on-surface-dark\"><li class=\"flex gap-2\"><span class=\"text-primary dark:text-primary-dark\">•</span> 20 dog breeds in a sortable table (click headers)</li><li class=\"flex gap-2\"><span class=\"text-primary dark:text-primary-dark\">•</span> Live search with 300ms debounce (Alpine.js x-model)</li><li class=\"flex gap-2\"><span class=\"text-primary dark:text-primary-dark\">•</span> Group filter dropdown (Herding, Working, Toy, etc.)</li><li class=\"flex gap-2\"><span class=\"text-primary dark:text-primary-dark\">•</span> Server-rendered HTML fragments via HTMX — no JSON, no fetch</li><li class=\"flex gap-2\"><span class=\"text-primary dark:text-primary-dark\">•</span> Single Go binary, zero JavaScript build tools</li></ul></div><!-- Source --><div class=\"pb-8\"><p class=\"text-sm text-on-surface/60 dark:text-on-surface-dark/60\">Full source: <a href=\"https://github.com/guilycst/GoATTH-penguinui/tree/main/examples/getting-started\" target=\"_blank\" class=\"text-primary dark:text-primary-dark underline underline-offset-2\">examples/getting-started</a></p></div></div>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		return nil
+	})
+}
+
+// codeBlock renders a syntax-highlighted code block using Prism.js
+func codeBlock(language string, code string) templ.Component {
+	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
+			return templ_7745c5c3_CtxErr
+		}
+		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+		if !templ_7745c5c3_IsBuffer {
+			defer func() {
+				templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err == nil {
+					templ_7745c5c3_Err = templ_7745c5c3_BufErr
+				}
+			}()
+		}
+		ctx = templ.InitializeContext(ctx)
+		templ_7745c5c3_Var3 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var3 == nil {
+			templ_7745c5c3_Var3 = templ.NopComponent
+		}
+		ctx = templ.ClearChildren(ctx)
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "<div class=\"rounded-radius border border-outline-dark overflow-hidden\"><div class=\"flex items-center justify-between px-4 py-2 bg-neutral-800 text-neutral-400 text-xs\"><span>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var4 string
-		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(getMainGoCode())
+		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(language)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/components/getting_started.templ`, Line: 42, Col: 139}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/components/getting_started.templ`, Line: 78, Col: 19}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "</code></pre></div><!-- Step 4 --><div><h2 class=\"text-xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong mb-3\">4. Generate and run</h2><pre class=\"rounded-radius bg-neutral-900 text-neutral-200 p-4 text-sm overflow-x-auto\"><code>templ generate go run . # Open http://localhost:3000</code></pre></div><!-- What you get --><div><h2 class=\"text-xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong mb-3\">What you get</h2><ul class=\"space-y-2 text-on-surface dark:text-on-surface-dark\"><li class=\"flex gap-2\"><span class=\"text-primary dark:text-primary-dark\">•</span> 20 dog breeds in a sortable table (click headers)</li><li class=\"flex gap-2\"><span class=\"text-primary dark:text-primary-dark\">•</span> Live search with 300ms debounce (Alpine.js x-model)</li><li class=\"flex gap-2\"><span class=\"text-primary dark:text-primary-dark\">•</span> Group filter dropdown (Herding, Working, Toy, etc.)</li><li class=\"flex gap-2\"><span class=\"text-primary dark:text-primary-dark\">•</span> Server-rendered HTML fragments via HTMX — no JSON, no fetch</li><li class=\"flex gap-2\"><span class=\"text-primary dark:text-primary-dark\">•</span> Single Go binary, zero JavaScript build tools</li></ul></div><!-- Source --><div class=\"pb-8\"><p class=\"text-sm text-on-surface/60 dark:text-on-surface-dark/60\">Full source: <a href=\"https://github.com/guilycst/GoATTH-penguinui/tree/main/examples/getting-started\" target=\"_blank\" class=\"text-primary dark:text-primary-dark underline underline-offset-2\">examples/getting-started</a></p></div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "</span></div><pre class=\"!m-0 !rounded-none max-h-[28rem] overflow-auto\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var5 = []any{"language-" + language}
+		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var5...)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "<code class=\"")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var6 string
+		templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(templ.CSSClasses(templ_7745c5c3_Var5).String())
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/components/getting_started.templ`, Line: 1, Col: 0}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var7 string
+		templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(code)
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/components/getting_started.templ`, Line: 80, Col: 107}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "</code></pre></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -112,12 +200,12 @@ func Page() templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var5 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var5 == nil {
-			templ_7745c5c3_Var5 = templ.NopComponent
+		templ_7745c5c3_Var8 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var8 == nil {
+			templ_7745c5c3_Var8 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "<!doctype html><html lang=\"en\"><head><title>Dog Breeds</title><script src=\"https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js\" defer></script><script src=\"https://unpkg.com/htmx.org@2.0.8/dist/htmx.min.js\"></script><link href=\"https://cdn.jsdelivr.net/npm/tailwindcss@4/dist/tailwind.min.css\" rel=\"stylesheet\"></head><body class=\"min-h-screen bg-gray-50 text-gray-800\"><div class=\"max-w-5xl mx-auto px-6 py-12\"><h1 class=\"text-3xl font-bold mb-8\">Dog Breeds</h1><!-- Alpine.js filter bar --><div x-data=\"{ search: '', group: '', buildURL() {\n            let u = '/api/breeds?';\n            if (this.search) u += 'search=' + encodeURIComponent(this.search) + '&';\n            if (this.group) u += 'group=' + encodeURIComponent(this.group);\n            return u;\n          } }\" class=\"flex flex-wrap gap-4 mb-6\"><input type=\"search\" x-model=\"search\" @input.debounce.300ms=\"htmx.ajax('GET', buildURL(), {target: '#breed-rows', swap: 'innerHTML'})\" placeholder=\"Search breeds...\" class=\"border rounded-lg px-3 py-2 text-sm\"> <select x-model=\"group\" @change=\"htmx.ajax('GET', buildURL(), {target: '#breed-rows', swap: 'innerHTML'})\" class=\"border rounded-lg px-3 py-2 text-sm\"><option value=\"\">All Groups</option> <option value=\"Herding\">Herding</option> <option value=\"Working\">Working</option> <option value=\"Toy\">Toy</option></select></div><!-- HTMX sortable table --><table class=\"w-full text-left text-sm bg-white rounded-lg border\"><thead class=\"bg-gray-100 text-xs uppercase\"><tr><th class=\"px-4 py-3\" hx-get=\"/api/breeds?order_by=breed&order_dir=asc\" hx-target=\"#breed-rows\" hx-swap=\"innerHTML\">Breed</th><th class=\"px-4 py-3\">Group</th><th class=\"px-4 py-3\">Origin</th></tr></thead> <tbody id=\"breed-rows\" hx-get=\"/api/breeds\" hx-trigger=\"load\" hx-swap=\"innerHTML\"><tr><td colspan=\"3\" class=\"p-8 text-center text-gray-400\">Loading...</td></tr></tbody></table></div></body></html>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "<!doctype html><html lang=\"en\"><head><title>Dog Breeds</title><script src=\"https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js\" defer></script><script src=\"https://unpkg.com/htmx.org@2.0.8/dist/htmx.min.js\"></script><link href=\"https://cdn.jsdelivr.net/npm/tailwindcss@4/dist/tailwind.min.css\" rel=\"stylesheet\"></head><body class=\"min-h-screen bg-gray-50 text-gray-800\"><div class=\"max-w-5xl mx-auto px-6 py-12\"><h1 class=\"text-3xl font-bold mb-8\">Dog Breeds</h1><!-- Alpine.js filter bar --><div x-data=\"{ search: '', group: '', buildURL() {\n            let u = '/api/breeds?';\n            if (this.search) u += 'search=' + encodeURIComponent(this.search) + '&';\n            if (this.group) u += 'group=' + encodeURIComponent(this.group);\n            return u;\n          } }\" class=\"flex flex-wrap gap-4 mb-6\"><input type=\"search\" x-model=\"search\" @input.debounce.300ms=\"htmx.ajax('GET', buildURL(), {target: '#breed-rows', swap: 'innerHTML'})\" placeholder=\"Search breeds...\" class=\"border rounded-lg px-3 py-2 text-sm\"> <select x-model=\"group\" @change=\"htmx.ajax('GET', buildURL(), {target: '#breed-rows', swap: 'innerHTML'})\" class=\"border rounded-lg px-3 py-2 text-sm\"><option value=\"\">All Groups</option> <option value=\"Herding\">Herding</option> <option value=\"Working\">Working</option> <option value=\"Toy\">Toy</option></select></div><!-- HTMX sortable table --><table class=\"w-full text-left text-sm bg-white rounded-lg border\"><thead class=\"bg-gray-100 text-xs uppercase\"><tr><th class=\"px-4 py-3\" hx-get=\"/api/breeds?order_by=breed&order_dir=asc\" hx-target=\"#breed-rows\" hx-swap=\"innerHTML\">Breed</th><th class=\"px-4 py-3\">Group</th><th class=\"px-4 py-3\">Origin</th></tr></thead> <tbody id=\"breed-rows\" hx-get=\"/api/breeds\" hx-trigger=\"load\" hx-swap=\"innerHTML\"><tr><td colspan=\"3\" class=\"p-8 text-center text-gray-400\">Loading...</td></tr></tbody></table></div></body></html>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

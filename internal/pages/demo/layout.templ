@@ -34,6 +34,8 @@ templ Layout(title string, activeComponent string, content templ.Component) {
 			<link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
 			<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
 			<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-go.min.js"></script>
+			<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+			<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-markup.min.js"></script>
 			<style>
 				[x-cloak] { display: none !important; }
 				.code-block { font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace; }
@@ -53,7 +55,7 @@ templ Layout(title string, activeComponent string, content templ.Component) {
 				}
 			</style>
 		</head>
-		<body class="min-h-screen bg-surface text-on-surface dark:bg-surface-dark dark:text-on-surface-dark theme-transition">
+		<body class="h-screen overflow-hidden bg-surface text-on-surface dark:bg-surface-dark dark:text-on-surface-dark theme-transition">
 			<!-- Header -->
 			<header class="sticky top-0 z-50 border-b border-outline bg-surface/95 backdrop-blur supports-[backdrop-filter]:bg-surface/60 dark:border-outline-dark dark:bg-surface-dark/95 dark:supports-[backdrop-filter]:bg-surface-dark/60">
 				<div class="flex h-16 items-center justify-between px-4 lg:px-8">

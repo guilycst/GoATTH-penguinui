@@ -7,7 +7,7 @@ templ GettingStartedPage() {
 }
 
 templ gettingStartedContent() {
-	<div class="space-y-10 max-w-3xl">
+	<div class="space-y-10">
 		<div>
 			<h1 class="text-3xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong">Getting Started</h1>
 			<p class="mt-2 text-on-surface dark:text-on-surface-dark">
@@ -19,35 +19,35 @@ templ gettingStartedContent() {
 		<!-- Step 1 -->
 		<div>
 			<h2 class="text-xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong mb-3">1. Create your project</h2>
-			<pre class="rounded-radius bg-neutral-900 text-neutral-200 p-4 text-sm overflow-x-auto"><code>mkdir dog-breeds && cd dog-breeds
+			@codeBlock("bash", `mkdir dog-breeds && cd dog-breeds
 go mod init dog-breeds
-go get github.com/a-h/templ@latest</code></pre>
+go get github.com/a-h/templ@latest`)
 		</div>
 
 		<!-- Step 2 -->
 		<div>
 			<h2 class="text-xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong mb-3">2. Create your page template</h2>
 			<p class="text-on-surface dark:text-on-surface-dark mb-3">
-				Create <code class="bg-surface-alt dark:bg-surface-dark-alt px-1.5 py-0.5 rounded text-sm">page.templ</code> — a single file that renders the full page with Alpine.js for the filter bar and HTMX for loading data:
+				Create <code class="bg-surface-alt dark:bg-surface-dark-alt px-1.5 py-0.5 rounded text-sm font-mono">page.templ</code> — a single file that renders the full page with Alpine.js for the filter bar and HTMX for loading data:
 			</p>
-			<pre class="rounded-radius bg-neutral-900 text-neutral-200 p-4 text-sm overflow-x-auto max-h-96 overflow-y-auto"><code>{ getPageTemplCode() }</code></pre>
+			@codeBlock("go", getPageTemplCode())
 		</div>
 
 		<!-- Step 3 -->
 		<div>
 			<h2 class="text-xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong mb-3">3. Create the server</h2>
 			<p class="text-on-surface dark:text-on-surface-dark mb-3">
-				Create <code class="bg-surface-alt dark:bg-surface-dark-alt px-1.5 py-0.5 rounded text-sm">main.go</code> — serves the page and handles the HTMX API for filtering, searching, and sorting:
+				Create <code class="bg-surface-alt dark:bg-surface-dark-alt px-1.5 py-0.5 rounded text-sm font-mono">main.go</code> — serves the page and handles the HTMX API for filtering, searching, and sorting:
 			</p>
-			<pre class="rounded-radius bg-neutral-900 text-neutral-200 p-4 text-sm overflow-x-auto max-h-96 overflow-y-auto"><code>{ getMainGoCode() }</code></pre>
+			@codeBlock("go", getMainGoCode())
 		</div>
 
 		<!-- Step 4 -->
 		<div>
 			<h2 class="text-xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong mb-3">4. Generate and run</h2>
-			<pre class="rounded-radius bg-neutral-900 text-neutral-200 p-4 text-sm overflow-x-auto"><code>templ generate
+			@codeBlock("bash", `templ generate
 go run .
-# Open http://localhost:3000</code></pre>
+# Open http://localhost:3000`)
 		</div>
 
 		<!-- What you get -->
@@ -68,6 +68,16 @@ go run .
 				Full source: <a href="https://github.com/guilycst/GoATTH-penguinui/tree/main/examples/getting-started" target="_blank" class="text-primary dark:text-primary-dark underline underline-offset-2">examples/getting-started</a>
 			</p>
 		</div>
+	</div>
+}
+
+// codeBlock renders a syntax-highlighted code block using Prism.js
+templ codeBlock(language string, code string) {
+	<div class="rounded-radius border border-outline-dark overflow-hidden">
+		<div class="flex items-center justify-between px-4 py-2 bg-neutral-800 text-neutral-400 text-xs">
+			<span>{ language }</span>
+		</div>
+		<pre class="!m-0 !rounded-none max-h-[28rem] overflow-auto"><code class={ "language-" + language }>{ code }</code></pre>
 	</div>
 }
 
