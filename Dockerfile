@@ -12,8 +12,8 @@ FROM debian:bookworm-slim
 
 WORKDIR /app
 
-COPY --from=builder /out/server /app/server
 COPY --from=builder /src /app
+COPY --from=builder /out/server /app/server
 
 EXPOSE 8090
 

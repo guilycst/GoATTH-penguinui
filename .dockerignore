@@ -3,3 +3,4 @@
 bin
 tests/e2e/test-results
 node_modules
+server
