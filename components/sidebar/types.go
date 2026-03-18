@@ -24,9 +24,11 @@ type Item struct {
 
 // Config holds configuration for the sidebar
 type Config struct {
-	// Items are the navigation items
+	// Items are the top-level navigation items (icon links above sections)
 	Items []Item
-	// Sections are grouped navigation sections with titles
+	// SectionsTitle is an optional header rendered above the sections (e.g. "Components")
+	SectionsTitle string
+	// Sections are grouped navigation sections with titles and left-border items
 	Sections []Section
 	// Logo is the logo component (optional)
 	Logo templ.Component

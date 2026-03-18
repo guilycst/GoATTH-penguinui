@@ -52,67 +52,68 @@ templ Sidebar(cfg Config) {
 			</div>
 		}
 		
-		<!-- Navigation Items (flat list, backward compatible) -->
-		if len(cfg.Items) > 0 {
-			<div class={ cfg.NavClasses() }>
+		<!-- Navigation -->
+		<div class={ cfg.NavClasses() }>
+			<!-- Top-level items (icon links) -->
+			if len(cfg.Items) > 0 {
 				<div class="flex flex-col gap-1">
 					for _, item := range cfg.Items {
 						@sidebarItem(item)
 					}
 				</div>
-			</div>
-		}
+			}
 
-		<!-- Navigation Sections (grouped with titles) -->
-		if len(cfg.Sections) > 0 {
-			<div class={ cfg.NavClasses() }>
-				<div class="flex flex-col gap-6">
+			<!-- Sections (grouped with titles + left-border items) -->
+			if len(cfg.Sections) > 0 {
+				if len(cfg.Items) > 0 {
+					<div class="mt-4"></div>
+				}
+				if cfg.SectionsTitle != "" {
+					<div class="py-2 font-bold text-on-surface-strong dark:text-on-surface-dark-strong">
+						{ cfg.SectionsTitle }
+					</div>
+				}
+				<div class="flex flex-col">
 					for i, section := range cfg.Sections {
 						@sidebarSection(section, i)
 					}
 				</div>
-			</div>
-		}
+			}
+		</div>
 	</nav>
 }
 
-// sidebarItem renders a single sidebar navigation item
+// sidebarItem renders a single sidebar navigation item (top-level icon links)
 templ sidebarItem(item Item) {
-	{{ itemClasses := "flex items-center rounded-radius gap-2 px-2 py-1.5 text-sm font-medium underline-offset-2 focus-visible:underline focus:outline-hidden transition-colors" }}
-	
 	if item.Disabled {
-		{{ itemClasses = itemClasses + " text-on-surface/40 cursor-not-allowed dark:text-on-surface-dark/40" }}
-	} else if item.Active {
-		{{ itemClasses = itemClasses + " bg-primary/10 text-on-surface-strong dark:bg-primary-dark/10 dark:text-on-surface-dark-strong" }}
-	} else {
-		{{ itemClasses = itemClasses + " text-on-surface hover:bg-primary/5 hover:text-on-surface-strong dark:text-on-surface-dark dark:hover:bg-primary-dark/5 dark:hover:text-on-surface-dark-strong" }}
-	}
-	
-	if item.Disabled {
-		<span class={ itemClasses }>
+		<span class="flex items-center gap-2 py-2 text-base text-on-surface/40 cursor-not-allowed dark:text-on-surface-dark/40">
 			if item.Icon != nil {
-				<span class="shrink-0 size-5">
+				<span class="shrink-0 size-8 rounded-sm p-1.5 bg-surface-alt text-on-surface dark:bg-surface-dark-alt dark:text-on-surface-dark">
 					@item.Icon
 				</span>
 			}
 			<span>{ item.Label }</span>
-			if item.Badge != "" {
-				<span class="ml-auto text-xs rounded-full bg-on-surface/10 px-2 py-0.5 dark:bg-on-surface-dark/10">{ item.Badge }</span>
-			}
 		</span>
-	} else {
-		<a href={ templ.SafeURL(item.Href) } class={ itemClasses }>
+	} else if item.Active {
+		<a href={ templ.SafeURL(item.Href) } class="flex items-center gap-2 py-2 text-base font-medium text-primary dark:text-primary-dark">
 			if item.Icon != nil {
-				<span class="shrink-0 size-5">
+				<span class="shrink-0 size-8 rounded-sm p-1.5 bg-primary/10 text-primary dark:bg-primary-dark/10 dark:text-primary-dark">
+					@item.Icon
+				</span>
+			}
+			<span>{ item.Label }</span>
+			<span class="sr-only">active</span>
+		</a>
+	} else {
+		<a href={ templ.SafeURL(item.Href) } class="flex items-center gap-2 py-2 text-base text-on-surface transition-colors hover:text-on-surface-strong dark:text-on-surface-dark dark:hover:text-on-surface-dark-strong">
+			if item.Icon != nil {
+				<span class="shrink-0 size-8 rounded-sm p-1.5 bg-surface-alt text-on-surface dark:bg-surface-dark-alt dark:text-on-surface-dark">
 					@item.Icon
 				</span>
 			}
 			<span>{ item.Label }</span>
 			if item.Badge != "" {
 				<span class="ml-auto text-xs rounded-full bg-on-surface/10 px-2 py-0.5 dark:bg-on-surface-dark/10">{ item.Badge }</span>
-			}
-			if item.Active {
-				<span class="sr-only">active</span>
 			}
 		</a>
 	}
