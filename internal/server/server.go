@@ -111,6 +111,8 @@ func (s *Server) handleComponent(w http.ResponseWriter, r *http.Request) {
 		components.TextareaDemoPage().Render(r.Context(), w)
 	case "toast":
 		components.ToastDemoPage().Render(r.Context(), w)
+	case "tooltip":
+		components.TooltipDemoPage().Render(r.Context(), w)
 	default:
 		http.NotFound(w, r)
 	}
