@@ -45,6 +45,7 @@ func (s *Server) setupRoutes() {
 	s.mux.HandleFunc("/api/components/button", s.handleButtonFragment)
 	s.mux.HandleFunc("/api/components/accordion-content/", s.handleAccordionContent)
 	s.mux.HandleFunc("/api/components/tab-content/", s.handleTabContent)
+	s.mux.HandleFunc("/api/components/table/rows", s.handleTableRows)
 
 	// Root redirect to first component
 	s.mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {

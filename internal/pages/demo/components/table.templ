@@ -15,7 +15,7 @@ templ tableDemoContent() {
 	@demo.ComponentDemo(
 		demo.ComponentDemoProps{
 			Title:         "Table",
-			Description:   "Tables display structured data in rows and columns. Supports default, striped, checkbox, action buttons, and user avatar variants.",
+			Description:   "Tables display structured data in rows and columns. Supports static, sortable, lazy-loaded, paginated, and infinite scroll variants.",
 			OriginalURL:   "/original/table/default-table.html",
 			OriginalLabel: "Original PenguinUI",
 			GoATTHLabel:   "GoATTH Component",
@@ -29,36 +29,49 @@ templ tableDemoContent() {
         {Key: "email", Label: "Email"},
         {Key: "membership", Label: "Membership"},
     },
-    Rows: []table.Row{
-        {ID: "2335", Cells: map[string]table.Cell{
-            "id":         {Text: "2335"},
-            "name":       {Text: "Alice Brown"},
-            "email":      {Text: "alice.brown@gmail.com"},
-            "membership": {Text: "Silver"},
-        }},
-    },
+    Rows: rows,
 })
 
-// Striped Table
+// Sortable Table (HTMX)
 @table.Table(table.Config{
-    Variant: table.Striped,
-    Columns: columns,
+    ID:           "sortable",
+    HTMXEndpoint: "/api/components/table/rows",
+    Columns: []table.Column{
+        {Key: "id", Label: "CustomerID", Sortable: true},
+        {Key: "name", Label: "Name", Sortable: true},
+        {Key: "email", Label: "Email"},
+        {Key: "membership", Label: "Membership", Sortable: true},
+    },
+    SortBy:  "id",
+    SortDir: table.SortAsc,
     Rows:    rows,
 })
 
-// Table with Checkboxes
+// Lazy-Loaded Table (HTMX)
 @table.Table(table.Config{
-    ShowCheckbox: true,
+    ID:           "lazy",
+    HTMXEndpoint: "/api/components/table/rows",
+    LazyLoad:     true,
     Columns:      columns,
-    Rows:         rows,
 })
 
-// Table with Action Buttons
-// Use table.ActionButton("Edit") as a Cell Component
+// Paginated Table
+@table.Table(table.Config{
+    ID:           "paginated",
+    HTMXEndpoint: "/api/components/table/rows",
+    Columns:      columns,
+    Rows:         rows,
+    Pagination:   &table.PaginationConfig{CurrentPage: 1, TotalPages: 4, PerPage: 3},
+})
 
-// Users Table with Avatars
-// Use table.UserCell(avatarURL, name, email) as a Cell Component
-// Use table.StatusBadge("Active", "success") for status`,
+// Infinite Scroll Table
+@table.Table(table.Config{
+    ID:             "infinite",
+    HTMXEndpoint:   "/api/components/table/rows",
+    Columns:        columns,
+    Rows:           rows,
+    InfiniteScroll: &table.InfiniteScrollConfig{NextPage: 2, HasMore: true},
+})`,
 	)
 }
 
@@ -111,6 +124,58 @@ templ tableDemoPreview() {
 				Rows:    usersRows(),
 			})
 		</div>
+
+		// Sortable Table (HTMX)
+		<div>
+			<h4 class="text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong">Sortable Table (click headers)</h4>
+			<p class="text-xs text-on-surface/60 dark:text-on-surface-dark/60 mb-2">Click column headers to sort. Uses HTMX to fetch sorted data from the server.</p>
+			@table.Table(table.Config{
+				ID:           "sortable-table",
+				HTMXEndpoint: "/api/components/table/rows",
+				SortBy:       "id",
+				SortDir:      table.SortAsc,
+				Columns:      sortableColumns(),
+				Rows:         stripedRows(),
+			})
+		</div>
+
+		// Lazy-Loaded Table
+		<div>
+			<h4 class="text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong">Lazy-Loaded Table</h4>
+			<p class="text-xs text-on-surface/60 dark:text-on-surface-dark/60 mb-2">Table body loads from the server via HTMX on page load.</p>
+			@table.Table(table.Config{
+				ID:           "lazy-table",
+				HTMXEndpoint: "/api/components/table/rows?variant=lazy",
+				LazyLoad:     true,
+				Columns:      defaultColumns(),
+			})
+		</div>
+
+		// Paginated Table
+		<div>
+			<h4 class="text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong">Paginated Table</h4>
+			<p class="text-xs text-on-surface/60 dark:text-on-surface-dark/60 mb-2">Navigate between pages with HTMX-powered pagination controls.</p>
+			@table.Table(table.Config{
+				ID:           "paginated-table",
+				HTMXEndpoint: "/api/components/table/rows",
+				Columns:      defaultColumns(),
+				Rows:         paginatedRows(1),
+				Pagination:   &table.PaginationConfig{CurrentPage: 1, TotalPages: 4, PerPage: 3},
+			})
+		</div>
+
+		// Infinite Scroll Table
+		<div>
+			<h4 class="text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong">Infinite Scroll Table</h4>
+			<p class="text-xs text-on-surface/60 dark:text-on-surface-dark/60 mb-2">Scroll down to automatically load more rows via HTMX.</p>
+			@table.Table(table.Config{
+				ID:             "infinite-table",
+				HTMXEndpoint:   "/api/components/table/rows?variant=infinite",
+				Columns:        defaultColumns(),
+				Rows:           infiniteScrollInitialRows(),
+				InfiniteScroll: &table.InfiniteScrollConfig{NextPage: 2, HasMore: true},
+			})
+		</div>
 	</div>
 }
 
@@ -120,6 +185,15 @@ func defaultColumns() []table.Column {
 		{Key: "name", Label: "Name"},
 		{Key: "email", Label: "Email"},
 		{Key: "membership", Label: "Membership"},
+	}
+}
+
+func sortableColumns() []table.Column {
+	return []table.Column{
+		{Key: "id", Label: "CustomerID", Sortable: true},
+		{Key: "name", Label: "Name", Sortable: true},
+		{Key: "email", Label: "Email"},
+		{Key: "membership", Label: "Membership", Sortable: true},
 	}
 }
 
@@ -288,6 +362,82 @@ func usersRows() []table.Row {
 			"since":  {Text: "Sep 17, 2018"},
 			"status": {Component: table.StatusBadge("Active", "success")},
 			"action": {Component: table.ActionButton("Edit")},
+		}},
+	}
+}
+
+// paginatedRows returns 3 rows for the given page (1-indexed)
+func paginatedRows(page int) []table.Row {
+	all := allSampleRows()
+	perPage := 3
+	start := (page - 1) * perPage
+	if start >= len(all) {
+		return nil
+	}
+	end := start + perPage
+	if end > len(all) {
+		end = len(all)
+	}
+	return all[start:end]
+}
+
+func infiniteScrollInitialRows() []table.Row {
+	all := allSampleRows()
+	if len(all) > 3 {
+		return all[:3]
+	}
+	return all
+}
+
+func allSampleRows() []table.Row {
+	return []table.Row{
+		{ID: "2335", Cells: map[string]table.Cell{
+			"id": {Text: "2335"}, "name": {Text: "Alice Brown"},
+			"email": {Text: "alice.brown@penguinui.com"}, "membership": {Text: "Silver"},
+		}},
+		{ID: "2338", Cells: map[string]table.Cell{
+			"id": {Text: "2338"}, "name": {Text: "Bob Johnson"},
+			"email": {Text: "johnson.bob@penguinui.com"}, "membership": {Text: "Gold"},
+		}},
+		{ID: "2342", Cells: map[string]table.Cell{
+			"id": {Text: "2342"}, "name": {Text: "Sarah Adams"},
+			"email": {Text: "s.adams@penguinui.com"}, "membership": {Text: "Gold"},
+		}},
+		{ID: "2345", Cells: map[string]table.Cell{
+			"id": {Text: "2345"}, "name": {Text: "Alex Martinez"},
+			"email": {Text: "alex.martinez@penguinui.com"}, "membership": {Text: "Gold"},
+		}},
+		{ID: "2346", Cells: map[string]table.Cell{
+			"id": {Text: "2346"}, "name": {Text: "Ryan Thompson"},
+			"email": {Text: "ryan.thompson@penguinui.com"}, "membership": {Text: "Silver"},
+		}},
+		{ID: "2349", Cells: map[string]table.Cell{
+			"id": {Text: "2349"}, "name": {Text: "Emily Rodriguez"},
+			"email": {Text: "emily.rodriguez@penguinui.com"}, "membership": {Text: "Gold"},
+		}},
+		{ID: "2350", Cells: map[string]table.Cell{
+			"id": {Text: "2350"}, "name": {Text: "James Wilson"},
+			"email": {Text: "james.wilson@penguinui.com"}, "membership": {Text: "Silver"},
+		}},
+		{ID: "2351", Cells: map[string]table.Cell{
+			"id": {Text: "2351"}, "name": {Text: "Sophia Chen"},
+			"email": {Text: "sophia.chen@penguinui.com"}, "membership": {Text: "Gold"},
+		}},
+		{ID: "2352", Cells: map[string]table.Cell{
+			"id": {Text: "2352"}, "name": {Text: "Michael Davis"},
+			"email": {Text: "m.davis@penguinui.com"}, "membership": {Text: "Silver"},
+		}},
+		{ID: "2353", Cells: map[string]table.Cell{
+			"id": {Text: "2353"}, "name": {Text: "Olivia Taylor"},
+			"email": {Text: "olivia.taylor@penguinui.com"}, "membership": {Text: "Gold"},
+		}},
+		{ID: "2354", Cells: map[string]table.Cell{
+			"id": {Text: "2354"}, "name": {Text: "Daniel Lee"},
+			"email": {Text: "daniel.lee@penguinui.com"}, "membership": {Text: "Silver"},
+		}},
+		{ID: "2355", Cells: map[string]table.Cell{
+			"id": {Text: "2355"}, "name": {Text: "Emma Harris"},
+			"email": {Text: "emma.harris@penguinui.com"}, "membership": {Text: "Gold"},
 		}},
 	}
 }
