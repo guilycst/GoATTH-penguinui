@@ -107,7 +107,7 @@ templ filterBar(cfg Config) {
 		}
 		<div
 			x-show="filtersExpanded"
-			x-collapse
+			x-transition
 			class="px-4 pb-4"
 			if !cfg.Filters.Collapsible {
 				class="px-4 py-4"

@@ -202,7 +202,8 @@ func (cfg Config) IsSortedBy(key string) bool {
 	return cfg.SortBy == key
 }
 
-// NextSortDir returns the next sort direction when clicking a column header
+// NextSortDir returns the next sort direction when clicking a column header.
+// Cycles: neutral → asc → desc → neutral
 func (cfg Config) NextSortDir(key string) SortDir {
 	if cfg.SortBy != key || cfg.SortDir == SortNone {
 		return SortAsc
@@ -210,12 +211,20 @@ func (cfg Config) NextSortDir(key string) SortDir {
 	if cfg.SortDir == SortAsc {
 		return SortDesc
 	}
-	return SortAsc
+	return SortNone
 }
 
-// SortURL builds the HTMX URL for sorting by a given column
+// SortURL builds the HTMX URL for sorting by a given column.
+// When direction cycles back to SortNone, omits sort params to reset to natural order.
 func (cfg Config) SortURL(key string) string {
 	dir := cfg.NextSortDir(key)
+	if dir == SortNone {
+		url := cfg.HTMXEndpoint + "?"
+		if cfg.Pagination != nil {
+			url += "per_page=" + itoa(cfg.Pagination.PerPage)
+		}
+		return url
+	}
 	url := cfg.HTMXEndpoint + "?order_by=" + key + "&order_dir=" + string(dir)
 	if cfg.Pagination != nil {
 		url += "&per_page=" + itoa(cfg.Pagination.PerPage)
