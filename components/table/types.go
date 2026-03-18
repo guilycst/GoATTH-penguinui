@@ -122,6 +122,20 @@ func (cfg Config) PaginationID() string {
 	return cfg.GetID() + "-pagination"
 }
 
+// PaginationBaseURL returns the base URL for pagination links with per_page and sort params
+func (cfg Config) PaginationBaseURL() string {
+	url := cfg.HTMXEndpoint
+	sep := "?"
+	if cfg.Pagination != nil && cfg.Pagination.PerPage > 0 {
+		url += sep + "per_page=" + itoa(cfg.Pagination.PerPage)
+		sep = "&"
+	}
+	if cfg.SortBy != "" {
+		url += sep + "order_by=" + cfg.SortBy + "&order_dir=" + string(cfg.SortDir)
+	}
+	return url
+}
+
 // HasSortableColumns returns true if any column is sortable
 func (cfg Config) HasSortableColumns() bool {
 	for _, col := range cfg.Columns {

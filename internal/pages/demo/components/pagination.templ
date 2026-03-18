@@ -1,0 +1,127 @@
+package components
+
+import (
+	"github.com/guilycst/GoATTH-penguinui/components/pagination"
+	"github.com/guilycst/GoATTH-penguinui/internal/pages/demo"
+)
+
+// PaginationDemoPage renders the Pagination component demo
+templ PaginationDemoPage() {
+	@demo.Layout("Pagination", "pagination", paginationDemoContent())
+}
+
+// paginationDemoContent renders the actual content inside the layout
+templ paginationDemoContent() {
+	@demo.ComponentDemo(
+		demo.ComponentDemoProps{
+			Title:         "Pagination",
+			Description:   "Pagination components allow users to navigate between pages of content. Supports simple prev/next and ellipsis variants.",
+			OriginalURL:   "/original/pagination/pagination-with-ellipsis.html",
+			OriginalLabel: "Original PenguinUI",
+			GoATTHLabel:   "GoATTH Component",
+		},
+		paginationDemoPreview(),
+		`// Simple pagination (prev/next only)
+@pagination.Pagination(pagination.Config{
+    Variant:     pagination.Simple,
+    CurrentPage: 3,
+    TotalPages:  10,
+    BaseURL:     "/items",
+})
+
+// With ellipsis and page numbers
+@pagination.Pagination(pagination.Config{
+    Variant:     pagination.WithEllipsis,
+    CurrentPage: 2,
+    TotalPages:  30,
+    BaseURL:     "/items",
+})
+
+// With HTMX integration
+@pagination.Pagination(pagination.Config{
+    Variant:     pagination.WithEllipsis,
+    CurrentPage: 5,
+    TotalPages:  30,
+    BaseURL:     "/api/items",
+    HTMXTarget:  "#items-tbody",
+    HTMXSwap:    "innerHTML",
+})`,
+	)
+}
+
+// paginationDemoPreview renders the GoATTH pagination preview
+templ paginationDemoPreview() {
+	<div class="w-full max-w-3xl mx-auto space-y-12">
+		// Simple Pagination (prev/next only)
+		<div>
+			<h4 class="text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong">Simple Pagination (Prev/Next)</h4>
+			<p class="text-xs text-on-surface/60 dark:text-on-surface-dark/60 mb-4">A minimal pagination with only previous and next buttons.</p>
+			@pagination.Pagination(pagination.Config{
+				Variant:     pagination.Simple,
+				CurrentPage: 3,
+				TotalPages:  10,
+				BaseURL:     "#",
+			})
+		</div>
+
+		// Simple Pagination - First Page (prev disabled)
+		<div>
+			<h4 class="text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong">Simple Pagination (First Page)</h4>
+			<p class="text-xs text-on-surface/60 dark:text-on-surface-dark/60 mb-4">Previous button is disabled on the first page.</p>
+			@pagination.Pagination(pagination.Config{
+				Variant:     pagination.Simple,
+				CurrentPage: 1,
+				TotalPages:  10,
+				BaseURL:     "#",
+			})
+		</div>
+
+		// With Ellipsis - Beginning
+		<div>
+			<h4 class="text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong">Pagination with Ellipsis (Page 2 of 30)</h4>
+			<p class="text-xs text-on-surface/60 dark:text-on-surface-dark/60 mb-4">Shows page numbers with ellipsis for large page ranges.</p>
+			@pagination.Pagination(pagination.Config{
+				Variant:     pagination.WithEllipsis,
+				CurrentPage: 2,
+				TotalPages:  30,
+				BaseURL:     "#",
+			})
+		</div>
+
+		// With Ellipsis - Middle
+		<div>
+			<h4 class="text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong">Pagination with Ellipsis (Page 15 of 30)</h4>
+			<p class="text-xs text-on-surface/60 dark:text-on-surface-dark/60 mb-4">Current page in the middle shows ellipsis on both sides.</p>
+			@pagination.Pagination(pagination.Config{
+				Variant:     pagination.WithEllipsis,
+				CurrentPage: 15,
+				TotalPages:  30,
+				BaseURL:     "#",
+			})
+		</div>
+
+		// With Ellipsis - End
+		<div>
+			<h4 class="text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong">Pagination with Ellipsis (Page 29 of 30)</h4>
+			<p class="text-xs text-on-surface/60 dark:text-on-surface-dark/60 mb-4">Near the end, ellipsis only appears before the range.</p>
+			@pagination.Pagination(pagination.Config{
+				Variant:     pagination.WithEllipsis,
+				CurrentPage: 29,
+				TotalPages:  30,
+				BaseURL:     "#",
+			})
+		</div>
+
+		// Small page count (no ellipsis needed)
+		<div>
+			<h4 class="text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong">Small Page Count (No Ellipsis)</h4>
+			<p class="text-xs text-on-surface/60 dark:text-on-surface-dark/60 mb-4">When total pages are 7 or fewer, all pages are shown.</p>
+			@pagination.Pagination(pagination.Config{
+				Variant:     pagination.WithEllipsis,
+				CurrentPage: 3,
+				TotalPages:  5,
+				BaseURL:     "#",
+			})
+		</div>
+	</div>
+}
