@@ -5,10 +5,11 @@ import "github.com/guilycst/GoATTH-penguinui/components/sidebar"
 // Layout renders the main layout with sidebar navigation and global theme selector
 templ Layout(title string, activeComponent string, content templ.Component) {
 	<!DOCTYPE html>
-	<html lang="en" x-data="{ 
+	<html lang="en" x-data="{
 		theme: localStorage.getItem('theme') || 'minimal',
 		sidebarOpen: false,
-		showThemeDropdown: false
+		showThemeDropdown: false,
+		setTheme(name) { this.theme = name; document.documentElement.setAttribute('data-theme', name); }
 	}" 
 	x-init="
 		$watch('theme', value => {
@@ -98,12 +99,12 @@ templ Layout(title string, activeComponent string, content templ.Component) {
 								<div class="py-1">
 									for _, t := range getThemeOptions() {
 										<button
-											@click={ "theme = '" + t.Key + "'; document.documentElement.setAttribute('data-theme', '" + t.Key + "'); open = false" }
+											data-theme-key={ t.Key }
+											@click="setTheme($el.dataset.themeKey); open = false"
 											class="w-full px-4 py-1.5 text-left text-sm hover:bg-surface-alt dark:hover:bg-surface-dark-alt flex items-center justify-between"
-											:class={ "theme === '" + t.Key + "' ? 'bg-primary/10 text-primary font-medium' : ''" }
+											:class="theme === $el.dataset.themeKey ? 'bg-primary/10 text-primary font-medium' : ''"
 										>
 											<span>{ t.Label }</span>
-											<span x-show={ "theme === '" + t.Key + "'" } class="text-primary text-xs">✓</span>
 										</button>
 									}
 								</div>
@@ -148,7 +149,7 @@ templ Layout(title string, activeComponent string, content templ.Component) {
 					:class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'"
 				>
 					@sidebar.Sidebar(sidebar.Config{
-						Items: getSidebarItems(activeComponent),
+						Sections: getSidebarSections(activeComponent),
 					})
 				</div>
 
@@ -169,162 +170,50 @@ templ Layout(title string, activeComponent string, content templ.Component) {
 	</html>
 }
 
-// getSidebarItems returns the sidebar navigation items
-func getSidebarItems(activeComponent string) []sidebar.Item {
-	return []sidebar.Item{
+// getSidebarSections returns the sidebar navigation grouped by component category
+func getSidebarSections(activeComponent string) []sidebar.Section {
+	return []sidebar.Section{
 		{
-			ID:     "button",
-			Label:  "Buttons",
-			Href:   "/components/button",
-			Icon:   nil,
-			Active: activeComponent == "button",
+			Title: "Display",
+			Items: []sidebar.Item{
+				{ID: "accordion", Label: "Accordion", Href: "/components/accordion", Active: activeComponent == "accordion"},
+				{ID: "avatar", Label: "Avatar", Href: "/components/avatar", Active: activeComponent == "avatar"},
+				{ID: "badge", Label: "Badge", Href: "/components/badge", Active: activeComponent == "badge"},
+				{ID: "banner", Label: "Banner", Href: "/components/banner", Active: activeComponent == "banner"},
+				{ID: "card", Label: "Card", Href: "/components/card", Active: activeComponent == "card"},
+				{ID: "spinner", Label: "Spinner", Href: "/components/spinner", Active: activeComponent == "spinner"},
+				{ID: "table", Label: "Table", Href: "/components/table", Active: activeComponent == "table"},
+				{ID: "tabs", Label: "Tabs", Href: "/components/tabs", Active: activeComponent == "tabs"},
+			},
 		},
 		{
-			ID:     "accordion",
-			Label:  "Accordion",
-			Href:   "/components/accordion",
-			Icon:   nil,
-			Active: activeComponent == "accordion",
+			Title: "Form",
+			Items: []sidebar.Item{
+				{ID: "button", Label: "Button", Href: "/components/button", Active: activeComponent == "button"},
+				{ID: "checkbox", Label: "Checkbox", Href: "/components/checkbox", Active: activeComponent == "checkbox"},
+				{ID: "combobox", Label: "Combobox", Href: "/components/combobox", Active: activeComponent == "combobox"},
+				{ID: "dropdown", Label: "Dropdown", Href: "/components/dropdown", Active: activeComponent == "dropdown"},
+				{ID: "pagination", Label: "Pagination", Href: "/components/pagination", Active: activeComponent == "pagination"},
+				{ID: "select", Label: "Select", Href: "/components/select", Active: activeComponent == "select"},
+				{ID: "text-input", Label: "Text Input", Href: "/components/text-input", Active: activeComponent == "text-input"},
+				{ID: "textarea", Label: "Textarea", Href: "/components/textarea", Active: activeComponent == "textarea"},
+				{ID: "toggle", Label: "Toggle", Href: "/components/toggle", Active: activeComponent == "toggle"},
+			},
 		},
 		{
-			ID:     "sidebar",
-			Label:  "Sidebar",
-			Href:   "/components/sidebar",
-			Icon:   nil,
-			Active: activeComponent == "sidebar",
+			Title: "Feedback",
+			Items: []sidebar.Item{
+				{ID: "alert", Label: "Alert", Href: "/components/alert", Active: activeComponent == "alert"},
+				{ID: "modal", Label: "Modal", Href: "/components/modal", Active: activeComponent == "modal"},
+				{ID: "toast", Label: "Toast", Href: "/components/toast", Active: activeComponent == "toast"},
+				{ID: "tooltip", Label: "Tooltip", Href: "/components/tooltip", Active: activeComponent == "tooltip"},
+			},
 		},
 		{
-			ID:     "avatar",
-			Label:  "Avatar",
-			Href:   "/components/avatar",
-			Icon:   nil,
-			Active: activeComponent == "avatar",
-		},
-		{
-			ID:     "badge",
-			Label:  "Badge",
-			Href:   "/components/badge",
-			Icon:   nil,
-			Active: activeComponent == "badge",
-		},
-		{
-			ID:     "banner",
-			Label:  "Banner",
-			Href:   "/components/banner",
-			Icon:   nil,
-			Active: activeComponent == "banner",
-		},
-		{
-			ID:     "card",
-			Label:  "Card",
-			Href:   "/components/card",
-			Icon:   nil,
-			Active: activeComponent == "card",
-		},
-		{
-			ID:     "combobox",
-			Label:  "Combobox",
-			Href:   "/components/combobox",
-			Icon:   nil,
-			Active: activeComponent == "combobox",
-		},
-		{
-			ID:     "modal",
-			Label:  "Modal",
-			Href:   "/components/modal",
-			Icon:   nil,
-			Active: activeComponent == "modal",
-		},
-		{
-			ID:     "alert",
-			Label:  "Alert",
-			Href:   "/components/alert",
-			Icon:   nil,
-			Active: activeComponent == "alert",
-		},
-		{
-			ID:     "tabs",
-			Label:  "Tabs",
-			Href:   "/components/tabs",
-			Icon:   nil,
-			Active: activeComponent == "tabs",
-		},
-		{
-			ID:     "table",
-			Label:  "Table",
-			Href:   "/components/table",
-			Icon:   nil,
-			Active: activeComponent == "table",
-		},
-		{
-			ID:     "toggle",
-			Label:  "Toggle",
-			Href:   "/components/toggle",
-			Icon:   nil,
-			Active: activeComponent == "toggle",
-		},
-		{
-			ID:     "tooltip",
-			Label:  "Tooltip",
-			Href:   "/components/tooltip",
-			Icon:   nil,
-			Active: activeComponent == "tooltip",
-		},
-		{
-			ID:     "toast",
-			Label:  "Toast",
-			Href:   "/components/toast",
-			Icon:   nil,
-			Active: activeComponent == "toast",
-		},
-		{
-			ID:     "textarea",
-			Label:  "Textarea",
-			Href:   "/components/textarea",
-			Icon:   nil,
-			Active: activeComponent == "textarea",
-		},
-		{
-			ID:     "pagination",
-			Label:  "Pagination",
-			Href:   "/components/pagination",
-			Icon:   nil,
-			Active: activeComponent == "pagination",
-		},
-		{
-			ID:     "dropdown",
-			Label:  "Dropdown",
-			Href:   "/components/dropdown",
-			Icon:   nil,
-			Active: activeComponent == "dropdown",
-		},
-		{
-			ID:     "spinner",
-			Label:  "Spinner",
-			Href:   "/components/spinner",
-			Icon:   nil,
-			Active: activeComponent == "spinner",
-		},
-		{
-			ID:     "text-input",
-			Label:  "Text Input",
-			Href:   "/components/text-input",
-			Icon:   nil,
-			Active: activeComponent == "text-input",
-		},
-		{
-			ID:     "select",
-			Label:  "Select",
-			Href:   "/components/select",
-			Icon:   nil,
-			Active: activeComponent == "select",
-		},
-		{
-			ID:     "checkbox",
-			Label:  "Checkbox",
-			Href:   "/components/checkbox",
-			Icon:   nil,
-			Active: activeComponent == "checkbox",
+			Title: "Navigation",
+			Items: []sidebar.Item{
+				{ID: "sidebar", Label: "Sidebar", Href: "/components/sidebar", Active: activeComponent == "sidebar"},
+			},
 		},
 	}
 }

@@ -599,7 +599,7 @@ func TestIntegration(t *testing.T) {
 		assert.Contains(t, title, "Accordion")
 
 		// Navigate to button
-		buttonLink := page.Locator("a:has-text('Buttons')")
+		buttonLink := page.Locator("a:has-text('Button')")
 		err = buttonLink.Click()
 		require.NoError(t, err)
 

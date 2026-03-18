@@ -337,3 +337,72 @@ func TestTheme_Visual_Parity_99_99(t *testing.T) {
 		}
 	})
 }
+
+// TestTheme_Switching verifies the theme dropdown changes the data-theme attribute
+func TestTheme_Switching(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping E2E test in short mode")
+	}
+
+	_, browser, _ := setupPlaywright(t)
+	page := newPage(t, browser)
+
+	_, err := page.Goto(baseURL+"/components/button", playwright.PageGotoOptions{
+		WaitUntil: playwright.WaitUntilStateDomcontentloaded,
+	})
+	require.NoError(t, err)
+
+	// Wait for Alpine.js
+	_, err = page.WaitForFunction(`() => typeof Alpine !== 'undefined'`, nil, playwright.PageWaitForFunctionOptions{
+		Timeout: playwright.Float(3000),
+	})
+	require.NoError(t, err)
+
+	// Get initial theme
+	initialTheme, err := page.Evaluate(`() => document.documentElement.getAttribute('data-theme')`, nil)
+	require.NoError(t, err)
+	t.Logf("Initial theme: %v", initialTheme)
+
+	themes := []struct {
+		key   string
+		label string
+	}{
+		{"arctic", "Arctic"},
+		{"neo-brutalism", "Neo Brutalism"},
+		{"90s", "90s"},
+		{"minimal", "Minimal"},
+	}
+
+	for _, theme := range themes {
+		t.Run("SwitchTo_"+theme.label, func(t *testing.T) {
+			// Open the theme dropdown
+			dropdownBtn := page.Locator("button:has(span.capitalize)")
+			err := dropdownBtn.Click()
+			require.NoError(t, err)
+
+			// Click the theme button by its data-theme-key
+			themeBtn := page.Locator(fmt.Sprintf("button[data-theme-key='%s']", theme.key))
+			err = themeBtn.WaitFor(playwright.LocatorWaitForOptions{
+				State:   playwright.WaitForSelectorStateVisible,
+				Timeout: playwright.Float(2000),
+			})
+			require.NoError(t, err)
+
+			err = themeBtn.Click()
+			require.NoError(t, err)
+
+			// Verify data-theme attribute changed
+			_, err = page.WaitForFunction(
+				fmt.Sprintf(`() => document.documentElement.getAttribute('data-theme') === '%s'`, theme.key),
+				nil,
+				playwright.PageWaitForFunctionOptions{Timeout: playwright.Float(2000)},
+			)
+			require.NoError(t, err, "data-theme should be '%s'", theme.key)
+
+			// Verify localStorage was updated
+			storedTheme, err := page.Evaluate(`() => localStorage.getItem('theme')`, nil)
+			require.NoError(t, err)
+			assert.Equal(t, theme.key, storedTheme, "localStorage theme should match")
+		})
+	}
+}
