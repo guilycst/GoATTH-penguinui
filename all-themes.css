@@ -1,9 +1,51 @@
-[data-theme=arctic] {
-        /* Fonts */
+@theme {
+    /* Fonts */
+    --font-title: 'Poppins', sans-serif;
+    --font-paragraph: 'Inter', sans-serif;
+
+   /* Light Themes */
+    --color-surface: var(--color-neutral-100);
+    --color-surface-alt: var(--color-neutral-200);
+    --color-on-surface: var(--color-neutral-800);
+    --color-on-surface-strong: var(--color-black);
+    --color-primary: var(--color-purple-500);
+    --color-on-primary: var(--color-white);
+    --color-secondary: var(--color-sky-500);
+    --color-on-secondary: var(--color-white);
+    --color-outline: var(--color-neutral-300);
+    --color-outline-strong: var(--color-neutral-800);
+
+    /* Dark Theme */
+    --color-surface-dark: var(--color-neutral-800);
+    --color-surface-dark-alt: var(--color-neutral-900);
+    --color-on-surface-dark: var(--color-neutral-300);
+    --color-on-surface-dark-strong: var(--color-neutral-100);
+    --color-primary-dark: var(--color-purple-400);
+    --color-on-primary-dark: var(--color-black);
+    --color-secondary-dark: var(--color-blue-400);
+    --color-on-secondary-dark: var(--color-black);
+    --color-outline-dark: var(--color-neutral-700);
+    --color-outline-dark-strong: var(--color-neutral-300);
+
+    /* Shared Colors */
+    --color-info: var(--color-cyan-500);
+    --color-on-info: var(--color-black);
+    --color-success: var(--color-teal-400);
+    --color-on-success: var(--color-black);
+    --color-warning: var(--color-yellow-300);
+    --color-on-warning: var(--color-black);
+    --color-danger: var(--color-pink-500);
+    --color-on-danger: var(--color-black);
+
+    /* Border Radius */
+    --radius-radius: var(--radius-xl);
+}
+
+@layer base {
+
+    [data-theme=arctic] {
         --font-body: 'Inter', sans-serif;
         --font-title: 'Inter', sans-serif;
-
-        /* Light Theme */
         --color-surface: var(--color-white);
         --color-surface-alt: var(--color-slate-100);
         --color-on-surface: var(--color-slate-700);
@@ -14,8 +56,6 @@
         --color-on-secondary: var(--color-slate-100);
         --color-outline: var(--color-slate-300);
         --color-outline-strong: var(--color-slate-800);
-
-        /* Dark Theme */
         --color-surface-dark: var(--color-slate-900);
         --color-surface-dark-alt: var(--color-slate-800);
         --color-on-surface-dark: var(--color-slate-300);
@@ -26,8 +66,6 @@
         --color-on-secondary-dark: var(--color-slate-100);
         --color-outline-dark: var(--color-slate-700);
         --color-outline-dark-strong: var(--color-slate-300);
-
-        /* Shared Colors */
         --color-info: var(--color-sky-600);
         --color-on-info: var(--color-white);
         --color-success: var(--color-green-600);
@@ -36,17 +74,12 @@
         --color-on-warning: var(--color-white);
         --color-danger: var(--color-red-600);
         --color-on-danger: var(--color-white);
-
-        /* Border Radius */
         --radius-radius: var(--radius-lg);
     }
 
     [data-theme=minimal] {
-        /* Fonts */
         --font-body: 'Montserrat', sans-serif;
         --font-title: 'Montserrat', sans-serif;
-
-        /* Light Theme */
         --color-surface: var(--color-white);
         --color-surface-alt: var(--color-neutral-100);
         --color-on-surface: var(--color-neutral-600);
@@ -57,8 +90,6 @@
         --color-on-secondary: var(--color-white);
         --color-outline: var(--color-neutral-300);
         --color-outline-strong: var(--color-neutral-800);
-
-        /* Dark Theme */
         --color-surface-dark: var(--color-neutral-950);
         --color-surface-dark-alt: var(--color-neutral-800);
         --color-on-surface-dark: var(--color-neutral-400);
@@ -69,8 +100,6 @@
         --color-on-secondary-dark: var(--color-black);
         --color-outline-dark: var(--color-neutral-700);
         --color-outline-dark-strong: var(--color-neutral-300);
-
-        /* Shared Colors */
         --color-info: var(--color-sky-500);
         --color-on-info: var(--color-white);
         --color-success: var(--color-green-300);
@@ -79,17 +108,12 @@
         --color-on-warning: var(--color-amber-900);
         --color-danger: var(--color-red-500);
         --color-on-danger: var(--color-white);
-
-        /* Border Radius */
         --radius-radius: var(--radius-none);
     }
 
     [data-theme=modern] {
-        /* Fonts */
         --font-body: 'Lato', sans-serif;
         --font-title: 'Lato', sans-serif;
-
-        /* Light Theme */
         --color-surface: var(--color-white);
         --color-surface-alt: var(--color-neutral-50);
         --color-on-surface: var(--color-neutral-600);
@@ -100,8 +124,6 @@
         --color-on-secondary: var(--color-white);
         --color-outline: var(--color-neutral-300);
         --color-outline-strong: var(--color-neutral-800);
-
-        /* Dark Theme */
         --color-surface-dark: var(--color-neutral-950);
         --color-surface-dark-alt: var(--color-neutral-900);
         --color-on-surface-dark: var(--color-neutral-300);
@@ -112,8 +134,6 @@
         --color-on-secondary-dark: var(--color-black);
         --color-outline-dark: var(--color-neutral-700);
         --color-outline-dark-strong: var(--color-neutral-300);
-
-        /* Shared Colors */
         --color-info: var(--color-sky-500);
         --color-on-info: var(--color-white);
         --color-success: var(--color-green-500);
@@ -122,17 +142,12 @@
         --color-on-warning: var(--color-white);
         --color-danger: var(--color-red-500);
         --color-on-danger: var(--color-white);
-
-        /* Border Radius */
         --radius-radius: var(--radius-sm);
     }
 
     [data-theme=high-contrast] {
-        /* Fonts */
         --font-body: 'Inter', sans-serif;
         --font-title: 'Inter', sans-serif;
-
-        /* Light Theme */
         --color-surface: var(--color-gray-50);
         --color-surface-alt: var(--color-gray-200);
         --color-on-surface: var(--color-gray-800);
@@ -143,8 +158,6 @@
         --color-on-secondary: var(--color-white);
         --color-outline: var(--color-gray-500);
         --color-outline-strong: var(--color-gray-900);
-
-        /* Dark Theme */
         --color-surface-dark: var(--color-gray-900);
         --color-surface-dark-alt: var(--color-gray-800);
         --color-on-surface-dark: var(--color-gray-300);
@@ -155,8 +168,6 @@
         --color-on-secondary-dark: var(--color-black);
         --color-outline-dark: var(--color-gray-500);
         --color-outline-dark-strong: var(--color-gray-300);
-
-        /* Shared Colors */
         --color-info: var(--color-sky-500);
         --color-on-info: var(--color-black);
         --color-success: var(--color-green-500);
@@ -165,17 +176,12 @@
         --color-on-warning: var(--color-black);
         --color-danger: var(--color-red-500);
         --color-on-danger: var(--color-black);
-
-        /* Border Radius */
         --radius-radius: var(--radius-sm);
     }
 
     [data-theme=neo-brutalism] {
-        /* Fonts */
         --font-body: 'Space Mono', monospace;
         --font-title: 'Montserrat', sans-serif;
-
-        /* Light Theme */
         --color-surface: var(--color-white);
         --color-surface-alt: var(--color-neutral-50);
         --color-on-surface: var(--color-black);
@@ -186,8 +192,6 @@
         --color-on-secondary: var(--color-black);
         --color-outline: var(--color-black);
         --color-outline-strong: var(--color-black);
-
-        /* Dark Theme */
         --color-surface-dark: var(--color-neutral-950);
         --color-surface-dark-alt: var(--color-neutral-800);
         --color-on-surface-dark: var(--color-neutral-200);
@@ -198,8 +202,6 @@
         --color-on-secondary-dark: var(--color-black);
         --color-outline-dark: var(--color-neutral-300);
         --color-outline-dark-strong: var(--color-white);
-
-        /* Shared Colors */
         --color-info: var(--color-sky-600);
         --color-on-info: var(--color-black);
         --color-success: var(--color-green-600);
@@ -208,17 +210,12 @@
         --color-on-warning: var(--color-black);
         --color-danger: var(--color-red-500);
         --color-on-danger: var(--color-black);
-
-        /* Border Radius */
         --radius-radius: var(--radius-none);
     }
 
     [data-theme=halloween] {
-        /* Fonts */
         --font-body: 'Poppins', sans-serif;
         --font-title: 'Denk One', sans-serif;
-
-        /* Light Theme */
         --color-surface: var(--color-white);
         --color-surface-alt: var(--color-gray-100);
         --color-on-surface: var(--color-slate-600);
@@ -229,8 +226,6 @@
         --color-on-secondary: var(--color-slate-100);
         --color-outline: var(--color-gray-200);
         --color-outline-strong: var(--color-orange-500);
-
-        /* Dark Theme */
         --color-surface-dark: var(--color-black);
         --color-surface-dark-alt: var(--color-gray-900);
         --color-on-surface-dark: var(--color-violet-100);
@@ -241,8 +236,6 @@
         --color-on-secondary-dark: var(--color-white);
         --color-outline-dark: var(--color-slate-700);
         --color-outline-dark-strong: var(--color-purple-600);
-
-        /* Shared Colors */
         --color-info: var(--color-sky-500);
         --color-on-info: var(--color-slate-100);
         --color-success: var(--color-green-400);
@@ -251,17 +244,12 @@
         --color-on-warning: var(--color-slate-900);
         --color-danger: var(--color-red-500);
         --color-on-danger: var(--color-slate-100);
-
-        /* Border Radius */
         --radius-radius: var(--radius-xl);
     }
 
     [data-theme=zombie] {
-        /* Fonts */
         --font-body: 'Montserrat', sans-serif;
         --font-title: 'Denk One', sans-serif;
-
-        /* Light Theme */
         --color-surface: var(--color-violet-50);
         --color-surface-alt: var(--color-violet-100);
         --color-on-surface: var(--color-slate-600);
@@ -272,8 +260,6 @@
         --color-on-secondary: var(--color-slate-100);
         --color-outline: var(--color-gray-200);
         --color-outline-strong: var(--color-slate-800);
-
-        /* Dark Theme */
         --color-surface-dark: var(--color-indigo-950);
         --color-surface-dark-alt: var(--color-violet-950);
         --color-on-surface-dark: var(--color-violet-100);
@@ -284,8 +270,6 @@
         --color-on-secondary-dark: var(--color-black);
         --color-outline-dark: var(--color-slate-700);
         --color-outline-dark-strong: var(--color-slate-400);
-
-        /* Shared Colors */
         --color-info: var(--color-sky-500);
         --color-on-info: var(--color-slate-100);
         --color-success: var(--color-green-400);
@@ -294,17 +278,12 @@
         --color-on-warning: var(--color-slate-900);
         --color-danger: var(--color-red-500);
         --color-on-danger: var(--color-slate-100);
-
-        /* Border Radius */
         --radius-radius: var(--radius-xl);
     }
 
     [data-theme=pastel] {
-        /* Fonts */
         --font-body: 'Playpen Sans', cursive;
         --font-title: 'Playpen Sans', cursive;
-
-        /* Light Theme */
         --color-surface: var(--color-amber-50);
         --color-surface-alt: var(--color-amber-100);
         --color-on-surface: var(--color-neutral-500);
@@ -315,8 +294,6 @@
         --color-on-secondary: var(--color-neutral-800);
         --color-outline: var(--color-neutral-200);
         --color-outline-strong: var(--color-neutral-500);
-
-        /* Dark Theme */
         --color-surface-dark: var(--color-neutral-900);
         --color-surface-dark-alt: var(--color-neutral-800);
         --color-on-surface-dark: var(--color-violet-100);
@@ -327,8 +304,6 @@
         --color-on-secondary-dark: var(--color-neutral-800);
         --color-outline-dark: var(--color-neutral-700);
         --color-outline-dark-strong: var(--color-neutral-600);
-
-        /* Shared Colors */
         --color-info: var(--color-blue-300);
         --color-on-info: var(--color-sky-800);
         --color-success: var(--color-green-300);
@@ -337,17 +312,12 @@
         --color-on-warning: var(--color-amber-700);
         --color-danger: var(--color-red-300);
         --color-on-danger: var(--color-red-800);
-
-        /* Border Radius */
         --radius-radius: var(--radius-xl);
     }
 
     [data-theme=90s] {
-        /* Fonts */
         --font-body: 'Poppins', sans-serif;
         --font-title: 'Oswald', sans-serif;
-
-        /* Light Theme */
         --color-surface: var(--color-neutral-100);
         --color-surface-alt: var(--color-neutral-200);
         --color-on-surface: var(--color-neutral-800);
@@ -358,8 +328,6 @@
         --color-on-secondary: var(--color-white);
         --color-outline: var(--color-neutral-300);
         --color-outline-strong: var(--color-neutral-800);
-
-        /* Dark Theme */
         --color-surface-dark: var(--color-neutral-800);
         --color-surface-dark-alt: var(--color-neutral-900);
         --color-on-surface-dark: var(--color-neutral-300);
@@ -370,8 +338,6 @@
         --color-on-secondary-dark: var(--color-black);
         --color-outline-dark: var(--color-neutral-700);
         --color-outline-dark-strong: var(--color-neutral-300);
-
-        /* Shared Colors */
         --color-info: var(--color-cyan-500);
         --color-on-info: var(--color-black);
         --color-success: var(--color-teal-400);
@@ -380,17 +346,12 @@
         --color-on-warning: var(--color-black);
         --color-danger: var(--color-pink-500);
         --color-on-danger: var(--color-black);
-
-        /* Border Radius */
         --radius-radius: var(--radius-xl);
     }
 
     [data-theme=christmas] {
-        /* Fonts */
         --font-body: 'Lato', sans-serif;
         --font-title: 'Jost', sans-serif;
-
-        /* Light Theme */
         --color-surface: var(--color-white);
         --color-surface-alt: var(--color-emerald-50);
         --color-on-surface: var(--color-neutral-700);
@@ -401,8 +362,6 @@
         --color-on-secondary: var(--color-white);
         --color-outline: var(--color-neutral-300);
         --color-outline-strong: var(--color-neutral-800);
-
-        /* Dark Theme */
         --color-surface-dark: var(--color-emerald-950);
         --color-surface-dark-alt: var(--color-emerald-800);
         --color-on-surface-dark: var(--color-neutral-200);
@@ -413,8 +372,6 @@
         --color-on-secondary-dark: var(--color-white);
         --color-outline-dark: var(--color-emerald-900);
         --color-outline-dark-strong: var(--color-white);
-
-        /* Shared Colors */
         --color-info: var(--color-cyan-500);
         --color-on-info: var(--color-black);
         --color-success: var(--color-emerald-500);
@@ -423,17 +380,12 @@
         --color-on-warning: var(--color-black);
         --color-danger: var(--color-red-500);
         --color-on-danger: var(--color-black);
-
-        /* Border Radius */
         --radius-radius: var(--radius-md);
     }
 
     [data-theme=prototype] {
-        /* Fonts */
         --font-body: 'Playpen Sans', cursive;
         --font-title: 'Playpen Sans', cursive;
-
-        /* Light Theme */
         --color-surface: var(--color-white);
         --color-surface-alt: var(--color-neutral-100);
         --color-on-surface: var(--color-black);
@@ -444,8 +396,6 @@
         --color-on-secondary: var(--color-white);
         --color-outline: var(--color-black);
         --color-outline-strong: var(--color-black);
-
-        /* Dark Theme */
         --color-surface-dark: var(--color-black);
         --color-surface-dark-alt: var(--color-neutral-900);
         --color-on-surface-dark: var(--color-white);
@@ -456,8 +406,6 @@
         --color-on-secondary-dark: var(--color-black);
         --color-outline-dark: var(--color-white);
         --color-outline-dark-strong: var(--color-white);
-
-        /* Shared Colors */
         --color-info: var(--color-sky-300);
         --color-on-info: var(--color-black);
         --color-success: var(--color-green-300);
@@ -466,17 +414,12 @@
         --color-on-warning: var(--color-black);
         --color-danger: var(--color-red-300);
         --color-on-danger: var(--color-black);
-
-        /* Border Radius */
         --radius-radius: var(--radius-none);
     }
 
     [data-theme=news] {
-        /* Fonts */
         --font-body: 'Inter', sans-serif;
         --font-title: 'Merriweather', serif;
-
-        /* Light Theme */
         --color-surface: var(--color-zinc-50);
         --color-surface-alt: var(--color-zinc-100);
         --color-on-surface: var(--color-neutral-600);
@@ -487,8 +430,6 @@
         --color-on-secondary: var(--color-white);
         --color-outline: var(--color-zinc-300);
         --color-outline-strong: var(--color-zinc-500);
-
-        /* Dark Theme */
         --color-surface-dark: var(--color-zinc-900);
         --color-surface-dark-alt: var(--color-zinc-800);
         --color-on-surface-dark: var(--color-zinc-200);
@@ -499,8 +440,6 @@
         --color-on-secondary-dark: var(--color-black);
         --color-outline-dark: var(--color-zinc-700);
         --color-outline-dark-strong: var(--color-zinc-500);
-
-        /* Shared Colors */
         --color-info: var(--color-sky-700);
         --color-on-info: var(--color-slate-100);
         --color-success: var(--color-green-700);
@@ -509,17 +448,12 @@
         --color-on-warning: var(--color-amber-50);
         --color-danger: var(--color-red-700);
         --color-on-danger: var(--color-slate-100);
-
-        /* Border Radius */
         --radius-radius: var(--radius-sm);
     }
 
     [data-theme=industrial] {
-        /* Fonts */
         --font-body: 'Poppins', sans-serif;
         --font-title: 'Oswald', sans-serif;
-
-        /* Light Theme */
         --color-surface: var(--color-stone-50);
         --color-surface-alt: var(--color-stone-200);
         --color-on-surface: var(--color-stone-800);
@@ -530,8 +464,6 @@
         --color-on-secondary: var(--color-stone-50);
         --color-outline: var(--color-stone-300);
         --color-outline-strong: var(--color-blue-600);
-
-        /* Dark Theme */
         --color-surface-dark: var(--color-stone-950);
         --color-surface-dark-alt: var(--color-stone-900);
         --color-on-surface-dark: var(--color-stone-300);
@@ -542,8 +474,6 @@
         --color-on-secondary-dark: var(--color-white);
         --color-outline-dark: var(--color-stone-700);
         --color-outline-dark-strong: var(--color-blue-500);
-
-        /* Shared Colors */
         --color-info: var(--color-sky-600);
         --color-on-info: var(--color-slate-100);
         --color-success: var(--color-green-600);
@@ -552,7 +482,7 @@
         --color-on-warning: var(--color-black);
         --color-danger: var(--color-red-600);
         --color-on-danger: var(--color-white);
-
-        /* Border Radius */
         --radius-radius: var(--radius-none);
     }
+
+}

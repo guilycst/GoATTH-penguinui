@@ -2,6 +2,7 @@ package e2e
 
 import (
 	"fmt"
+	"strings"
 	"testing"
 	"time"
 
@@ -38,8 +39,10 @@ func TestTheme_Colors_VerifyComputedValues(t *testing.T) {
 
 		bgColor, err := button.Evaluate("el => window.getComputedStyle(el).backgroundColor", nil)
 		require.NoError(t, err)
-		// Primary should be dark (black or near-black)
-		assert.Contains(t, fmt.Sprintf("%v", bgColor), "rgb(0, 0, 0)", "Primary button background should be black")
+		// Primary should be dark (black or near-black, may render as rgb or oklab)
+		bgStr := fmt.Sprintf("%v", bgColor)
+		isDark := bgStr == "rgb(0, 0, 0)" || strings.Contains(bgStr, "oklab(0.0")
+		assert.True(t, isDark, "Primary button background should be black/near-black, got: %s", bgStr)
 
 		textColor, err := button.Evaluate("el => window.getComputedStyle(el).color", nil)
 		require.NoError(t, err)

@@ -7,9 +7,6 @@
 /* Dark mode variant - enables dark mode with .dark class */
 @custom-variant dark (&:where(.dark, .dark *));
 
-/* Theme variants - enables theme switching with data-theme attribute */
-@custom-variant theme-minimal (&:where([data-theme="minimal"], [data-theme="minimal"] *));
-
 /* ============================================
    TAILWIND IMPORT
    ============================================ */
@@ -22,91 +19,17 @@
 @source "../internal/**/*.go";
 
 /* ============================================
-   THEME CONFIGURATION - Minimalist Theme (Default)
-   Based on: https://www.penguinui.com/theme?config=minimal_montserrat_montserrat_false_-none_black_white_neutral-800_neutral-300_white_neutral-950_neutral-100_neutral-800_neutral-600_neutral-900_neutral-400_neutral-100_neutral-100_black_white_black_neutral-300_neutral-700_neutral-800_neutral-300_red-500_white_sky-500_white_amber-300_amber-900_green-300_slate-900
-   ============================================ */
-
-@theme {
-  /* Fonts */
-  --font-body: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
-  --font-title: 'Montserrat', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
-
-  /* ==========================================
-     LIGHT MODE - Minimalist Theme
-     ========================================== */
-  
-  /* Surface Colors */
-  --color-surface: #ffffff;                    /* white */
-  --color-surface-alt: #f1f5f9;               /* neutral-100 */
-  --color-surface-dark: #000000;              /* black - for inverse */
-  
-  /* Text Colors */
-  --color-on-surface: #475569;                /* neutral-600 */
-  --color-on-surface-strong: #0f172a;         /* neutral-900 */
-  
-  /* Primary Colors */
-  --color-primary: #000000;                   /* black */
-  --color-on-primary: #ffffff;                /* white */
-  --color-primary-dark: #ffffff;              /* white (for dark mode) */
-  --color-on-primary-dark: #000000;           /* black */
-  
-  /* Secondary Colors */
-  --color-secondary: #1e293b;                 /* neutral-800 */
-  --color-on-secondary: #ffffff;              /* white */
-  --color-secondary-dark: #cbd5e1;            /* neutral-300 (for dark mode) */
-  --color-on-secondary-dark: #000000;         /* black */
-  
-  /* Outline Colors */
-  --color-outline: #cbd5e1;                   /* neutral-300 */
-  --color-outline-strong: #1e293b;            /* neutral-800 */
-  --color-outline-dark: #334155;              /* neutral-700 (for dark mode) */
-  --color-outline-dark-strong: #cbd5e1;       /* neutral-300 */
-
-  /* ==========================================
-     DARK MODE - Minimalist Theme
-     ========================================== */
-  --color-surface-dark: #020617;              /* neutral-950 */
-  --color-surface-dark-alt: #1e293b;          /* neutral-800 */
-  --color-on-surface-dark: #94a3b8;           /* neutral-400 */
-  --color-on-surface-dark-strong: #f1f5f9;    /* neutral-100 */
-
-  /* ==========================================
-     SEMANTIC COLORS
-     ========================================== */
-  
-  /* Info - Sky Blue */
-  --color-info: #0ea5e9;                      /* sky-500 */
-  --color-on-info: #ffffff;                   /* white */
-  --color-info-dark: #0ea5e9;
-  --color-on-info-dark: #ffffff;
-  
-  /* Success - Green with Slate text */
-  --color-success: #86efac;                   /* green-300 */
-  --color-on-success: #0f172a;                /* slate-900 */
-  --color-success-dark: #86efac;
-  --color-on-success-dark: #0f172a;
-  
-  /* Warning - Amber */
-  --color-warning: #fcd34d;                   /* amber-300 */
-  --color-on-warning: #78350f;                /* amber-900 */
-  --color-warning-dark: #fcd34d;
-  --color-on-warning-dark: #78350f;
-  
-  /* Danger - Red */
-  --color-danger: #ef4444;                    /* red-500 */
-  --color-on-danger: #ffffff;                 /* white */
-  --color-danger-dark: #ef4444;
-  --color-on-danger-dark: #ffffff;
-
-  /* Border Radius */
-  --radius-radius: 1rem;                      /* rounded-2xl default */
-}
-
-/* ============================================
-   THEME OVERRIDES - Per-theme CSS variable definitions
-   Imported AFTER @theme so [data-theme=X] selectors override :root defaults
+   THEME SYSTEM
+   Imported from all-themes.css which provides:
+   - @theme block with var() references (default theme tokens)
+   - @layer base with [data-theme=X] overrides for 13 themes
    ============================================ */
 @import "../all-themes.css";
+
+/* Font families (not theme-dependent) */
+@theme {
+  --font-body: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+}
 
 /* ============================================
    BASE STYLES
@@ -115,13 +38,13 @@
   html {
     font-family: var(--font-body);
   }
-  
+
   body {
     font-family: var(--font-body);
     background-color: var(--color-surface);
     color: var(--color-on-surface);
   }
-  
+
   .dark body {
     background-color: var(--color-surface-dark);
     color: var(--color-on-surface-dark);
@@ -135,10 +58,10 @@
   .font-title {
     font-family: var(--font-title);
   }
-  
+
   /* Background pattern - matching PenguinUI exactly */
   .bg-pattern {
-    background: 
+    background:
       repeating-linear-gradient(
         90deg,
         var(--color-surface-alt) 0,
@@ -156,9 +79,9 @@
     background-size: 1.5em 1.5em;
     background-color: var(--color-surface);
   }
-  
+
   .dark .bg-pattern {
-    background: 
+    background:
       repeating-linear-gradient(
         90deg,
         var(--color-surface-dark-alt) 0,
@@ -176,7 +99,7 @@
     background-size: 1.5em 1.5em;
     background-color: var(--color-surface-dark);
   }
-  
+
   /* Smooth theme transitions */
   .theme-transition {
     transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
