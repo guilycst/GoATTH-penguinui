@@ -1,4 +1,4 @@
-/*! tailwindcss v4.1.17 | MIT License | https://tailwindcss.com */
+/*! tailwindcss v4.2.1 | MIT License | https://tailwindcss.com */
 @layer properties;
 @layer theme, base, components, utilities;
 @layer theme {
@@ -422,6 +422,12 @@
   .inset-y-0 {
     inset-block: calc(var(--spacing) * 0);
   }
+  .start {
+    inset-inline-start: var(--spacing);
+  }
+  .end {
+    inset-inline-end: var(--spacing);
+  }
   .end-0 {
     inset-inline-end: calc(var(--spacing) * 0);
   }
@@ -441,7 +447,7 @@
     top: calc(var(--spacing) * 1);
   }
   .top-1\/2 {
-    top: calc(1/2 * 100%);
+    top: calc(1 / 2 * 100%);
   }
   .top-2\.5 {
     top: calc(var(--spacing) * 2.5);
@@ -525,7 +531,7 @@
     left: calc(var(--spacing) * 0);
   }
   .left-1\/2 {
-    left: calc(1/2 * 100%);
+    left: calc(1 / 2 * 100%);
   }
   .left-2 {
     left: calc(var(--spacing) * 2);
@@ -859,7 +865,7 @@
     width: calc(var(--spacing) * 0.5);
   }
   .w-1\/2 {
-    width: calc(1/2 * 100%);
+    width: calc(1 / 2 * 100%);
   }
   .w-3 {
     width: calc(var(--spacing) * 3);
@@ -998,7 +1004,7 @@
     translate: var(--tw-translate-x) var(--tw-translate-y);
   }
   .-translate-x-1\/2 {
-    --tw-translate-x: calc(calc(1/2 * 100%) * -1);
+    --tw-translate-x: calc(calc(1 / 2 * 100%) * -1);
     translate: var(--tw-translate-x) var(--tw-translate-y);
   }
   .-translate-x-2 {
@@ -1026,11 +1032,11 @@
     translate: var(--tw-translate-x) var(--tw-translate-y);
   }
   .-translate-y-1\/2 {
-    --tw-translate-y: calc(calc(1/2 * 100%) * -1);
+    --tw-translate-y: calc(calc(1 / 2 * 100%) * -1);
     translate: var(--tw-translate-x) var(--tw-translate-y);
   }
   .-translate-y-1\/4 {
-    --tw-translate-y: calc(calc(1/4 * 100%) * -1);
+    --tw-translate-y: calc(calc(1 / 4 * 100%) * -1);
     translate: var(--tw-translate-x) var(--tw-translate-y);
   }
   .-translate-y-full {
@@ -2564,7 +2570,7 @@
   }
   .peer-checked\:-translate-y-1\/2 {
     &:is(:where(.peer):checked ~ *) {
-      --tw-translate-y: calc(calc(1/2 * 100%) * -1);
+      --tw-translate-y: calc(calc(1 / 2 * 100%) * -1);
       translate: var(--tw-translate-x) var(--tw-translate-y);
     }
   }
@@ -2804,13 +2810,13 @@
   .before\:top-1\/2 {
     &::before {
       content: var(--tw-content);
-      top: calc(1/2 * 100%);
+      top: calc(1 / 2 * 100%);
     }
   }
   .before\:left-1\/2 {
     &::before {
       content: var(--tw-content);
-      left: calc(1/2 * 100%);
+      left: calc(1 / 2 * 100%);
     }
   }
   .before\:h-1\.5 {
@@ -2828,14 +2834,14 @@
   .before\:-translate-x-1\/2 {
     &::before {
       content: var(--tw-content);
-      --tw-translate-x: calc(calc(1/2 * 100%) * -1);
+      --tw-translate-x: calc(calc(1 / 2 * 100%) * -1);
       translate: var(--tw-translate-x) var(--tw-translate-y);
     }
   }
   .before\:-translate-y-1\/2 {
     &::before {
       content: var(--tw-content);
-      --tw-translate-y: calc(calc(1/2 * 100%) * -1);
+      --tw-translate-y: calc(calc(1 / 2 * 100%) * -1);
       translate: var(--tw-translate-x) var(--tw-translate-y);
     }
   }
@@ -4161,7 +4167,7 @@
   }
   .lg\:w-1\/2 {
     @media (width >= 64rem) {
-      width: calc(1/2 * 100%);
+      width: calc(1 / 2 * 100%);
     }
   }
   .lg\:w-\[80\%\] {

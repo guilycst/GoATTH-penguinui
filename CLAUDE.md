@@ -27,7 +27,7 @@ make generate
 # Build Tailwind CSS (REQUIRED after editing CSS)
 make css
 
-# Run dev server (default port 7070)
+# Run dev server (default port 8090)
 make dev
 # or with live reload:
 make dev-air
