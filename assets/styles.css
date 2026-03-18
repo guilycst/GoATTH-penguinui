@@ -855,6 +855,15 @@
   .min-h-\[50svh\] {
     min-height: 50svh;
   }
+  .min-h-\[200px\] {
+    min-height: 200px;
+  }
+  .min-h-\[280px\] {
+    min-height: 280px;
+  }
+  .min-h-\[300px\] {
+    min-height: 300px;
+  }
   .min-h-screen {
     min-height: 100vh;
   }
