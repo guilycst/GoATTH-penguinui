@@ -119,11 +119,17 @@ func tableDemoContent() templ.Component {
 
 // Infinite Scroll Table
 @table.Table(table.Config{
-    ID:             "infinite",
-    HTMXEndpoint:   "/api/components/table/rows",
-    Columns:        columns,
-    Rows:           rows,
-    InfiniteScroll: &table.InfiniteScrollConfig{NextPage: 2, HasMore: true},
+    ID:           "infinite",
+    HTMXEndpoint: "/api/components/table/rows?variant=infinite",
+    Columns:      columns,
+    Rows:         rows,
+    Pagination: &table.PaginationConfig{
+        Mode:            table.PaginationInfiniteScroll,
+        CurrentPage:     1,
+        PerPage:         3,
+        HasMore:         true,
+        ContainerHeight: "300px",
+    },
 })`,
 		).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
@@ -295,16 +301,22 @@ func tableDemoPreview() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "</div><div><h4 class=\"text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong\">Infinite Scroll Table</h4><p class=\"text-xs text-on-surface/60 dark:text-on-surface-dark/60 mb-2\">Scroll down to automatically load more rows via HTMX.</p>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "</div><div><h4 class=\"text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong\">Infinite Scroll Table</h4><p class=\"text-xs text-on-surface/60 dark:text-on-surface-dark/60 mb-2\">Scroll down in the container to automatically load more rows via HTMX.</p>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = table.Table(table.Config{
-			ID:             "infinite-table",
-			HTMXEndpoint:   "/api/components/table/rows?variant=infinite",
-			Columns:        defaultColumns(),
-			Rows:           infiniteScrollInitialRows(),
-			InfiniteScroll: &table.InfiniteScrollConfig{NextPage: 2, HasMore: true},
+			ID:           "infinite-table",
+			HTMXEndpoint: "/api/components/table/rows?variant=infinite",
+			Columns:      defaultColumns(),
+			Rows:         infiniteScrollInitialRows(),
+			Pagination: &table.PaginationConfig{
+				Mode:            table.PaginationInfiniteScroll,
+				CurrentPage:     1,
+				PerPage:         3,
+				HasMore:         true,
+				ContainerHeight: "300px",
+			},
 		}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err

@@ -50,17 +50,56 @@ type Row struct {
 	Cells map[string]Cell
 }
 
+// PaginationMode determines pagination behavior
+type PaginationMode string
+
+const (
+	// PaginationTraditional renders page numbers below the table (default)
+	PaginationTraditional PaginationMode = ""
+	// PaginationInfiniteScroll appends rows on scroll using HTMX revealed trigger.
+	// The table container gets a fixed height and scrolls internally.
+	PaginationInfiniteScroll PaginationMode = "infinite"
+)
+
 // PaginationConfig holds pagination state
 type PaginationConfig struct {
+	// Mode is the pagination style: traditional (default) or infinite scroll
+	Mode PaginationMode
 	// CurrentPage is the 1-indexed current page number
 	CurrentPage int
 	// TotalPages is the total number of pages
 	TotalPages int
 	// PerPage is the number of items per page
 	PerPage int
+	// HasMore indicates if more rows are available (used by infinite scroll)
+	HasMore bool
+	// ContainerHeight is the CSS height for infinite scroll container (e.g. "400px", "60vh").
+	// Defaults to "400px" if empty and Mode is PaginationInfiniteScroll.
+	ContainerHeight string
 }
 
-// InfiniteScrollConfig holds infinite scroll state
+// IsInfiniteScroll returns true if this pagination uses infinite scroll mode
+func (p *PaginationConfig) IsInfiniteScroll() bool {
+	return p != nil && p.Mode == PaginationInfiniteScroll
+}
+
+// NextPage returns CurrentPage + 1
+func (p *PaginationConfig) NextPage() int {
+	if p == nil {
+		return 2
+	}
+	return p.CurrentPage + 1
+}
+
+// GetContainerHeight returns the container height, defaulting to "400px"
+func (p *PaginationConfig) GetContainerHeight() string {
+	if p == nil || p.ContainerHeight == "" {
+		return "400px"
+	}
+	return p.ContainerHeight
+}
+
+// InfiniteScrollConfig holds infinite scroll state (deprecated: use PaginationConfig with Mode)
 type InfiniteScrollConfig struct {
 	// NextPage is the next page number to load
 	NextPage int
@@ -251,6 +290,18 @@ func (cfg Config) PageURL(page int) string {
 
 // NextPageURL builds the HTMX URL for infinite scroll
 func (cfg Config) NextPageURL() string {
+	// Support new PaginationConfig infinite scroll mode
+	if cfg.Pagination != nil && cfg.Pagination.IsInfiniteScroll() {
+		url := cfg.HTMXEndpoint + "?page=" + itoa(cfg.Pagination.NextPage()) + "&variant=infinite"
+		if cfg.Pagination.PerPage > 0 {
+			url += "&per_page=" + itoa(cfg.Pagination.PerPage)
+		}
+		if cfg.SortBy != "" {
+			url += "&order_by=" + cfg.SortBy + "&order_dir=" + string(cfg.SortDir)
+		}
+		return url
+	}
+	// Legacy InfiniteScrollConfig support
 	if cfg.InfiniteScroll == nil {
 		return ""
 	}

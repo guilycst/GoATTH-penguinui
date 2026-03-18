@@ -55,34 +55,39 @@ templ Table(cfg Config) {
 		@filterScript(cfg)
 		<div x-data={ filterAlpineInit(cfg) }>
 			@filterBar(cfg)
-			if cfg.ShowCheckbox {
-				<div x-data="{ checkAll: false }" class={ cfg.ContainerClasses() }>
-					@tableInner(cfg)
-				</div>
-			} else {
-				<div class={ cfg.ContainerClasses() }>
-					@tableInner(cfg)
-				</div>
-			}
-			if cfg.Pagination != nil {
+			@tableContainer(cfg)
+			if showTraditionalPagination(cfg) {
 				@TablePagination(cfg)
 			}
+		</div>
+	} else {
+		@tableContainer(cfg)
+		if showTraditionalPagination(cfg) {
+			@TablePagination(cfg)
+		}
+	}
+}
+
+// tableContainer renders the table with appropriate wrapping for the pagination mode
+templ tableContainer(cfg Config) {
+	if cfg.Pagination != nil && cfg.Pagination.IsInfiniteScroll() {
+		<!-- Infinite scroll: height-constrained scrollable container -->
+		<div class={ cfg.ContainerClasses() } style={ "max-height: " + cfg.Pagination.GetContainerHeight() + "; overflow-y: auto;" }>
+			@tableInner(cfg)
 		</div>
 	} else if cfg.ShowCheckbox {
 		<div x-data="{ checkAll: false }" class={ cfg.ContainerClasses() }>
 			@tableInner(cfg)
 		</div>
-		if cfg.Pagination != nil {
-			@TablePagination(cfg)
-		}
 	} else {
 		<div class={ cfg.ContainerClasses() }>
 			@tableInner(cfg)
 		</div>
-		if cfg.Pagination != nil {
-			@TablePagination(cfg)
-		}
 	}
+}
+
+func showTraditionalPagination(cfg Config) bool {
+	return cfg.Pagination != nil && !cfg.Pagination.IsInfiniteScroll()
 }
 
 // filterBar renders the collapsible filter controls above the table
@@ -262,7 +267,7 @@ templ TableBody(cfg Config) {
 		for _, row := range cfg.Rows {
 			@TableRow(cfg, row)
 		}
-		if cfg.InfiniteScroll != nil && cfg.InfiniteScroll.HasMore && cfg.HTMXEndpoint != "" {
+		if hasMoreRows(cfg) {
 			@scrollSentinel(cfg)
 		}
 	</tbody>
@@ -274,9 +279,25 @@ templ TableRows(cfg Config) {
 	for _, row := range cfg.Rows {
 		@TableRow(cfg, row)
 	}
-	if cfg.InfiniteScroll != nil && cfg.InfiniteScroll.HasMore && cfg.HTMXEndpoint != "" {
+	if hasMoreRows(cfg) {
 		@scrollSentinel(cfg)
 	}
+}
+
+// hasMoreRows returns true if the table should render a scroll sentinel for infinite scroll
+func hasMoreRows(cfg Config) bool {
+	if cfg.HTMXEndpoint == "" {
+		return false
+	}
+	// New pagination-based infinite scroll
+	if cfg.Pagination != nil && cfg.Pagination.IsInfiniteScroll() && cfg.Pagination.HasMore {
+		return true
+	}
+	// Legacy InfiniteScrollConfig
+	if cfg.InfiniteScroll != nil && cfg.InfiniteScroll.HasMore {
+		return true
+	}
+	return false
 }
 
 // TableRow renders a single table row
