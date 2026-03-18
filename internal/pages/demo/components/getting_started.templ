@@ -5,6 +5,7 @@ import (
 	"path/filepath"
 	"runtime"
 
+	"github.com/guilycst/GoATTH-penguinui/components/codeblock"
 	"github.com/guilycst/GoATTH-penguinui/internal/pages/demo"
 )
 
@@ -29,7 +30,7 @@ templ gettingStartedContent() {
 		<!-- Step 1 -->
 		<div>
 			<h2 class="text-xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong mb-3">1. Create your project</h2>
-			@codeBlock("bash", step1Code())
+			@codeblock.CodeBlock(codeblock.Config{Language: "bash", Code: step1Code()})
 		</div>
 
 		<!-- Step 2 -->
@@ -39,7 +40,7 @@ templ gettingStartedContent() {
 				Create <code class="bg-surface-alt dark:bg-surface-dark-alt px-1.5 py-0.5 rounded text-sm font-mono">page.templ</code> —
 				Alpine.js handles the filter bar state, HTMX loads and swaps table rows from the server:
 			</p>
-			@codeBlock("go", readExampleFile("page.templ"))
+			@codeblock.CodeBlock(codeblock.Config{Language: "go", Label: "page.templ", Code: readExampleFile("page.templ"), MaxHeight: "400px"})
 		</div>
 
 		<!-- Step 3 -->
@@ -49,15 +50,13 @@ templ gettingStartedContent() {
 				Create <code class="bg-surface-alt dark:bg-surface-dark-alt px-1.5 py-0.5 rounded text-sm font-mono">main.go</code> —
 				serves the page and handles the HTMX API endpoint for filtering, searching, and sorting:
 			</p>
-			@codeBlock("go", readExampleFile("main.go"))
+			@codeblock.CodeBlock(codeblock.Config{Language: "go", Label: "main.go", Code: readExampleFile("main.go"), MaxHeight: "400px"})
 		</div>
 
 		<!-- Step 4 -->
 		<div>
 			<h2 class="text-xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong mb-3">4. Generate and run</h2>
-			@codeBlock("bash", `templ generate
-go run .
-# Open http://localhost:3000`)
+			@codeblock.CodeBlock(codeblock.Config{Language: "bash", Code: "templ generate\ngo run .\n# Open http://localhost:3000"})
 		</div>
 
 		<!-- What you get -->
@@ -78,16 +77,6 @@ go run .
 				Full source: <a href="https://github.com/guilycst/GoATTH-penguinui/tree/main/examples/getting-started" target="_blank" class="text-primary dark:text-primary-dark underline underline-offset-2">examples/getting-started</a>
 			</p>
 		</div>
-	</div>
-}
-
-// codeBlock renders a syntax-highlighted code block using Prism.js
-templ codeBlock(language string, code string) {
-	<div class="rounded-radius border border-outline-dark overflow-hidden">
-		<div class="flex items-center justify-between px-4 py-2 bg-neutral-800 text-neutral-400 text-xs">
-			<span>{ language }</span>
-		</div>
-		<pre class="!m-0 !rounded-none max-h-[28rem] overflow-auto"><code class={ "language-" + language }>{ code }</code></pre>
 	</div>
 }
 

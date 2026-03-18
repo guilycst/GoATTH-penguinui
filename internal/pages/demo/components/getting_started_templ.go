@@ -13,6 +13,7 @@ import (
 	"path/filepath"
 	"runtime"
 
+	"github.com/guilycst/GoATTH-penguinui/components/codeblock"
 	"github.com/guilycst/GoATTH-penguinui/internal/pages/demo"
 )
 
@@ -70,7 +71,7 @@ func gettingStartedContent() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = codeBlock("bash", step1Code()).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = codeblock.CodeBlock(codeblock.Config{Language: "bash", Code: step1Code()}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -78,7 +79,7 @@ func gettingStartedContent() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = codeBlock("go", readExampleFile("page.templ")).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = codeblock.CodeBlock(codeblock.Config{Language: "go", Label: "page.templ", Code: readExampleFile("page.templ"), MaxHeight: "400px"}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -86,7 +87,7 @@ func gettingStartedContent() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = codeBlock("go", readExampleFile("main.go")).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = codeblock.CodeBlock(codeblock.Config{Language: "go", Label: "main.go", Code: readExampleFile("main.go"), MaxHeight: "400px"}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -94,91 +95,11 @@ func gettingStartedContent() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = codeBlock("bash", `templ generate
-go run .
-# Open http://localhost:3000`).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = codeblock.CodeBlock(codeblock.Config{Language: "bash", Code: "templ generate\ngo run .\n# Open http://localhost:3000"}).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "</div><!-- What you get --><div><h2 class=\"text-xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong mb-3\">What you get</h2><ul class=\"space-y-2 text-on-surface dark:text-on-surface-dark\"><li class=\"flex gap-2\"><span class=\"text-primary dark:text-primary-dark font-bold\">•</span> 20 dog breeds in a sortable table — click any column header</li><li class=\"flex gap-2\"><span class=\"text-primary dark:text-primary-dark font-bold\">•</span> Live search with 300ms debounce via Alpine.js <code class=\"text-xs bg-surface-alt dark:bg-surface-dark-alt px-1 rounded\">x-model</code></li><li class=\"flex gap-2\"><span class=\"text-primary dark:text-primary-dark font-bold\">•</span> Group filter dropdown (Sporting, Herding, Working, Hound, Non-Sporting, Toy)</li><li class=\"flex gap-2\"><span class=\"text-primary dark:text-primary-dark font-bold\">•</span> Server-rendered HTML fragments via HTMX — no JSON, no fetch, no client state</li><li class=\"flex gap-2\"><span class=\"text-primary dark:text-primary-dark font-bold\">•</span> Single Go binary, zero JavaScript build tools</li></ul></div><!-- Source --><div class=\"pb-8\"><p class=\"text-sm text-on-surface/60 dark:text-on-surface-dark/60\">Full source: <a href=\"https://github.com/guilycst/GoATTH-penguinui/tree/main/examples/getting-started\" target=\"_blank\" class=\"text-primary dark:text-primary-dark underline underline-offset-2\">examples/getting-started</a></p></div></div>")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		return nil
-	})
-}
-
-// codeBlock renders a syntax-highlighted code block using Prism.js
-func codeBlock(language string, code string) templ.Component {
-	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
-		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
-		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
-			return templ_7745c5c3_CtxErr
-		}
-		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
-		if !templ_7745c5c3_IsBuffer {
-			defer func() {
-				templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
-				if templ_7745c5c3_Err == nil {
-					templ_7745c5c3_Err = templ_7745c5c3_BufErr
-				}
-			}()
-		}
-		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var3 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var3 == nil {
-			templ_7745c5c3_Var3 = templ.NopComponent
-		}
-		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "<div class=\"rounded-radius border border-outline-dark overflow-hidden\"><div class=\"flex items-center justify-between px-4 py-2 bg-neutral-800 text-neutral-400 text-xs\"><span>")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		var templ_7745c5c3_Var4 string
-		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(language)
-		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/components/getting_started.templ`, Line: 88, Col: 19}
-		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "</span></div><pre class=\"!m-0 !rounded-none max-h-[28rem] overflow-auto\">")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		var templ_7745c5c3_Var5 = []any{"language-" + language}
-		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var5...)
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "<code class=\"")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		var templ_7745c5c3_Var6 string
-		templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(templ.CSSClasses(templ_7745c5c3_Var5).String())
-		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/components/getting_started.templ`, Line: 1, Col: 0}
-		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "\">")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		var templ_7745c5c3_Var7 string
-		templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(code)
-		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/components/getting_started.templ`, Line: 90, Col: 107}
-		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "</code></pre></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
