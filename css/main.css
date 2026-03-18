@@ -103,6 +103,12 @@
 }
 
 /* ============================================
+   THEME OVERRIDES - Per-theme CSS variable definitions
+   Imported AFTER @theme so [data-theme=X] selectors override :root defaults
+   ============================================ */
+@import "../all-themes.css";
+
+/* ============================================
    BASE STYLES
    ============================================ */
 @layer base {
