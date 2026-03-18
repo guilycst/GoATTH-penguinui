@@ -1,0 +1,107 @@
+package table
+
+import "fmt"
+
+// Table renders a table component based on PenguinUI
+// Usage:
+//
+//	@table.Table(table.Config{
+//	    Columns: []table.Column{
+//	        {Key: "id", Label: "CustomerID"},
+//	        {Key: "name", Label: "Name"},
+//	        {Key: "email", Label: "Email"},
+//	    },
+//	    Rows: []table.Row{
+//	        {ID: "1", Cells: map[string]table.Cell{
+//	            "id":    {Text: "2335"},
+//	            "name":  {Text: "Alice Brown"},
+//	            "email": {Text: "alice@example.com"},
+//	        }},
+//	    },
+//	})
+templ Table(cfg Config) {
+	if cfg.ShowCheckbox {
+		<div x-data="{ checkAll: false }" class={ cfg.ContainerClasses() }>
+			@tableInner(cfg)
+		</div>
+	} else {
+		<div class={ cfg.ContainerClasses() }>
+			@tableInner(cfg)
+		</div>
+	}
+}
+
+templ tableInner(cfg Config) {
+	<table class={ cfg.TableClasses() }>
+		<thead class={ cfg.TheadClasses() }>
+			<tr>
+				if cfg.ShowCheckbox {
+					<th scope="col" class={ cfg.HeaderCellClasses() }>
+						@checkboxLabel(cfg, "checkAll", true)
+					</th>
+				}
+				for _, col := range cfg.Columns {
+					<th scope="col" class={ cfg.HeaderCellClasses() }>{ col.Label }</th>
+				}
+			</tr>
+		</thead>
+		<tbody class={ cfg.TbodyClasses() }>
+			for _, row := range cfg.Rows {
+				<tr class={ cfg.RowClasses() }>
+					if cfg.ShowCheckbox {
+						<td class={ cfg.CellClasses() }>
+							@checkboxLabel(cfg, fmt.Sprintf("user%s", row.ID), false)
+						</td>
+					}
+					for _, col := range cfg.Columns {
+						<td class={ cfg.CellClasses() }>
+							if cell, ok := row.Cells[col.Key]; ok {
+								if cell.Component != nil {
+									@cell.Component
+								} else {
+									{ cell.Text }
+								}
+							}
+						</td>
+					}
+				</tr>
+			}
+		</tbody>
+	</table>
+}
+
+templ checkboxLabel(cfg Config, id string, isHeader bool) {
+	<label for={ id } class="flex items-center text-on-surface dark:text-on-surface-dark">
+		<div class="relative flex items-center">
+			if isHeader {
+				<input type="checkbox" x-model="checkAll" id={ id } class={ cfg.CheckboxClasses() }/>
+			} else {
+				<input type="checkbox" id={ id } class={ cfg.CheckboxClasses() } x-bind:checked="checkAll"/>
+			}
+			<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" stroke="currentColor" fill="none" stroke-width="4" class="pointer-events-none invisible absolute left-1/2 top-1/2 size-3 -translate-x-1/2 -translate-y-1/2 text-on-primary peer-checked:visible dark:text-on-primary-dark">
+				<path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"></path>
+			</svg>
+		</div>
+	</label>
+}
+
+// ActionButton renders an action button for table rows
+templ ActionButton(label string) {
+	<button type="button" class={ ActionButtonClasses() }>{ label }</button>
+}
+
+// StatusBadge renders a status badge for table cells
+templ StatusBadge(label string, status string) {
+	<span class={ StatusBadgeClasses(status) }>{ label }</span>
+}
+
+// UserCell renders a user cell with avatar, name, and email
+templ UserCell(avatarURL string, name string, email string) {
+	<div class="flex w-max items-center gap-2">
+		<img class="size-10 rounded-full object-cover" src={ avatarURL } alt="user avatar"/>
+		<div class="flex flex-col">
+			<span class="text-neutral-900 dark:text-white">{ name }</span>
+			<span class="text-sm text-neutral-600 opacity-85 dark:text-neutral-300">{ email }</span>
+		</div>
+	</div>
+}

@@ -89,6 +89,8 @@ func (s *Server) handleComponent(w http.ResponseWriter, r *http.Request) {
 		components.ModalDemoPage().Render(r.Context(), w)
 	case "tabs":
 		components.TabsDemoPage().Render(r.Context(), w)
+	case "table":
+		components.TableDemoPage().Render(r.Context(), w)
 	default:
 		http.NotFound(w, r)
 	}
