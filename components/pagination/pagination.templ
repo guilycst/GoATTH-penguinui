@@ -1,0 +1,172 @@
+package pagination
+
+// Pagination renders a pagination navigation component based on PenguinUI.
+// Supports two variants: WithEllipsis (page numbers with ellipsis) and Simple (prev/next only).
+//
+// Usage:
+//
+//	// Simple pagination (prev/next only)
+//	@pagination.Pagination(pagination.Config{
+//	    Variant:     pagination.Simple,
+//	    CurrentPage: 3,
+//	    TotalPages:  10,
+//	    BaseURL:     "/items",
+//	})
+//
+//	// With ellipsis and page numbers
+//	@pagination.Pagination(pagination.Config{
+//	    Variant:     pagination.WithEllipsis,
+//	    CurrentPage: 5,
+//	    TotalPages:  30,
+//	    BaseURL:     "/items",
+//	})
+//
+//	// With HTMX integration
+//	@pagination.Pagination(pagination.Config{
+//	    Variant:     pagination.WithEllipsis,
+//	    CurrentPage: 2,
+//	    TotalPages:  10,
+//	    BaseURL:     "/api/items",
+//	    HTMXTarget:  "#items-tbody",
+//	    HTMXSwap:    "innerHTML",
+//	})
+templ Pagination(cfg Config) {
+	<nav
+		if cfg.ID != "" {
+			id={ cfg.ID }
+		}
+		aria-label="pagination"
+		class={ cfg.NavClasses() }
+	>
+		<ul class={ cfg.ListClasses() }>
+			// Previous button
+			<li>
+				if cfg.HasPrevious() {
+					if cfg.HTMXTarget != "" {
+						<a
+							href={ templ.SafeURL(cfg.PageURL(cfg.PreviousPage())) }
+							class={ cfg.PrevNextClasses(true) }
+							aria-label="previous page"
+							hx-get={ cfg.PageURL(cfg.PreviousPage()) }
+							hx-target={ cfg.HTMXTarget }
+							hx-swap={ cfg.SwapStrategy() }
+						>
+							@prevIcon()
+							Previous
+						</a>
+					} else {
+						<a
+							href={ templ.SafeURL(cfg.PageURL(cfg.PreviousPage())) }
+							class={ cfg.PrevNextClasses(true) }
+							aria-label="previous page"
+						>
+							@prevIcon()
+							Previous
+						</a>
+					}
+				} else {
+					<span class={ cfg.PrevNextClasses(false) } aria-disabled="true">
+						@prevIcon()
+						Previous
+					</span>
+				}
+			</li>
+			// Page numbers (ellipsis variant only)
+			if cfg.Variant != Simple {
+				for _, item := range cfg.Pages() {
+					if item.IsEllipsis {
+						<li>
+							<span class={ cfg.EllipsisClasses() } aria-label="more pages">
+								@ellipsisIcon()
+							</span>
+						</li>
+					} else if item.IsCurrent {
+						<li>
+							<a
+								href={ templ.SafeURL(cfg.PageURL(item.Page)) }
+								class={ cfg.PageClasses(true) }
+								aria-current="page"
+								aria-label={ "page " + itoa(item.Page) }
+							>
+								{ itoa(item.Page) }
+							</a>
+						</li>
+					} else {
+						<li>
+							if cfg.HTMXTarget != "" {
+								<a
+									href={ templ.SafeURL(cfg.PageURL(item.Page)) }
+									class={ cfg.PageClasses(false) }
+									aria-label={ "page " + itoa(item.Page) }
+									hx-get={ cfg.PageURL(item.Page) }
+									hx-target={ cfg.HTMXTarget }
+									hx-swap={ cfg.SwapStrategy() }
+								>
+									{ itoa(item.Page) }
+								</a>
+							} else {
+								<a
+									href={ templ.SafeURL(cfg.PageURL(item.Page)) }
+									class={ cfg.PageClasses(false) }
+									aria-label={ "page " + itoa(item.Page) }
+								>
+									{ itoa(item.Page) }
+								</a>
+							}
+						</li>
+					}
+				}
+			}
+			// Next button
+			<li>
+				if cfg.HasNext() {
+					if cfg.HTMXTarget != "" {
+						<a
+							href={ templ.SafeURL(cfg.PageURL(cfg.NextPage())) }
+							class={ cfg.PrevNextClasses(true) }
+							aria-label="next page"
+							hx-get={ cfg.PageURL(cfg.NextPage()) }
+							hx-target={ cfg.HTMXTarget }
+							hx-swap={ cfg.SwapStrategy() }
+						>
+							Next
+							@nextIcon()
+						</a>
+					} else {
+						<a
+							href={ templ.SafeURL(cfg.PageURL(cfg.NextPage())) }
+							class={ cfg.PrevNextClasses(true) }
+							aria-label="next page"
+						>
+							Next
+							@nextIcon()
+						</a>
+					}
+				} else {
+					<span class={ cfg.PrevNextClasses(false) } aria-disabled="true">
+						Next
+						@nextIcon()
+					</span>
+				}
+			</li>
+		</ul>
+	</nav>
+}
+
+templ prevIcon() {
+	<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-6">
+		<path fill-rule="evenodd" d="M11.78 5.22a.75.75 0 0 1 0 1.06L8.06 10l3.72 3.72a.75.75 0 1 1-1.06 1.06l-4.25-4.25a.75.75 0 0 1 0-1.06l4.25-4.25a.75.75 0 0 1 1.06 0Z" clip-rule="evenodd"></path>
+	</svg>
+}
+
+templ nextIcon() {
+	<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-6">
+		<path fill-rule="evenodd" d="M8.22 5.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 0 1-1.06-1.06L11.94 10 8.22 6.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd"></path>
+	</svg>
+}
+
+templ ellipsisIcon() {
+	<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" aria-hidden="true" stroke="currentColor" class="size-6">
+		<path stroke-linecap="round" stroke-linejoin="round" d="M6.75 12a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM12.75 12a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0ZM18.75 12a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z"></path>
+	</svg>
+}

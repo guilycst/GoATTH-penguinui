@@ -94,6 +94,8 @@ func (s *Server) handleComponent(w http.ResponseWriter, r *http.Request) {
 		components.TableDemoPage().Render(r.Context(), w)
 	case "toggle":
 		components.ToggleDemoPage().Render(r.Context(), w)
+	case "pagination":
+		components.PaginationDemoPage().Render(r.Context(), w)
 	default:
 		http.NotFound(w, r)
 	}

@@ -1,6 +1,10 @@
 package table
 
-import "fmt"
+import (
+	"fmt"
+
+	"github.com/guilycst/GoATTH-penguinui/components/pagination"
+)
 
 // Table renders a table component based on PenguinUI
 // Supports static content, sorting, lazy loading, pagination, and infinite scroll.
@@ -57,7 +61,7 @@ templ Table(cfg Config) {
 		</div>
 	}
 	if cfg.Pagination != nil {
-		@Pagination(cfg)
+		@TablePagination(cfg)
 	}
 }
 
@@ -191,77 +195,22 @@ templ scrollSentinel(cfg Config) {
 	</tr>
 }
 
-// Pagination renders page navigation controls below the table
-templ Pagination(cfg Config) {
+// TablePagination renders page navigation controls below the table using the pagination component
+templ TablePagination(cfg Config) {
 	if cfg.Pagination != nil && cfg.Pagination.TotalPages > 1 {
-		<nav id={ cfg.PaginationID() } aria-label="Table pagination" class="flex items-center justify-between border-t border-outline px-4 py-3 dark:border-outline-dark">
+		<div id={ cfg.PaginationID() } class="flex items-center justify-between border-t border-outline px-4 py-3 dark:border-outline-dark">
 			<div class="text-sm text-on-surface/70 dark:text-on-surface-dark/70">
 				Page { itoa(cfg.Pagination.CurrentPage) } of { itoa(cfg.Pagination.TotalPages) }
 			</div>
-			<div class="flex items-center gap-1">
-				// Previous button
-				if cfg.Pagination.CurrentPage > 1 {
-					<button
-						type="button"
-						class="rounded-radius px-3 py-1.5 text-sm font-medium text-on-surface hover:bg-surface-alt dark:text-on-surface-dark dark:hover:bg-surface-dark-alt transition-colors"
-						hx-get={ cfg.PageURL(cfg.Pagination.CurrentPage - 1) }
-						hx-target={ "#" + cfg.TbodyID() }
-						hx-swap="innerHTML"
-					>
-						Prev
-					</button>
-				} else {
-					<button
-						type="button"
-						class="rounded-radius px-3 py-1.5 text-sm font-medium text-on-surface/40 dark:text-on-surface-dark/40 cursor-not-allowed"
-						disabled
-					>
-						Prev
-					</button>
-				}
-				// Page numbers
-				for _, page := range cfg.Pagination.PaginationPages() {
-					if page == cfg.Pagination.CurrentPage {
-						<button
-							type="button"
-							class="rounded-radius px-3 py-1.5 text-sm font-medium bg-primary text-on-primary dark:bg-primary-dark dark:text-on-primary-dark"
-						>
-							{ itoa(page) }
-						</button>
-					} else {
-						<button
-							type="button"
-							class="rounded-radius px-3 py-1.5 text-sm font-medium text-on-surface hover:bg-surface-alt dark:text-on-surface-dark dark:hover:bg-surface-dark-alt transition-colors"
-							hx-get={ cfg.PageURL(page) }
-							hx-target={ "#" + cfg.TbodyID() }
-							hx-swap="innerHTML"
-						>
-							{ itoa(page) }
-						</button>
-					}
-				}
-				// Next button
-				if cfg.Pagination.CurrentPage < cfg.Pagination.TotalPages {
-					<button
-						type="button"
-						class="rounded-radius px-3 py-1.5 text-sm font-medium text-on-surface hover:bg-surface-alt dark:text-on-surface-dark dark:hover:bg-surface-dark-alt transition-colors"
-						hx-get={ cfg.PageURL(cfg.Pagination.CurrentPage + 1) }
-						hx-target={ "#" + cfg.TbodyID() }
-						hx-swap="innerHTML"
-					>
-						Next
-					</button>
-				} else {
-					<button
-						type="button"
-						class="rounded-radius px-3 py-1.5 text-sm font-medium text-on-surface/40 dark:text-on-surface-dark/40 cursor-not-allowed"
-						disabled
-					>
-						Next
-					</button>
-				}
-			</div>
-		</nav>
+			@pagination.Pagination(pagination.Config{
+				Variant:     pagination.WithEllipsis,
+				CurrentPage: cfg.Pagination.CurrentPage,
+				TotalPages:  cfg.Pagination.TotalPages,
+				BaseURL:     cfg.PaginationBaseURL(),
+				HTMXTarget:  "#" + cfg.TbodyID(),
+				HTMXSwap:    "innerHTML",
+			})
+		</div>
 	}
 }
 
