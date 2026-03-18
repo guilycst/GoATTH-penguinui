@@ -8,10 +8,7 @@ package combobox
 import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
-import (
-	"encoding/json"
-	"fmt"
-)
+import "fmt"
 
 // Combobox renders a combobox component with support for:
 // - Single or multi-select
@@ -116,8 +113,8 @@ func singleSelectCombobox(cfg Config) templ.Component {
 			templ_7745c5c3_Var2 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		optsJSON, _ := json.Marshal(cfg.Options)
-		selectedJSON, _ := json.Marshal(cfg.Selected)
+		optsJS := optionsToJS(cfg.Options)
+		selectedJS := selectedToJS(cfg.Selected)
 		placeholder := cfg.GetPlaceholder()
 		var templ_7745c5c3_Var3 = []any{"relative " + cfg.SizeClasses() + " " + cfg.Class}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var3...)
@@ -129,9 +126,9 @@ func singleSelectCombobox(cfg Config) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var4 string
-		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(singleSelectData(cfg.ID, string(optsJSON), string(selectedJSON), placeholder, cfg.EnableSearch))
+		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(singleSelectData(cfg.ID, optsJS, selectedJS, placeholder, cfg.EnableSearch))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/combobox/combobox.templ`, Line: 69, Col: 106}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/combobox/combobox.templ`, Line: 66, Col: 86}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 		if templ_7745c5c3_Err != nil {
@@ -162,7 +159,7 @@ func singleSelectCombobox(cfg Config) templ.Component {
 			var templ_7745c5c3_Var6 string
 			templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(cfg.ID)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/combobox/combobox.templ`, Line: 75, Col: 16}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/combobox/combobox.templ`, Line: 72, Col: 16}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 			if templ_7745c5c3_Err != nil {
@@ -175,7 +172,7 @@ func singleSelectCombobox(cfg Config) templ.Component {
 			var templ_7745c5c3_Var7 string
 			templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(cfg.Label)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/combobox/combobox.templ`, Line: 78, Col: 15}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/combobox/combobox.templ`, Line: 75, Col: 15}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 			if templ_7745c5c3_Err != nil {
@@ -202,7 +199,7 @@ func singleSelectCombobox(cfg Config) templ.Component {
 		var templ_7745c5c3_Var9 string
 		templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(cfg.ID + "-trigger")
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/combobox/combobox.templ`, Line: 85, Col: 27}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/combobox/combobox.templ`, Line: 82, Col: 27}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
 		if templ_7745c5c3_Err != nil {
@@ -238,7 +235,7 @@ func singleSelectCombobox(cfg Config) templ.Component {
 		var templ_7745c5c3_Var11 string
 		templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs("selectedOption ? '" + cfg.TriggerStateClasses(true) + "' : '" + cfg.TriggerStateClasses(false) + "'")
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/combobox/combobox.templ`, Line: 94, Col: 119}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/combobox/combobox.templ`, Line: 91, Col: 119}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
 		if templ_7745c5c3_Err != nil {
@@ -251,7 +248,7 @@ func singleSelectCombobox(cfg Config) templ.Component {
 		var templ_7745c5c3_Var12 string
 		templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(cfg.ID)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/combobox/combobox.templ`, Line: 119, Col: 14}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/combobox/combobox.templ`, Line: 116, Col: 14}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
 		if templ_7745c5c3_Err != nil {
@@ -264,7 +261,7 @@ func singleSelectCombobox(cfg Config) templ.Component {
 		var templ_7745c5c3_Var13 string
 		templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.JoinStringErrs(cfg.Name)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/combobox/combobox.templ`, Line: 120, Col: 18}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/combobox/combobox.templ`, Line: 117, Col: 18}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var13))
 		if templ_7745c5c3_Err != nil {
@@ -299,7 +296,7 @@ func singleSelectCombobox(cfg Config) templ.Component {
 		var templ_7745c5c3_Var16 string
 		templ_7745c5c3_Var16, templ_7745c5c3_Err = templ.JoinStringErrs(cfg.Label + " list")
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/combobox/combobox.templ`, Line: 135, Col: 42}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/combobox/combobox.templ`, Line: 132, Col: 42}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var16))
 		if templ_7745c5c3_Err != nil {
@@ -326,7 +323,7 @@ func singleSelectCombobox(cfg Config) templ.Component {
 			var templ_7745c5c3_Var18 string
 			templ_7745c5c3_Var18, templ_7745c5c3_Err = templ.JoinStringErrs(cfg.GetSearchPlaceholder())
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/combobox/combobox.templ`, Line: 160, Col: 46}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/combobox/combobox.templ`, Line: 157, Col: 46}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var18))
 			if templ_7745c5c3_Err != nil {
@@ -357,7 +354,7 @@ func singleSelectCombobox(cfg Config) templ.Component {
 		var templ_7745c5c3_Var20 string
 		templ_7745c5c3_Var20, templ_7745c5c3_Err = templ.JoinStringErrs(cfg.GetNoResultsText())
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/combobox/combobox.templ`, Line: 173, Col: 29}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/combobox/combobox.templ`, Line: 170, Col: 29}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var20))
 		if templ_7745c5c3_Err != nil {
@@ -375,7 +372,7 @@ func singleSelectCombobox(cfg Config) templ.Component {
 			var templ_7745c5c3_Var21 string
 			templ_7745c5c3_Var21, templ_7745c5c3_Err = templ.JoinStringErrs(cfg.HXMTEndpoint)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/combobox/combobox.templ`, Line: 179, Col: 31}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/combobox/combobox.templ`, Line: 176, Col: 31}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var21))
 			if templ_7745c5c3_Err != nil {
@@ -388,7 +385,7 @@ func singleSelectCombobox(cfg Config) templ.Component {
 			var templ_7745c5c3_Var22 string
 			templ_7745c5c3_Var22, templ_7745c5c3_Err = templ.JoinStringErrs(cfg.GetHTMXTrigger())
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/combobox/combobox.templ`, Line: 180, Col: 39}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/combobox/combobox.templ`, Line: 177, Col: 39}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var22))
 			if templ_7745c5c3_Err != nil {
@@ -401,7 +398,7 @@ func singleSelectCombobox(cfg Config) templ.Component {
 			var templ_7745c5c3_Var23 string
 			templ_7745c5c3_Var23, templ_7745c5c3_Err = templ.JoinStringErrs("#" + cfg.ID + "-options")
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/combobox/combobox.templ`, Line: 181, Col: 43}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/combobox/combobox.templ`, Line: 178, Col: 43}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var23))
 			if templ_7745c5c3_Err != nil {
@@ -414,7 +411,7 @@ func singleSelectCombobox(cfg Config) templ.Component {
 			var templ_7745c5c3_Var24 string
 			templ_7745c5c3_Var24, templ_7745c5c3_Err = templ.JoinStringErrs(cfg.ID + "-options")
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/combobox/combobox.templ`, Line: 188, Col: 34}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/combobox/combobox.templ`, Line: 185, Col: 34}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var24))
 			if templ_7745c5c3_Err != nil {
@@ -454,7 +451,7 @@ func singleSelectCombobox(cfg Config) templ.Component {
 		var templ_7745c5c3_Var27 string
 		templ_7745c5c3_Var27, templ_7745c5c3_Err = templ.JoinStringErrs("'" + cfg.ID + "-option-' + index")
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/combobox/combobox.templ`, Line: 197, Col: 52}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/combobox/combobox.templ`, Line: 194, Col: 52}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var27))
 		if templ_7745c5c3_Err != nil {
@@ -490,8 +487,8 @@ func multiSelectCombobox(cfg Config) templ.Component {
 			templ_7745c5c3_Var28 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		optsJSON, _ := json.Marshal(cfg.Options)
-		selectedJSON, _ := json.Marshal(cfg.Selected)
+		optsJS := optionsToJS(cfg.Options)
+		selectedJS := selectedToJS(cfg.Selected)
 		placeholder := cfg.GetPlaceholder()
 		var templ_7745c5c3_Var29 = []any{"relative " + cfg.SizeClasses() + " " + cfg.Class}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var29...)
@@ -503,9 +500,9 @@ func multiSelectCombobox(cfg Config) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var30 string
-		templ_7745c5c3_Var30, templ_7745c5c3_Err = templ.JoinStringErrs(multiSelectData(cfg.ID, string(optsJSON), string(selectedJSON), placeholder, cfg.EnableSearch))
+		templ_7745c5c3_Var30, templ_7745c5c3_Err = templ.JoinStringErrs(multiSelectData(cfg.ID, optsJS, selectedJS, placeholder, cfg.EnableSearch))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/combobox/combobox.templ`, Line: 260, Col: 105}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/combobox/combobox.templ`, Line: 257, Col: 85}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var30))
 		if templ_7745c5c3_Err != nil {
@@ -536,7 +533,7 @@ func multiSelectCombobox(cfg Config) templ.Component {
 			var templ_7745c5c3_Var32 string
 			templ_7745c5c3_Var32, templ_7745c5c3_Err = templ.JoinStringErrs(cfg.ID)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/combobox/combobox.templ`, Line: 266, Col: 16}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/combobox/combobox.templ`, Line: 263, Col: 16}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var32))
 			if templ_7745c5c3_Err != nil {
@@ -549,7 +546,7 @@ func multiSelectCombobox(cfg Config) templ.Component {
 			var templ_7745c5c3_Var33 string
 			templ_7745c5c3_Var33, templ_7745c5c3_Err = templ.JoinStringErrs(cfg.Label)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/combobox/combobox.templ`, Line: 269, Col: 15}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/combobox/combobox.templ`, Line: 266, Col: 15}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var33))
 			if templ_7745c5c3_Err != nil {
@@ -576,7 +573,7 @@ func multiSelectCombobox(cfg Config) templ.Component {
 		var templ_7745c5c3_Var35 string
 		templ_7745c5c3_Var35, templ_7745c5c3_Err = templ.JoinStringErrs(cfg.ID + "-trigger")
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/combobox/combobox.templ`, Line: 276, Col: 27}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/combobox/combobox.templ`, Line: 273, Col: 27}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var35))
 		if templ_7745c5c3_Err != nil {
@@ -612,7 +609,7 @@ func multiSelectCombobox(cfg Config) templ.Component {
 		var templ_7745c5c3_Var37 string
 		templ_7745c5c3_Var37, templ_7745c5c3_Err = templ.JoinStringErrs("selectedValues.length > 0 ? '" + cfg.TriggerStateClasses(true) + "' : '" + cfg.TriggerStateClasses(false) + "'")
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/combobox/combobox.templ`, Line: 281, Col: 130}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/combobox/combobox.templ`, Line: 278, Col: 130}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var37))
 		if templ_7745c5c3_Err != nil {
@@ -625,7 +622,7 @@ func multiSelectCombobox(cfg Config) templ.Component {
 		var templ_7745c5c3_Var38 string
 		templ_7745c5c3_Var38, templ_7745c5c3_Err = templ.JoinStringErrs(cfg.Name)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/combobox/combobox.templ`, Line: 309, Col: 19}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/combobox/combobox.templ`, Line: 306, Col: 19}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var38))
 		if templ_7745c5c3_Err != nil {
@@ -674,7 +671,7 @@ func multiSelectCombobox(cfg Config) templ.Component {
 			var templ_7745c5c3_Var42 string
 			templ_7745c5c3_Var42, templ_7745c5c3_Err = templ.JoinStringErrs(cfg.GetSearchPlaceholder())
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/combobox/combobox.templ`, Line: 345, Col: 46}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/combobox/combobox.templ`, Line: 342, Col: 46}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var42))
 			if templ_7745c5c3_Err != nil {
@@ -710,7 +707,7 @@ func multiSelectCombobox(cfg Config) templ.Component {
 			var templ_7745c5c3_Var44 string
 			templ_7745c5c3_Var44, templ_7745c5c3_Err = templ.JoinStringErrs(cfg.GetClearAllText())
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/combobox/combobox.templ`, Line: 364, Col: 30}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/combobox/combobox.templ`, Line: 361, Col: 30}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var44))
 			if templ_7745c5c3_Err != nil {
@@ -728,7 +725,7 @@ func multiSelectCombobox(cfg Config) templ.Component {
 		var templ_7745c5c3_Var45 string
 		templ_7745c5c3_Var45, templ_7745c5c3_Err = templ.JoinStringErrs(cfg.GetNoResultsText())
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/combobox/combobox.templ`, Line: 374, Col: 29}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/combobox/combobox.templ`, Line: 371, Col: 29}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var45))
 		if templ_7745c5c3_Err != nil {
@@ -741,7 +738,7 @@ func multiSelectCombobox(cfg Config) templ.Component {
 		var templ_7745c5c3_Var46 string
 		templ_7745c5c3_Var46, templ_7745c5c3_Err = templ.JoinStringErrs("'" + cfg.ID + "-cb-' + item.value")
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/combobox/combobox.templ`, Line: 381, Col: 55}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/combobox/combobox.templ`, Line: 378, Col: 55}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var46))
 		if templ_7745c5c3_Err != nil {
@@ -776,7 +773,7 @@ func multiSelectCombobox(cfg Config) templ.Component {
 		var templ_7745c5c3_Var49 string
 		templ_7745c5c3_Var49, templ_7745c5c3_Err = templ.JoinStringErrs("'" + cfg.ID + "-cb-' + item.value")
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/combobox/combobox.templ`, Line: 387, Col: 56}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/combobox/combobox.templ`, Line: 384, Col: 56}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var49))
 		if templ_7745c5c3_Err != nil {
@@ -790,28 +787,74 @@ func multiSelectCombobox(cfg Config) templ.Component {
 	})
 }
 
-// singleSelectData generates Alpine.js data for single-select combobox
-func singleSelectData(id, optionsJSON, selectedJSON, placeholder string, enableSearch bool) string {
-	fid, _ := json.Marshal(id)
-	ph, _ := json.Marshal(placeholder)
-	enableSearchJSON, _ := json.Marshal(enableSearch)
-
-	// Ensure selectedValues is always an array, not null
-	selectedValuesData := selectedJSON
-	if selectedValuesData == "null" {
-		selectedValuesData = "[]"
+// jsEscapeSingle escapes a string for use inside JS single quotes
+func jsEscapeSingle(s string) string {
+	result := ""
+	for _, c := range s {
+		switch c {
+		case '\'':
+			result += `\'`
+		case '\\':
+			result += `\\`
+		default:
+			result += string(c)
+		}
 	}
+	return result
+}
 
+// optionsToJS converts options to a JS array literal using single quotes
+// (avoids double-quote escaping issues when inside HTML x-data attributes)
+func optionsToJS(options []Option) string {
+	if len(options) == 0 {
+		return "[]"
+	}
+	result := "["
+	for i, opt := range options {
+		if i > 0 {
+			result += ","
+		}
+		result += fmt.Sprintf("{value:'%s',label:'%s'", jsEscapeSingle(opt.Value), jsEscapeSingle(opt.Label))
+		if opt.Img != "" {
+			result += fmt.Sprintf(",img:'%s'", jsEscapeSingle(opt.Img))
+		}
+		if opt.Meta != "" {
+			result += fmt.Sprintf(",meta:'%s'", jsEscapeSingle(opt.Meta))
+		}
+		result += "}"
+	}
+	result += "]"
+	return result
+}
+
+// selectedToJS converts selected values to a JS array literal using single quotes
+func selectedToJS(selected []string) string {
+	if len(selected) == 0 {
+		return "[]"
+	}
+	result := "["
+	for i, v := range selected {
+		if i > 0 {
+			result += ","
+		}
+		result += fmt.Sprintf("'%s'", jsEscapeSingle(v))
+	}
+	result += "]"
+	return result
+}
+
+// singleSelectData generates Alpine.js data for single-select combobox
+func singleSelectData(id, optionsJS, selectedJS, placeholder string, enableSearch bool) string {
 	return fmt.Sprintf(`{
-		id: %s,
-		placeholder: %s,
+		id: '%s',
+		placeholder: '%s',
 		allOptions: %s,
 		selectedValues: %s,
 		search: '',
 		isOpen: false,
 		openedWithKeyboard: false,
 		optionsLoaded: false,
-		enableSearch: %s,
+		enableSearch: %t,
 		get selectedOption() {
 			if (!this.selectedValues || this.selectedValues.length === 0) return null;
 			const value = this.selectedValues[0];
@@ -830,7 +873,7 @@ func singleSelectData(id, optionsJSON, selectedJSON, placeholder string, enableS
 		},
 		highlightFirstMatchingOption(pressedKey) {
 			if (!this.isOpen && !this.openedWithKeyboard) return;
-			const option = this.allOptions.find(o => 
+			const option = this.allOptions.find(o =>
 				o.label.toLowerCase().startsWith(pressedKey.toLowerCase())
 			);
 			if (option) {
@@ -839,32 +882,18 @@ func singleSelectData(id, optionsJSON, selectedJSON, placeholder string, enableS
 				if (el) el.focus();
 			}
 		}
-	}`, fid, ph, optionsJSON, selectedValuesData, enableSearchJSON)
+	}`, jsEscapeSingle(id), jsEscapeSingle(placeholder), optionsJS, selectedJS, enableSearch)
 }
 
 // multiSelectData generates Alpine.js data for multi-select combobox
-func multiSelectData(id, optionsJSON, selectedJSON, placeholder string, enableSearch bool) string {
-	fid, _ := json.Marshal(id)
-	ph, _ := json.Marshal(placeholder)
-
-	// Ensure selected is always an array, not null
-	selectedValuesData := selectedJSON
-	if selectedValuesData == "null" {
-		selectedValuesData = "[]"
-	}
-
-	optsData := fmt.Sprintf(`
-		allOptions: %s.map(o => ({...o, checked: (%s).includes(o.value)})),
-	`, optionsJSON, selectedValuesData)
-	enableSearchJSON, _ := json.Marshal(enableSearch)
-
+func multiSelectData(id, optionsJS, selectedJS, placeholder string, enableSearch bool) string {
 	return fmt.Sprintf(`{
-		id: %s,
-		placeholder: %s,
-		%s
+		id: '%s',
+		placeholder: '%s',
+		allOptions: %s.map(o => ({...o, checked: (%s).includes(o.value)})),
 		search: '',
 		isOpen: false,
-		enableSearch: %s,
+		enableSearch: %t,
 		get filteredOptions() {
 			if (!this.enableSearch || !this.search) return this.allOptions;
 			const q = this.search.toLowerCase();
@@ -886,8 +915,8 @@ func multiSelectData(id, optionsJSON, selectedJSON, placeholder string, enableSe
 			const orig = this.allOptions.find(o => o.value === item.value);
 			if (orig) {
 				orig.checked = !orig.checked;
-				this.$dispatch('combobox-change', { 
-					id: this.id, 
+				this.$dispatch('combobox-change', {
+					id: this.id,
 					values: this.selectedValues,
 					added: orig.checked ? item.value : null,
 					removed: orig.checked ? null : item.value
@@ -899,7 +928,7 @@ func multiSelectData(id, optionsJSON, selectedJSON, placeholder string, enableSe
 			this.search = '';
 			this.$dispatch('combobox-change', { id: this.id, values: [] });
 		}
-	}`, fid, ph, optsData, enableSearchJSON)
+	}`, jsEscapeSingle(id), jsEscapeSingle(placeholder), optionsJS, selectedJS, enableSearch)
 }
 
 var _ = templruntime.GeneratedTemplate
