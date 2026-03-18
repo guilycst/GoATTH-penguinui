@@ -1,6 +1,9 @@
 package main
 
-import "github.com/guilycst/GoATTH-penguinui/components/table"
+import (
+	"github.com/guilycst/GoATTH-penguinui/components/head"
+	"github.com/guilycst/GoATTH-penguinui/components/table"
+)
 
 // Page renders the dog breeds page using the GoATTH table component
 // with Alpine.js filter bar and HTMX-powered sorting.
@@ -11,10 +14,7 @@ templ Page(cols []table.Column, rows []table.Row) {
 			<meta charset="UTF-8"/>
 			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 			<title>Dog Breeds — GoATTH Getting Started</title>
-			<script src="https://cdn.jsdelivr.net/npm/@alpinejs/collapse@3.x.x/dist/cdn.min.js" defer></script>
-			<script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
-			<script src="https://unpkg.com/htmx.org@2.0.8/dist/htmx.min.js"></script>
-			<link href="https://cdn.jsdelivr.net/npm/tailwindcss@4/dist/tailwind.min.css" rel="stylesheet"/>
+			@head.Dependencies()
 		</head>
 		<body class="min-h-screen bg-gray-50 text-gray-800 font-sans">
 			<div class="max-w-5xl mx-auto px-6 py-12">
