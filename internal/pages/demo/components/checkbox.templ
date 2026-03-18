@@ -1,0 +1,234 @@
+package components
+
+import (
+	"github.com/guilycst/GoATTH-penguinui/components/checkbox"
+	"github.com/guilycst/GoATTH-penguinui/internal/pages/demo"
+)
+
+// CheckboxDemoPage renders the Checkbox component demo
+templ CheckboxDemoPage() {
+	@demo.Layout("Checkbox", "checkbox", checkboxDemoContent())
+}
+
+// checkboxDemoContent renders the actual content inside the layout
+templ checkboxDemoContent() {
+	@demo.ComponentDemo(
+		demo.ComponentDemoProps{
+			Title:         "Checkbox",
+			Description:   "A checkbox allows users to select one or more options from a set. Supports color variants, custom icons, animations, descriptions, containers, and groups.",
+			OriginalURL:   "/original/checkbox/default-checkbox.html",
+			OriginalLabel: "Original PenguinUI",
+			GoATTHLabel:   "GoATTH Component",
+		},
+		checkboxDemoPreview(),
+		`// Default Checkbox
+@checkbox.Checkbox(checkbox.Config{
+    ID:      "notifications",
+    Label:   "Notifications",
+    Checked: true,
+})
+
+// Color Variant
+@checkbox.Checkbox(checkbox.Config{
+    ID:      "success",
+    Label:   "Success",
+    Variant: checkbox.Success,
+    Checked: true,
+})
+
+// With Description
+@checkbox.Checkbox(checkbox.Config{
+    ID:            "email",
+    Label:         "Email Updates",
+    Description:   "You only gonna get good news, promise.",
+    DescriptionID: "emailDesc",
+    Checked:       true,
+})
+
+// With Container
+@checkbox.Checkbox(checkbox.Config{
+    ID:        "containerCheck",
+    Label:     "Notifications",
+    Container: true,
+    Checked:   true,
+})
+
+// Checkbox Group
+@checkbox.CheckboxGroup(checkbox.GroupConfig{
+    Title: "Notifications",
+    Items: []checkbox.Config{
+        {ID: "email", Label: "Email notifications", Value: "email", Checked: true},
+        {ID: "push", Label: "Push notifications", Value: "push"},
+        {ID: "sms", Label: "SMS alerts", Value: "sms", Checked: true},
+    },
+})`,
+	)
+}
+
+// checkboxDemoPreview renders the GoATTH checkbox preview
+templ checkboxDemoPreview() {
+	<div class="w-full max-w-4xl mx-auto space-y-8">
+		// Default Checkbox
+		<div>
+			<h4 class="text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong">Default Checkbox</h4>
+			<div class="flex flex-wrap gap-4">
+				@checkbox.Checkbox(checkbox.Config{
+					ID:      "defaultChecked",
+					Label:   "Notifications",
+					Checked: true,
+				})
+				@checkbox.Checkbox(checkbox.Config{
+					ID:    "defaultUnchecked",
+					Label: "Unchecked",
+				})
+			</div>
+		</div>
+
+		// Color Variants
+		<div>
+			<h4 class="text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong">Color Variants</h4>
+			<div class="flex flex-wrap gap-4">
+				@checkbox.Checkbox(checkbox.Config{
+					ID:      "variantPrimary",
+					Label:   "Primary",
+					Variant: checkbox.Primary,
+					Checked: true,
+				})
+				@checkbox.Checkbox(checkbox.Config{
+					ID:      "variantSecondary",
+					Label:   "Secondary",
+					Variant: checkbox.Secondary,
+					Checked: true,
+				})
+				@checkbox.Checkbox(checkbox.Config{
+					ID:      "variantInfo",
+					Label:   "Info",
+					Variant: checkbox.Info,
+					Checked: true,
+				})
+				@checkbox.Checkbox(checkbox.Config{
+					ID:      "variantSuccess",
+					Label:   "Success",
+					Variant: checkbox.Success,
+					Checked: true,
+				})
+				@checkbox.Checkbox(checkbox.Config{
+					ID:      "variantWarning",
+					Label:   "Warning",
+					Variant: checkbox.Warning,
+					Checked: true,
+				})
+				@checkbox.Checkbox(checkbox.Config{
+					ID:      "variantDanger",
+					Label:   "Danger",
+					Variant: checkbox.Danger,
+					Checked: true,
+				})
+			</div>
+		</div>
+
+		// Custom Icons
+		<div>
+			<h4 class="text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong">Custom Icons</h4>
+			<div class="flex flex-wrap gap-4">
+				@checkbox.Checkbox(checkbox.Config{
+					ID:      "iconXmark",
+					Label:   "Xmark",
+					Icon:    checkbox.IconXmark,
+					Checked: true,
+				})
+				@checkbox.Checkbox(checkbox.Config{
+					ID:      "iconMinus",
+					Label:   "Minus",
+					Icon:    checkbox.IconMinus,
+					Checked: true,
+				})
+				@checkbox.Checkbox(checkbox.Config{
+					ID:      "iconPlus",
+					Label:   "Plus",
+					Icon:    checkbox.IconPlus,
+					Checked: true,
+				})
+			</div>
+		</div>
+
+		// Animations
+		<div>
+			<h4 class="text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong">Animations</h4>
+			<div class="flex flex-wrap gap-4">
+				@checkbox.Checkbox(checkbox.Config{
+					ID:        "animSlideUp",
+					Label:     "Slide Up",
+					Animation: checkbox.AnimationSlideUp,
+					Checked:   true,
+				})
+				@checkbox.Checkbox(checkbox.Config{
+					ID:        "animScaleUp",
+					Label:     "Scale Up",
+					Animation: checkbox.AnimationScaleUp,
+					Checked:   true,
+				})
+				@checkbox.Checkbox(checkbox.Config{
+					ID:        "animSlideDown",
+					Label:     "Slide Down",
+					Animation: checkbox.AnimationSlideDown,
+					Checked:   true,
+				})
+			</div>
+		</div>
+
+		// With Description
+		<div>
+			<h4 class="text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong">With Description</h4>
+			@checkbox.Checkbox(checkbox.Config{
+				ID:            "descriptionCheckbox",
+				Label:         "Email Updates",
+				Description:   "You only gonna get good news, promise.",
+				DescriptionID: "checkboxDescription",
+				Checked:       true,
+			})
+		</div>
+
+		// With Container
+		<div>
+			<h4 class="text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong">With Container</h4>
+			@checkbox.Checkbox(checkbox.Config{
+				ID:        "containerCheckbox",
+				Label:     "Notifications",
+				Container: true,
+				Checked:   true,
+			})
+		</div>
+
+		// Checkbox Group
+		<div>
+			<h4 class="text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong">Checkbox Group</h4>
+			@checkbox.CheckboxGroup(checkbox.GroupConfig{
+				Title: "Notifications",
+				Items: []checkbox.Config{
+					{ID: "groupEmail", Label: "Email notifications", Value: "Email notifications", Checked: true},
+					{ID: "groupPush", Label: "Push notifications", Value: "Push notifications"},
+					{ID: "groupSMS", Label: "SMS alerts", Value: "SMS alerts", Checked: true},
+				},
+			})
+		</div>
+
+		// Disabled State
+		<div>
+			<h4 class="text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong">Disabled</h4>
+			<div class="flex flex-wrap gap-4">
+				@checkbox.Checkbox(checkbox.Config{
+					ID:       "disabledUnchecked",
+					Label:    "Disabled unchecked",
+					Disabled: true,
+				})
+				@checkbox.Checkbox(checkbox.Config{
+					ID:       "disabledChecked",
+					Label:    "Disabled checked",
+					Disabled: true,
+					Checked:  true,
+				})
+			</div>
+		</div>
+	</div>
+}

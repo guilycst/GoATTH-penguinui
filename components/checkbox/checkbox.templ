@@ -1,0 +1,111 @@
+package checkbox
+
+// Checkbox renders a single checkbox component based on PenguinUI
+// Usage:
+//
+//	@checkbox.Checkbox(checkbox.Config{
+//	    ID:    "notifications",
+//	    Label: "Notifications",
+//	})
+templ Checkbox(cfg Config) {
+	if cfg.Description != "" {
+		@checkboxWithDescription(cfg)
+	} else if cfg.Container {
+		@checkboxWithContainer(cfg)
+	} else {
+		@standardCheckbox(cfg)
+	}
+}
+
+// standardCheckbox renders a basic checkbox with label
+templ standardCheckbox(cfg Config) {
+	<label for={ cfg.ID } class="flex items-center gap-2 text-sm font-medium text-on-surface dark:text-on-surface-dark has-checked:text-on-surface-strong dark:has-checked:text-on-surface-dark-strong has-disabled:cursor-not-allowed has-disabled:opacity-75">
+		@checkboxInput(cfg)
+		<span>{ cfg.Label }</span>
+	</label>
+}
+
+// checkboxWithDescription renders a checkbox with description text below
+templ checkboxWithDescription(cfg Config) {
+	<div class="flex flex-col items-start">
+		<label for={ cfg.ID } class="flex items-center gap-2 text-sm font-medium text-on-surface dark:text-on-surface-dark has-checked:text-on-surface-strong dark:has-checked:text-on-surface-dark-strong has-disabled:cursor-not-allowed has-disabled:opacity-75">
+			@checkboxInput(cfg)
+			<span>{ cfg.Label }</span>
+		</label>
+		<span id={ cfg.DescriptionID } class="ml-6 text-sm text-on-surface dark:text-on-surface-dark">{ cfg.Description }</span>
+	</div>
+}
+
+// checkboxWithContainer renders a checkbox inside a bordered container
+templ checkboxWithContainer(cfg Config) {
+	<label for={ cfg.ID } class="inline-flex min-w-52 items-center justify-between rounded-radius gap-3 border border-outline bg-surface-alt px-4 py-2 text-sm font-medium text-on-surface dark:border-outline-dark dark:bg-surface-dark-alt dark:text-on-surface-dark has-checked:text-on-surface-strong dark:has-checked:text-on-surface-dark-strong has-disabled:opacity-75 has-disabled:cursor-not-allowed">
+		<span>{ cfg.Label }</span>
+		@checkboxInput(cfg)
+	</label>
+}
+
+// checkboxInput renders the actual input + SVG icon
+templ checkboxInput(cfg Config) {
+	<span class="relative flex items-center">
+		if cfg.Description != "" {
+			if cfg.Checked {
+				<input id={ cfg.ID } type="checkbox" class={ cfg.InputClasses() } aria-describedby={ cfg.DescriptionID } checked/>
+			} else if cfg.Disabled {
+				<input id={ cfg.ID } type="checkbox" class={ cfg.InputClasses() } aria-describedby={ cfg.DescriptionID } disabled/>
+			} else {
+				<input id={ cfg.ID } type="checkbox" class={ cfg.InputClasses() } aria-describedby={ cfg.DescriptionID }/>
+			}
+		} else if cfg.Value != "" {
+			if cfg.Checked {
+				<input id={ cfg.ID } type="checkbox" class={ cfg.InputClasses() } name={ cfg.Name } value={ cfg.Value } checked/>
+			} else if cfg.Disabled {
+				<input id={ cfg.ID } type="checkbox" class={ cfg.InputClasses() } name={ cfg.Name } value={ cfg.Value } disabled/>
+			} else {
+				<input id={ cfg.ID } type="checkbox" class={ cfg.InputClasses() } name={ cfg.Name } value={ cfg.Value }/>
+			}
+		} else {
+			if cfg.Checked {
+				<input id={ cfg.ID } type="checkbox" class={ cfg.InputClasses() } checked/>
+			} else if cfg.Disabled {
+				<input id={ cfg.ID } type="checkbox" class={ cfg.InputClasses() } disabled/>
+			} else {
+				<input id={ cfg.ID } type="checkbox" class={ cfg.InputClasses() }/>
+			}
+		}
+		<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" stroke="currentColor" fill="none" stroke-width="4" class={ cfg.SvgClasses() }>
+			<path stroke-linecap="round" stroke-linejoin="round" d={ cfg.iconPath() }/>
+		</svg>
+	</span>
+}
+
+// CheckboxGroup renders a group of checkboxes in a bordered list
+// Usage:
+//
+//	@checkbox.CheckboxGroup(checkbox.GroupConfig{
+//	    Title: "Notifications",
+//	    Items: []checkbox.Config{
+//	        {ID: "email", Label: "Email notifications", Value: "email", Checked: true},
+//	        {ID: "push", Label: "Push notifications", Value: "push"},
+//	        {ID: "sms", Label: "SMS alerts", Value: "sms", Checked: true},
+//	    },
+//	})
+templ CheckboxGroup(cfg GroupConfig) {
+	if cfg.Title != "" {
+		<h3 class="mb-2 pl-1 font-semibold text-on-surface-strong dark:text-on-surface-dark-strong">{ cfg.Title }</h3>
+	}
+	<ul class="flex min-w-52 flex-col divide-y divide-outline overflow-clip rounded-radius border border-outline dark:divide-outline-dark dark:border-outline-dark">
+		for _, item := range cfg.Items {
+			<li>
+				@groupCheckboxItem(item)
+			</li>
+		}
+	</ul>
+}
+
+// groupCheckboxItem renders a single checkbox inside a group list item
+templ groupCheckboxItem(cfg Config) {
+	<label for={ cfg.ID } class="flex items-center gap-2 p-3 text-sm font-medium text-on-surface dark:text-on-surface-dark has-checked:text-on-surface-strong dark:has-checked:text-on-surface-dark-strong has-disabled:cursor-not-allowed has-disabled:opacity-75">
+		@checkboxInput(cfg)
+		<span>{ cfg.Label }</span>
+	</label>
+}
