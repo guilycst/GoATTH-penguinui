@@ -1,0 +1,21 @@
+app = "guigoes-live"
+primary_region = "gru"
+
+[build]
+dockerfile = "Dockerfile"
+
+[processes]
+app = "server -port 8090"
+
+[http_service]
+auto_start_machines = true
+auto_stop_machines = true
+force_https = true
+internal_port = 8090
+min_machines_running = 0
+processes = [ "app" ]
+
+[[vm]]
+cpu_kind = "shared"
+cpus = 1
+memory = "1gb"

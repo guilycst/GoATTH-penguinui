@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 	"path/filepath"
 	"runtime"
 
@@ -16,9 +17,7 @@ func main() {
 	flag.StringVar(&port, "port", "8090", "Server port")
 	flag.Parse()
 
-	// Get the project root (one level up from cmd/server)
-	_, filename, _, _ := runtime.Caller(0)
-	projectRoot := filepath.Join(filepath.Dir(filename), "..", "..")
+	projectRoot := resolveProjectRoot()
 
 	srv := server.New(projectRoot)
 
@@ -29,4 +28,19 @@ func main() {
 	if err := http.ListenAndServe(addr, srv); err != nil {
 		log.Fatalf("Server error: %v", err)
 	}
+}
+
+func resolveProjectRoot() string {
+	if envRoot := os.Getenv("GOATTH_PROJECT_ROOT"); envRoot != "" {
+		return envRoot
+	}
+
+	if cwd, err := os.Getwd(); err == nil {
+		if _, err := os.Stat(filepath.Join(cwd, "assets")); err == nil {
+			return cwd
+		}
+	}
+
+	_, filename, _, _ := runtime.Caller(0)
+	return filepath.Join(filepath.Dir(filename), "..", "..")
 }

@@ -21,16 +21,18 @@ templ Sidebar(cfg Config) {
 		class={ cfg.ContainerClasses() + " " + cfg.Class }
 		aria-label="sidebar navigation"
 	>
-		<!-- Logo Section -->
-		<div class="shrink-0 border-b border-outline dark:border-outline-dark p-4">
-			<a href={ templ.SafeURL(logoHref) } class="flex items-center gap-2 text-xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong">
-				if cfg.Logo != nil {
-					@cfg.Logo
-				} else {
-					<span>{ cfg.LogoText }</span>
-				}
-			</a>
-		</div>
+		<!-- Logo Section (only rendered when Logo or LogoText is provided) -->
+		if cfg.Logo != nil || cfg.LogoText != "" {
+			<div class="shrink-0 border-b border-outline dark:border-outline-dark p-4">
+				<a href={ templ.SafeURL(logoHref) } class="flex items-center gap-2 text-xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong">
+					if cfg.Logo != nil {
+						@cfg.Logo
+					} else {
+						<span>{ cfg.LogoText }</span>
+					}
+				</a>
+			</div>
+		}
 		
 		<!-- Search Section -->
 		if cfg.ShowSearch {

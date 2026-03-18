@@ -50,7 +50,7 @@ type Section struct {
 
 // ContainerClasses returns the container CSS classes
 func (cfg Config) ContainerClasses() string {
-	return "fixed inset-y-0 left-0 z-40 w-64 transform border-r border-outline bg-surface transition-transform duration-200 ease-in-out lg:static lg:translate-x-0 dark:border-outline-dark dark:bg-surface-dark flex flex-col"
+	return "h-full w-full border-r border-outline bg-surface dark:border-outline-dark dark:bg-surface-dark flex flex-col"
 }
 
 // NavClasses returns the navigation container classes

@@ -1,0 +1,180 @@
+package alert
+
+// Alert renders an alert component matching PenguinUI's alert design
+templ Alert(cfg Config) {
+	if cfg.Dismissible {
+		@dismissibleAlert(cfg)
+	} else if cfg.Action != nil {
+		@actionAlert(cfg)
+	} else if cfg.Link != nil {
+		@linkAlert(cfg)
+	} else {
+		@defaultAlert(cfg)
+	}
+}
+
+// defaultAlert renders a simple alert (with or without list items)
+templ defaultAlert(cfg Config) {
+	<div class={ cfg.ContainerClasses() } role="alert">
+		<div class={ cfg.InnerClasses() }>
+			@iconBadge(cfg)
+			<div class="ml-2">
+				<h3 class={ cfg.TitleClasses() }>{ cfg.Title }</h3>
+				<p class="text-xs font-medium sm:text-sm">{ cfg.Description }</p>
+				if len(cfg.ListItems) > 0 {
+					@listContent(cfg)
+				}
+			</div>
+		</div>
+	</div>
+}
+
+// dismissibleAlert renders an alert with Alpine.js dismiss functionality and transition
+templ dismissibleAlert(cfg Config) {
+	<div
+		x-data="{ alertIsVisible: true }"
+		x-show="alertIsVisible"
+		class={ cfg.ContainerClasses() }
+		role="alert"
+		x-transition:leave="transition ease-in duration-300"
+		x-transition:leave-start="opacity-100 scale-100"
+		x-transition:leave-end="opacity-0 scale-90"
+	>
+		<div class={ cfg.InnerClasses() }>
+			@iconBadge(cfg)
+			<div class="ml-2">
+				<h3 class={ cfg.TitleClasses() }>{ cfg.Title }</h3>
+				<p class="text-xs font-medium sm:text-sm">{ cfg.Description }</p>
+				if len(cfg.ListItems) > 0 {
+					@listContent(cfg)
+				}
+			</div>
+			<button type="button" @click="alertIsVisible = false" class="ml-auto" aria-label="dismiss alert">
+				@dismissIcon()
+			</button>
+		</div>
+	</div>
+}
+
+// linkAlert renders an alert with an action link
+templ linkAlert(cfg Config) {
+	<div class={ cfg.ContainerClasses() } role="alert">
+		<div class={ cfg.InnerClasses() }>
+			@iconBadge(cfg)
+			<div class="flex w-full flex-col items-center justify-between gap-2 ml-2 sm:flex-row">
+				<div>
+					<h3 class={ cfg.TitleClasses() }>{ cfg.Title }</h3>
+					<p class="text-xs font-medium sm:text-sm">{ cfg.Description }</p>
+				</div>
+				<a href={ templ.SafeURL(cfg.Link.Href) } class={ cfg.LinkClasses() }>
+					{ cfg.Link.Text }
+				</a>
+			</div>
+		</div>
+	</div>
+}
+
+// actionAlert renders an alert with action buttons
+templ actionAlert(cfg Config) {
+	{{ dismissText := cfg.Action.DismissText }}
+	{{ if dismissText == "" { dismissText = "Dismiss" } }}
+	<div class={ cfg.ContainerClasses() } role="alert">
+		<div class={ cfg.InnerClasses() }>
+			@iconBadge(cfg)
+			<div class="flex flex-col gap-2 ml-2">
+				<div>
+					<h3 class={ cfg.TitleClasses() }>{ cfg.Title }</h3>
+					<p class="text-xs font-medium sm:text-sm">{ cfg.Description }</p>
+				</div>
+				<div class="flex items-center gap-4">
+					<button
+						type="button"
+						class={ cfg.PrimaryActionClasses() }
+						if cfg.Action.PrimaryOnClick != "" {
+							@click={ cfg.Action.PrimaryOnClick }
+						}
+						if cfg.Action.PrimaryHxGet != "" {
+							hx-get={ cfg.Action.PrimaryHxGet }
+						}
+						if cfg.Action.PrimaryHxPost != "" {
+							hx-post={ cfg.Action.PrimaryHxPost }
+						}
+						if cfg.Action.PrimaryHxTarget != "" {
+							hx-target={ cfg.Action.PrimaryHxTarget }
+						}
+						if cfg.Action.PrimaryHxSwap != "" {
+							hx-swap={ cfg.Action.PrimaryHxSwap }
+						}
+					>
+						{ cfg.Action.PrimaryText }
+					</button>
+					<button
+						type="button"
+						class="whitespace-nowrap text-center text-sm font-medium tracking-wide text-on-surface transition hover:opacity-75 dark:text-on-surface-dark active:opacity-100"
+					>
+						{ dismissText }
+					</button>
+				</div>
+			</div>
+		</div>
+	</div>
+}
+
+// listContent renders a bullet list inside the alert
+templ listContent(cfg Config) {
+	<ul class={ cfg.ListClasses() }>
+		for _, item := range cfg.ListItems {
+			<li>{ item }</li>
+		}
+	</ul>
+}
+
+// iconBadge renders the variant-specific icon
+templ iconBadge(cfg Config) {
+	<div class={ cfg.IconBadgeClasses() } aria-hidden="true">
+		switch cfg.Variant {
+			case Info:
+				@infoIcon()
+			case Success:
+				@successIcon()
+			case Warning:
+				@warningIcon()
+			case Danger:
+				@dangerIcon()
+			default:
+				@infoIcon()
+		}
+	</div>
+}
+
+// SVG Icons matching PenguinUI exactly
+
+templ infoIcon() {
+	<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-6" aria-hidden="true">
+		<path fill-rule="evenodd" d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-7-4a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM9 9a.75.75 0 0 0 0 1.5h.253a.25.25 0 0 1 .244.304l-.459 2.066A1.75 1.75 0 0 0 10.747 15H11a.75.75 0 0 0 0-1.5h-.253a.25.25 0 0 1-.244-.304l.459-2.066A1.75 1.75 0 0 0 9.253 9H9Z" clip-rule="evenodd"></path>
+	</svg>
+}
+
+templ successIcon() {
+	<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-6" aria-hidden="true">
+		<path fill-rule="evenodd" d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16Zm3.857-9.809a.75.75 0 0 0-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 1 0-1.06 1.061l2.5 2.5a.75.75 0 0 0 1.137-.089l4-5.5Z" clip-rule="evenodd"></path>
+	</svg>
+}
+
+templ warningIcon() {
+	<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-6" aria-hidden="true">
+		<path fill-rule="evenodd" d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-8-5a.75.75 0 0 1 .75.75v4.5a.75.75 0 0 1-1.5 0v-4.5A.75.75 0 0 1 10 5Zm0 10a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z" clip-rule="evenodd"></path>
+	</svg>
+}
+
+templ dangerIcon() {
+	<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-6" aria-hidden="true">
+		<path fill-rule="evenodd" d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16ZM8.28 7.22a.75.75 0 0 0-1.06 1.06L8.94 10l-1.72 1.72a.75.75 0 1 0 1.06 1.06L10 11.06l1.72 1.72a.75.75 0 1 0 1.06-1.06L11.06 10l1.72-1.72a.75.75 0 0 0-1.06-1.06L10 8.94 8.28 7.22Z" clip-rule="evenodd"></path>
+	</svg>
+}
+
+templ dismissIcon() {
+	<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" stroke="currentColor" fill="none" stroke-width="2.5" class="size-4 shrink-0">
+		<path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path>
+	</svg>
+}

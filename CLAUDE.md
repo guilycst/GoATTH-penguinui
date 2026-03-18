@@ -27,7 +27,7 @@ make generate
 # Build Tailwind CSS (REQUIRED after editing CSS)
 make css
 
-# Run dev server (default port 7070)
+# Run dev server (default port 8090)
 make dev
 # or with live reload:
 make dev-air
@@ -103,6 +103,30 @@ if string(selectedJSON) == "null" {
 }
 ```
 
+### Templ HTML escaping breaks Alpine.js `x-data` — NEVER use `json.Marshal` for inline JS:
+Templ's `EscapeString` converts `"` to `&quot;` inside HTML attributes. This silently
+breaks Alpine.js object literals in `x-data`. Use single-quoted JS string literals instead:
+```go
+// BAD — json.Marshal produces double quotes, templ escapes them to &quot;
+optsJSON, _ := json.Marshal(cfg.Options)
+return fmt.Sprintf(`{ options: %s }`, optsJSON)  // broken in browser
+
+// GOOD — build JS literals with single quotes
+func optionsToJS(options []Option) string {
+    result := "["
+    for i, opt := range options {
+        if i > 0 { result += "," }
+        result += fmt.Sprintf("{value:'%s',label:'%s'}", jsEscapeSingle(opt.Value), jsEscapeSingle(opt.Label))
+    }
+    return result + "]"
+}
+```
+
+### Layout — sidebar component is used without logo in the demo layout:
+The demo layout (`layout.templ`) already has a header with "GoATTH PenguinUI" branding.
+The sidebar component's logo section is conditional — only renders when `Logo` or `LogoText`
+is set. Don't pass `LogoText` in the layout to avoid a duplicate header appearance.
+
 ## Theme System
 
 - Themes defined in `all-themes.css` using `[data-theme="name"]` selectors
@@ -136,11 +160,12 @@ templ helperTemplate(cfg Config) {
 }
 ```
 
-### Alpine.js data generation:
+### Alpine.js data generation (use single-quoted JS, NOT json.Marshal):
 ```go
 func alpineData(cfg Config) string {
-    optsJSON, _ := json.Marshal(cfg.Options)
-    return fmt.Sprintf(`{ options: %s }`, optsJSON)
+    // Use single-quoted JS literals to avoid templ's HTML escaping of double quotes
+    opts := optionsToJS(cfg.Options)  // returns [{value:'a',label:'A'},...]
+    return fmt.Sprintf(`{ options: %s }`, opts)
 }
 ```
 

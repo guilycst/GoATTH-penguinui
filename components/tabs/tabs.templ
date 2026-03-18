@@ -1,0 +1,146 @@
+package tabs
+
+import "fmt"
+
+// Tabs renders a tabbed interface with keyboard navigation and ARIA attributes
+// matching PenguinUI's tab component exactly.
+//
+// Usage:
+//
+//	@tabs.Tabs(tabs.Config{
+//	    ID: "my-tabs",
+//	    Tabs: []tabs.Tab{
+//	        {ID: "one", Label: "Tab One", Content: myContent()},
+//	        {ID: "two", Label: "Tab Two", Content: otherContent()},
+//	    },
+//	})
+templ Tabs(cfg Config) {
+	{{ defaultTab := cfg.DefaultTab }}
+	{{ if defaultTab == "" && len(cfg.Tabs) > 0 { defaultTab = cfg.Tabs[0].ID } }}
+	{{ containerID := cfg.ID }}
+	{{ if containerID == "" { containerID = "tabs" } }}
+	<div
+		x-data={ fmt.Sprintf("{ selectedTab: '%s' }", jsEscapeSingle(defaultTab)) }
+		class={ "w-full " + cfg.Class }
+	>
+		<!-- Tab List -->
+		<div
+			x-on:keydown.right.prevent="$focus.wrap().next()"
+			x-on:keydown.left.prevent="$focus.wrap().previous()"
+			class="flex gap-2 overflow-x-auto border-b border-outline dark:border-outline-dark"
+			role="tablist"
+			aria-label="tab options"
+		>
+			for _, tab := range cfg.Tabs {
+				@tabButton(containerID, tab)
+			}
+		</div>
+		<!-- Tab Panels -->
+		<div class="px-2 py-4 text-on-surface dark:text-on-surface-dark">
+			for _, tab := range cfg.Tabs {
+				@tabPanel(containerID, tab)
+			}
+		</div>
+	</div>
+}
+
+// tabButton renders a single tab button
+templ tabButton(containerID string, tab Tab) {
+	{{ panelID := fmt.Sprintf("tabpanel%s%s", containerID, tab.ID) }}
+	{{ hasIcon := tab.Icon != nil }}
+	{{ hasBadge := tab.Badge != "" }}
+	{{ baseClass := "h-min px-4 py-2 text-sm" }}
+	{{ if hasIcon || hasBadge { baseClass = "flex h-min items-center gap-2 px-4 py-2 text-sm" } }}
+	<button
+		x-on:click={ fmt.Sprintf("selectedTab = '%s'", jsEscapeSingle(tab.ID)) }
+		x-bind:aria-selected={ fmt.Sprintf("selectedTab === '%s'", jsEscapeSingle(tab.ID)) }
+		x-bind:tabindex={ fmt.Sprintf("selectedTab === '%s' ? '0' : '-1'", jsEscapeSingle(tab.ID)) }
+		x-bind:class={ fmt.Sprintf("selectedTab === '%s' ? '%s' : '%s'", jsEscapeSingle(tab.ID), ActiveClasses(), InactiveClasses()) }
+		class={ baseClass }
+		type="button"
+		role="tab"
+		aria-controls={ panelID }
+	>
+		if tab.Icon != nil {
+			@tab.Icon
+		}
+		{ tab.Label }
+		if tab.Badge != "" {
+			<span
+				x-bind:class={ fmt.Sprintf("selectedTab === '%s' ? '%s' : '%s'", jsEscapeSingle(tab.ID), BadgeActiveClasses(), BadgeInactiveClasses()) }
+				class="text-xs font-medium px-1 rounded-full border"
+			>
+				{ tab.Badge }
+			</span>
+		}
+	</button>
+}
+
+// tabPanel renders a single tab panel (static or HTMX lazy-loaded)
+templ tabPanel(containerID string, tab Tab) {
+	{{ panelID := fmt.Sprintf("tabpanel%s%s", containerID, tab.ID) }}
+	if tab.HTMX != nil {
+		@htmxTabPanel(panelID, tab)
+	} else {
+		@staticTabPanel(panelID, tab)
+	}
+}
+
+// staticTabPanel renders a tab panel with inline content
+templ staticTabPanel(panelID string, tab Tab) {
+	<div
+		x-cloak
+		x-show={ fmt.Sprintf("selectedTab === '%s'", jsEscapeSingle(tab.ID)) }
+		id={ panelID }
+		role="tabpanel"
+		aria-label={ tab.Label }
+	>
+		if tab.Content != nil {
+			@tab.Content
+		}
+	</div>
+}
+
+// htmxTabPanel renders a tab panel that lazy-loads content via HTMX.
+// The panel fires hx-get once when it becomes visible (x-show + x-intersect).
+templ htmxTabPanel(panelID string, tab Tab) {
+	{{ swap := tab.HTMX.Swap }}
+	{{ if swap == "" { swap = "innerHTML" } }}
+	<div
+		x-cloak
+		x-show={ fmt.Sprintf("selectedTab === '%s'", jsEscapeSingle(tab.ID)) }
+		id={ panelID }
+		role="tabpanel"
+		aria-label={ tab.Label }
+		hx-get={ tab.HTMX.Get }
+		hx-trigger="intersect once"
+		hx-swap={ swap }
+		if tab.HTMX.Indicator != "" {
+			hx-indicator={ tab.HTMX.Indicator }
+		}
+	>
+		<div class="flex items-center gap-2 text-sm text-on-surface/60 dark:text-on-surface-dark/60">
+			<svg class="animate-spin size-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+				<circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+				<path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+			</svg>
+			Loading...
+		</div>
+	</div>
+}
+
+// jsEscapeSingle escapes a string for use inside JS single quotes
+func jsEscapeSingle(s string) string {
+	result := ""
+	for _, c := range s {
+		switch c {
+		case '\'':
+			result += `\'`
+		case '\\':
+			result += `\\`
+		default:
+			result += string(c)
+		}
+	}
+	return result
+}

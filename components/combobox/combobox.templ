@@ -1,9 +1,6 @@
 package combobox
 
-import (
-	"encoding/json"
-	"fmt"
-)
+import "fmt"
 
 // Combobox renders a combobox component with support for:
 // - Single or multi-select
@@ -60,13 +57,13 @@ templ Combobox(cfg Config) {
 
 // singleSelectCombobox renders a single-select combobox
 templ singleSelectCombobox(cfg Config) {
-	{{ 
-		optsJSON, _ := json.Marshal(cfg.Options)
-		selectedJSON, _ := json.Marshal(cfg.Selected)
+	{{
+		optsJS := optionsToJS(cfg.Options)
+		selectedJS := selectedToJS(cfg.Selected)
 		placeholder := cfg.GetPlaceholder()
 	}}
 	<div
-		x-data={ singleSelectData(cfg.ID, string(optsJSON), string(selectedJSON), placeholder, cfg.EnableSearch) }
+		x-data={ singleSelectData(cfg.ID, optsJS, selectedJS, placeholder, cfg.EnableSearch) }
 		x-on:keydown.esc.window="isOpen = false; openedWithKeyboard = false"
 		class={ "relative " + cfg.SizeClasses() + " " + cfg.Class }
 	>
@@ -251,13 +248,13 @@ templ singleSelectCombobox(cfg Config) {
 
 // multiSelectCombobox renders a multi-select combobox with checkboxes
 templ multiSelectCombobox(cfg Config) {
-	{{ 
-		optsJSON, _ := json.Marshal(cfg.Options)
-		selectedJSON, _ := json.Marshal(cfg.Selected)
+	{{
+		optsJS := optionsToJS(cfg.Options)
+		selectedJS := selectedToJS(cfg.Selected)
 		placeholder := cfg.GetPlaceholder()
 	}}
 	<div
-		x-data={ multiSelectData(cfg.ID, string(optsJSON), string(selectedJSON), placeholder, cfg.EnableSearch) }
+		x-data={ multiSelectData(cfg.ID, optsJS, selectedJS, placeholder, cfg.EnableSearch) }
 		x-on:keydown.esc.window="isOpen = false"
 		class={ "relative " + cfg.SizeClasses() + " " + cfg.Class }
 	>
@@ -420,28 +417,74 @@ templ multiSelectCombobox(cfg Config) {
 	</div>
 }
 
-// singleSelectData generates Alpine.js data for single-select combobox
-func singleSelectData(id, optionsJSON, selectedJSON, placeholder string, enableSearch bool) string {
-	fid, _ := json.Marshal(id)
-	ph, _ := json.Marshal(placeholder)
-	enableSearchJSON, _ := json.Marshal(enableSearch)
-	
-	// Ensure selectedValues is always an array, not null
-	selectedValuesData := selectedJSON
-	if selectedValuesData == "null" {
-		selectedValuesData = "[]"
+// jsEscapeSingle escapes a string for use inside JS single quotes
+func jsEscapeSingle(s string) string {
+	result := ""
+	for _, c := range s {
+		switch c {
+		case '\'':
+			result += `\'`
+		case '\\':
+			result += `\\`
+		default:
+			result += string(c)
+		}
 	}
-	
+	return result
+}
+
+// optionsToJS converts options to a JS array literal using single quotes
+// (avoids double-quote escaping issues when inside HTML x-data attributes)
+func optionsToJS(options []Option) string {
+	if len(options) == 0 {
+		return "[]"
+	}
+	result := "["
+	for i, opt := range options {
+		if i > 0 {
+			result += ","
+		}
+		result += fmt.Sprintf("{value:'%s',label:'%s'", jsEscapeSingle(opt.Value), jsEscapeSingle(opt.Label))
+		if opt.Img != "" {
+			result += fmt.Sprintf(",img:'%s'", jsEscapeSingle(opt.Img))
+		}
+		if opt.Meta != "" {
+			result += fmt.Sprintf(",meta:'%s'", jsEscapeSingle(opt.Meta))
+		}
+		result += "}"
+	}
+	result += "]"
+	return result
+}
+
+// selectedToJS converts selected values to a JS array literal using single quotes
+func selectedToJS(selected []string) string {
+	if len(selected) == 0 {
+		return "[]"
+	}
+	result := "["
+	for i, v := range selected {
+		if i > 0 {
+			result += ","
+		}
+		result += fmt.Sprintf("'%s'", jsEscapeSingle(v))
+	}
+	result += "]"
+	return result
+}
+
+// singleSelectData generates Alpine.js data for single-select combobox
+func singleSelectData(id, optionsJS, selectedJS, placeholder string, enableSearch bool) string {
 	return fmt.Sprintf(`{
-		id: %s,
-		placeholder: %s,
+		id: '%s',
+		placeholder: '%s',
 		allOptions: %s,
 		selectedValues: %s,
 		search: '',
 		isOpen: false,
 		openedWithKeyboard: false,
 		optionsLoaded: false,
-		enableSearch: %s,
+		enableSearch: %t,
 		get selectedOption() {
 			if (!this.selectedValues || this.selectedValues.length === 0) return null;
 			const value = this.selectedValues[0];
@@ -460,7 +503,7 @@ func singleSelectData(id, optionsJSON, selectedJSON, placeholder string, enableS
 		},
 		highlightFirstMatchingOption(pressedKey) {
 			if (!this.isOpen && !this.openedWithKeyboard) return;
-			const option = this.allOptions.find(o => 
+			const option = this.allOptions.find(o =>
 				o.label.toLowerCase().startsWith(pressedKey.toLowerCase())
 			);
 			if (option) {
@@ -469,32 +512,18 @@ func singleSelectData(id, optionsJSON, selectedJSON, placeholder string, enableS
 				if (el) el.focus();
 			}
 		}
-	}`, fid, ph, optionsJSON, selectedValuesData, enableSearchJSON)
+	}`, jsEscapeSingle(id), jsEscapeSingle(placeholder), optionsJS, selectedJS, enableSearch)
 }
 
 // multiSelectData generates Alpine.js data for multi-select combobox
-func multiSelectData(id, optionsJSON, selectedJSON, placeholder string, enableSearch bool) string {
-	fid, _ := json.Marshal(id)
-	ph, _ := json.Marshal(placeholder)
-	
-	// Ensure selected is always an array, not null
-	selectedValuesData := selectedJSON
-	if selectedValuesData == "null" {
-		selectedValuesData = "[]"
-	}
-	
-	optsData := fmt.Sprintf(`
-		allOptions: %s.map(o => ({...o, checked: (%s).includes(o.value)})),
-	`, optionsJSON, selectedValuesData)
-	enableSearchJSON, _ := json.Marshal(enableSearch)
-	
+func multiSelectData(id, optionsJS, selectedJS, placeholder string, enableSearch bool) string {
 	return fmt.Sprintf(`{
-		id: %s,
-		placeholder: %s,
-		%s
+		id: '%s',
+		placeholder: '%s',
+		allOptions: %s.map(o => ({...o, checked: (%s).includes(o.value)})),
 		search: '',
 		isOpen: false,
-		enableSearch: %s,
+		enableSearch: %t,
 		get filteredOptions() {
 			if (!this.enableSearch || !this.search) return this.allOptions;
 			const q = this.search.toLowerCase();
@@ -516,8 +545,8 @@ func multiSelectData(id, optionsJSON, selectedJSON, placeholder string, enableSe
 			const orig = this.allOptions.find(o => o.value === item.value);
 			if (orig) {
 				orig.checked = !orig.checked;
-				this.$dispatch('combobox-change', { 
-					id: this.id, 
+				this.$dispatch('combobox-change', {
+					id: this.id,
 					values: this.selectedValues,
 					added: orig.checked ? item.value : null,
 					removed: orig.checked ? null : item.value
@@ -529,5 +558,5 @@ func multiSelectData(id, optionsJSON, selectedJSON, placeholder string, enableSe
 			this.search = '';
 			this.$dispatch('combobox-change', { id: this.id, values: [] });
 		}
-	}`, fid, ph, optsData, enableSearchJSON)
+	}`, jsEscapeSingle(id), jsEscapeSingle(placeholder), optionsJS, selectedJS, enableSearch)
 }

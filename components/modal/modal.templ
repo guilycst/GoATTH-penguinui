@@ -1,0 +1,219 @@
+package modal
+
+import "fmt"
+
+// Modal renders a modal dialog component matching PenguinUI's modal design.
+// It includes a trigger button and the modal overlay with transitions.
+templ Modal(cfg Config) {
+	if cfg.AlertMode {
+		@alertModal(cfg)
+	} else {
+		@defaultModal(cfg)
+	}
+}
+
+// buttonClickExpr builds the Alpine.js click expression: close modal + optional custom action
+func buttonClickExpr(stateVar string, action *ButtonAction) string {
+	expr := stateVar + " = false"
+	if action != nil && action.OnClick != "" {
+		expr += "; " + action.OnClick
+	}
+	return expr
+}
+
+// defaultModal renders a standard modal with header/body/footer
+templ defaultModal(cfg Config) {
+	{{ titleID := fmt.Sprintf("%sTitle", cfg.ID) }}
+	{{ stateVar := fmt.Sprintf("%sIsOpen", cfg.ID) }}
+	<div x-data={ fmt.Sprintf("{%s: false}", stateVar) }>
+		<button x-on:click={ fmt.Sprintf("%s = true", stateVar) } type="button" class={ cfg.TriggerClasses() }>
+			{ cfg.TriggerText }
+		</button>
+		<div
+			x-cloak
+			x-show={ stateVar }
+			x-transition.opacity.duration.200ms
+			x-trap.inert.noscroll={ stateVar }
+			x-on:keydown.esc.window={ fmt.Sprintf("%s = false", stateVar) }
+			x-on:click.self={ fmt.Sprintf("%s = false", stateVar) }
+			class="fixed inset-0 z-30 flex items-end justify-center bg-black/20 p-4 pb-8 backdrop-blur-md sm:items-center lg:p-8"
+			role="dialog"
+			aria-modal="true"
+			aria-labelledby={ titleID }
+		>
+			<div
+				x-show={ stateVar }
+				x-transition:enter="transition ease-out duration-200 delay-100 motion-reduce:transition-opacity"
+				x-transition:enter-start="opacity-0 scale-50"
+				x-transition:enter-end="opacity-100 scale-100"
+				class={ cfg.DialogClasses() }
+			>
+				<!-- Dialog Header -->
+				<div class={ cfg.HeaderClasses() }>
+					<h3 id={ titleID } class="font-semibold tracking-wide text-on-surface-strong dark:text-on-surface-dark-strong">{ cfg.Title }</h3>
+					<button x-on:click={ fmt.Sprintf("%s = false", stateVar) } aria-label="close modal">
+						@closeIcon()
+					</button>
+				</div>
+				<!-- Dialog Body -->
+				<div class="px-4 py-8">
+					<p>{ cfg.Body }</p>
+				</div>
+				<!-- Dialog Footer -->
+				<div class="flex flex-col-reverse justify-between gap-2 border-t border-outline bg-surface-alt/60 p-4 dark:border-outline-dark dark:bg-surface-dark/20 sm:flex-row sm:items-center md:justify-end">
+					if cfg.SecondaryText != "" {
+						@secondaryButton(stateVar, cfg.SecondaryText, cfg.SecondaryAction)
+					}
+					@primaryButton(stateVar, cfg.PrimaryText, cfg.PrimaryAction)
+				</div>
+			</div>
+		</div>
+	</div>
+}
+
+// alertModal renders an alert-style modal with icon, centered text, and single CTA
+templ alertModal(cfg Config) {
+	{{ titleID := fmt.Sprintf("%sTitle", cfg.ID) }}
+	{{ stateVar := fmt.Sprintf("%sIsOpen", cfg.ID) }}
+	<div x-data={ fmt.Sprintf("{%s: false}", stateVar) }>
+		<button x-on:click={ fmt.Sprintf("%s = true", stateVar) } type="button" class={ cfg.TriggerClasses() }>
+			{ cfg.TriggerText }
+		</button>
+		<div
+			x-cloak
+			x-show={ stateVar }
+			x-transition.opacity.duration.200ms
+			x-trap.inert.noscroll={ stateVar }
+			x-on:keydown.esc.window={ fmt.Sprintf("%s = false", stateVar) }
+			x-on:click.self={ fmt.Sprintf("%s = false", stateVar) }
+			class="fixed inset-0 z-30 flex items-end justify-center bg-black/20 p-4 pb-8 backdrop-blur-md sm:items-center lg:p-8"
+			role="dialog"
+			aria-modal="true"
+			aria-labelledby={ titleID }
+		>
+			<div
+				x-show={ stateVar }
+				x-transition:enter="transition ease-out duration-200 delay-100 motion-reduce:transition-opacity"
+				x-transition:enter-start="opacity-0 scale-50"
+				x-transition:enter-end="opacity-100 scale-100"
+				class={ cfg.DialogClasses() }
+			>
+				<!-- Dialog Header -->
+				<div class={ cfg.HeaderClasses() }>
+					<div class={ cfg.IconBadgeClasses() }>
+						@alertIcon(cfg.Variant)
+					</div>
+					<button x-on:click={ fmt.Sprintf("%s = false", stateVar) } aria-label="close modal">
+						@closeIcon()
+					</button>
+				</div>
+				<!-- Dialog Body -->
+				<div class="px-4 text-center">
+					<h3 id={ titleID } class="mb-2 font-semibold tracking-wide text-on-surface-strong dark:text-on-surface-dark-strong">{ cfg.Title }</h3>
+					<p>{ cfg.Body }</p>
+				</div>
+				<!-- Dialog Footer -->
+				<div class="flex items-center justify-center border-outline p-4 dark:border-outline-dark">
+					@alertCTAButton(stateVar, cfg.PrimaryText, cfg.AlertCTAClasses(), cfg.PrimaryAction)
+				</div>
+			</div>
+		</div>
+	</div>
+}
+
+// primaryButton renders the primary action button with optional HTMX/JS actions
+templ primaryButton(stateVar string, text string, action *ButtonAction) {
+	<button
+		x-on:click={ buttonClickExpr(stateVar, action) }
+		type="button"
+		class="whitespace-nowrap rounded-radius bg-primary border border-primary dark:border-primary-dark px-4 py-2 text-center text-sm font-medium tracking-wide text-on-primary transition hover:opacity-75 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:opacity-100 active:outline-offset-0 dark:bg-primary-dark dark:text-on-primary-dark dark:focus-visible:outline-primary-dark"
+		if action != nil && action.HxGet != "" {
+			hx-get={ action.HxGet }
+		}
+		if action != nil && action.HxPost != "" {
+			hx-post={ action.HxPost }
+		}
+		if action != nil && action.HxTarget != "" {
+			hx-target={ action.HxTarget }
+		}
+		if action != nil && action.HxSwap != "" {
+			hx-swap={ action.HxSwap }
+		}
+	>
+		{ text }
+	</button>
+}
+
+// secondaryButton renders the secondary/dismiss button with optional HTMX/JS actions
+templ secondaryButton(stateVar string, text string, action *ButtonAction) {
+	<button
+		x-on:click={ buttonClickExpr(stateVar, action) }
+		type="button"
+		class="whitespace-nowrap rounded-radius px-4 py-2 text-center text-sm font-medium tracking-wide text-on-surface transition hover:opacity-75 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:opacity-100 active:outline-offset-0 dark:text-on-surface-dark dark:focus-visible:outline-primary-dark"
+		if action != nil && action.HxGet != "" {
+			hx-get={ action.HxGet }
+		}
+		if action != nil && action.HxPost != "" {
+			hx-post={ action.HxPost }
+		}
+		if action != nil && action.HxTarget != "" {
+			hx-target={ action.HxTarget }
+		}
+		if action != nil && action.HxSwap != "" {
+			hx-swap={ action.HxSwap }
+		}
+	>
+		{ text }
+	</button>
+}
+
+// alertCTAButton renders the full-width CTA button for alert modals
+templ alertCTAButton(stateVar string, text string, classes string, action *ButtonAction) {
+	<button
+		x-on:click={ buttonClickExpr(stateVar, action) }
+		type="button"
+		class={ classes }
+		if action != nil && action.HxGet != "" {
+			hx-get={ action.HxGet }
+		}
+		if action != nil && action.HxPost != "" {
+			hx-post={ action.HxPost }
+		}
+		if action != nil && action.HxTarget != "" {
+			hx-target={ action.HxTarget }
+		}
+		if action != nil && action.HxSwap != "" {
+			hx-swap={ action.HxSwap }
+		}
+	>
+		{ text }
+	</button>
+}
+
+// alertIcon renders the variant-specific icon for alert modals
+templ alertIcon(variant Variant) {
+	switch variant {
+		case Success:
+			<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-6" aria-hidden="true">
+				<path fill-rule="evenodd" d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16Zm3.857-9.809a.75.75 0 0 0-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 1 0-1.06 1.061l2.5 2.5a.75.75 0 0 0 1.137-.089l4-5.5Z" clip-rule="evenodd"></path>
+			</svg>
+		case Info:
+			<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-6" aria-hidden="true">
+				<path fill-rule="evenodd" d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-7-4a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM9 9a.75.75 0 0 0 0 1.5h.253a.25.25 0 0 1 .244.304l-.459 2.066A1.75 1.75 0 0 0 10.747 15H11a.75.75 0 0 0 0-1.5h-.253a.25.25 0 0 1-.244-.304l.459-2.066A1.75 1.75 0 0 0 9.253 9H9Z" clip-rule="evenodd"></path>
+			</svg>
+		case Warning:
+			<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-6" aria-hidden="true">
+				<path fill-rule="evenodd" d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-8-5a.75.75 0 0 1 .75.75v4.5a.75.75 0 0 1-1.5 0v-4.5A.75.75 0 0 1 10 5Zm0 10a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z" clip-rule="evenodd"></path>
+			</svg>
+		case Danger:
+			<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-6" aria-hidden="true">
+				<path fill-rule="evenodd" d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16ZM8.28 7.22a.75.75 0 0 0-1.06 1.06L8.94 10l-1.72 1.72a.75.75 0 1 0 1.06 1.06L10 11.06l1.72 1.72a.75.75 0 1 0 1.06-1.06L11.06 10l1.72-1.72a.75.75 0 0 0-1.06-1.06L10 8.94 8.28 7.22Z" clip-rule="evenodd"></path>
+			</svg>
+	}
+}
+
+templ closeIcon() {
+	<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" stroke="currentColor" fill="none" stroke-width="1.4" class="w-5 h-5">
+		<path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path>
+	</svg>
+}
