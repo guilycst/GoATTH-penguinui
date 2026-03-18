@@ -40,7 +40,7 @@ templ SplitView(props SplitViewProps, goTTHAContent templ.Component, templCode s
 			<div class="flex flex-col gap-4">
 				<div class="grid grid-cols-1 lg:grid-cols-3 gap-2 lg:gap-4 w-full mx-auto">
 					<!-- Size Controls -->
-					<div role="group" class="flex border border-outline dark:border-outline-dark rounded-2xl overflow-hidden">
+					<div role="group" class="flex border border-outline dark:border-outline-dark rounded-radius overflow-hidden">
 						<button 
 							@click="size = 'sm'"
 							class="px-2 py-1 h-9 text-sm w-full focus:z-10 focus-visible:outline-2 transition-colors"
@@ -75,7 +75,7 @@ templ SplitView(props SplitViewProps, goTTHAContent templ.Component, templCode s
 					
 					<!-- Disabled Toggle with HTMX -->
 					<label 
-						class="flex h-9 justify-between items-center border border-outline dark:border-outline-dark bg-surface-alt dark:bg-surface-dark-alt p-2 px-3 text-sm cursor-pointer rounded-2xl text-on-surface dark:text-on-surface-dark"
+						class="flex h-9 justify-between items-center border border-outline dark:border-outline-dark bg-surface-alt dark:bg-surface-dark-alt p-2 px-3 text-sm cursor-pointer rounded-radius text-on-surface dark:text-on-surface-dark"
 						hx-get="/api/components/button"
 						hx-target="#gottha-button-preview"
 						hx-swap="innerHTML"
@@ -102,7 +102,7 @@ templ SplitView(props SplitViewProps, goTTHAContent templ.Component, templCode s
 				</div>
 
 				<!-- Original Preview - Uses the provided OriginalHTML -->
-				<div class="overflow-hidden border border-outline dark:border-outline-dark rounded-2xl">
+				<div class="overflow-hidden border border-outline dark:border-outline-dark rounded-radius">
 					<div class="bg-surface-alt dark:bg-surface-dark-alt w-full px-4 py-3 flex items-center justify-between border-b border-outline dark:border-outline-dark">
 						<div class="flex gap-1.5">
 							<div class="rounded-full w-3 h-3 bg-red-500"></div>
@@ -118,7 +118,7 @@ templ SplitView(props SplitViewProps, goTTHAContent templ.Component, templCode s
 				</div>
 
 				<!-- Original Code -->
-				<div class="overflow-hidden border border-outline dark:border-outline-dark rounded-2xl">
+				<div class="overflow-hidden border border-outline dark:border-outline-dark rounded-radius">
 					<div class="flex items-center justify-between px-4 py-3 border-b border-outline dark:border-outline-dark bg-surface-alt dark:bg-surface-dark-alt">
 						<span class="text-sm font-medium">HTML</span>
 						<button 
@@ -148,7 +148,7 @@ templ SplitView(props SplitViewProps, goTTHAContent templ.Component, templCode s
 				</div>
 
 				<!-- GoATTH Preview - Matching PenguinUI exactly -->
-				<div class="overflow-hidden border border-outline dark:border-outline-dark rounded-2xl">
+				<div class="overflow-hidden border border-outline dark:border-outline-dark rounded-radius">
 					<div class="bg-surface-alt dark:bg-surface-dark-alt w-full px-4 py-3 flex items-center justify-between border-b border-outline dark:border-outline-dark">
 						<div class="flex gap-1.5">
 							<div class="rounded-full w-3 h-3 bg-red-500"></div>
@@ -164,7 +164,7 @@ templ SplitView(props SplitViewProps, goTTHAContent templ.Component, templCode s
 				</div>
 
 				<!-- GoATTH Code -->
-				<div class="overflow-hidden border border-outline dark:border-outline-dark rounded-2xl">
+				<div class="overflow-hidden border border-outline dark:border-outline-dark rounded-radius">
 					<div class="flex items-center justify-between px-4 py-3 border-b border-outline dark:border-outline-dark bg-surface-alt dark:bg-surface-dark-alt">
 						<span class="text-sm font-medium">Templ</span>
 						<button 

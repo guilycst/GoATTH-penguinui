@@ -230,7 +230,7 @@ func bannerDemoPreview() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "</div></div><div class=\"relative h-48 overflow-hidden border border-outline dark:border-outline-dark rounded-2xl\"><h4 class=\"absolute top-4 left-4 text-sm font-medium text-on-surface-strong dark:text-on-surface-dark-strong z-10\">Cookie Consent Banner (Bottom Right)</h4><div class=\"absolute inset-0 bg-surface dark:bg-surface-dark\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "</div></div><div class=\"relative h-48 overflow-hidden border border-outline dark:border-outline-dark rounded-radius\"><h4 class=\"absolute top-4 left-4 text-sm font-medium text-on-surface-strong dark:text-on-surface-dark-strong z-10\">Cookie Consent Banner (Bottom Right)</h4><div class=\"absolute inset-0 bg-surface dark:bg-surface-dark\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

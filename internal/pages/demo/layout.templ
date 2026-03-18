@@ -94,7 +94,7 @@ templ Layout(title string, activeComponent string, content templ.Component) {
 								x-show="open" 
 								@click.away="open = false"
 								x-cloak
-								class="absolute right-0 mt-2 w-48 max-h-80 overflow-y-auto rounded-lg border border-outline bg-surface shadow-lg dark:border-outline-dark dark:bg-surface-dark z-50"
+								class="absolute right-0 mt-2 w-48 max-h-80 overflow-y-auto rounded-radius border border-outline bg-surface shadow-lg dark:border-outline-dark dark:bg-surface-dark z-50"
 							>
 								<div class="py-1">
 									for _, t := range getThemeOptions() {
