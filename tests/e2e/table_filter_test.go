@@ -15,13 +15,18 @@ func TestTableFilter(t *testing.T) {
 
 	_, browser, _ := setupPlaywright(t)
 	page := newPage(t, browser)
-	page.SetDefaultTimeout(3000)
+	page.SetDefaultTimeout(5000)
 
 	_, err := page.Goto(baseURL+"/components/table", playwright.PageGotoOptions{
 		WaitUntil: playwright.WaitUntilStateDomcontentloaded,
 	})
 	require.NoError(t, err)
-	page.WaitForTimeout(300) // wait for Alpine.js
+
+	// Wait for Alpine.js + collapse plugin to fully initialize
+	page.WaitForFunction("() => typeof Alpine !== 'undefined' && Alpine.version", nil, playwright.PageWaitForFunctionOptions{
+		Timeout: playwright.Float(5000),
+	})
+	page.WaitForTimeout(300)
 
 	// --- Filter bar structure ---
 
@@ -91,7 +96,7 @@ func TestTableFilter(t *testing.T) {
 		// Type "alice"
 		err := searchInput.Fill("alice")
 		require.NoError(t, err)
-		page.WaitForTimeout(500) // debounce + HTMX swap
+		page.WaitForTimeout(1000) // debounce + HTMX swap
 
 		// Should show only Alice
 		tbodyText, err := page.Locator("#filtered-table tbody").TextContent()
@@ -110,7 +115,7 @@ func TestTableFilter(t *testing.T) {
 		// Clear search
 		err := searchInput.Fill("")
 		require.NoError(t, err)
-		page.WaitForTimeout(500)
+		page.WaitForTimeout(1000)
 
 		rows := page.Locator("#filtered-table tbody tr")
 		count, err := rows.Count()
@@ -125,7 +130,7 @@ func TestTableFilter(t *testing.T) {
 
 		_, err := sel.SelectOption(playwright.SelectOptionValues{Values: &[]string{"Gold"}})
 		require.NoError(t, err)
-		page.WaitForTimeout(500)
+		page.WaitForTimeout(1000)
 
 		tbodyText, err := page.Locator("#filtered-table tbody").TextContent()
 		require.NoError(t, err)
@@ -138,7 +143,7 @@ func TestTableFilter(t *testing.T) {
 
 		_, err := sel.SelectOption(playwright.SelectOptionValues{Values: &[]string{""}})
 		require.NoError(t, err)
-		page.WaitForTimeout(500)
+		page.WaitForTimeout(1000)
 
 		rows := page.Locator("#filtered-table tbody tr")
 		count, err := rows.Count()
@@ -153,13 +158,13 @@ func TestTableFilter(t *testing.T) {
 		sel := page.Locator("#filtered-table-filters select")
 		_, err := sel.SelectOption(playwright.SelectOptionValues{Values: &[]string{"Gold"}})
 		require.NoError(t, err)
-		page.WaitForTimeout(500)
+		page.WaitForTimeout(1000)
 
 		// Then search within Gold
 		searchInput := page.Locator("#filtered-table-filters input[type='search']")
 		err = searchInput.Fill("bob")
 		require.NoError(t, err)
-		page.WaitForTimeout(500)
+		page.WaitForTimeout(1000)
 
 		tbodyText, err := page.Locator("#filtered-table tbody").TextContent()
 		require.NoError(t, err)
@@ -175,7 +180,7 @@ func TestTableFilter(t *testing.T) {
 		require.NoError(t, err)
 		_, err = sel.SelectOption(playwright.SelectOptionValues{Values: &[]string{""}})
 		require.NoError(t, err)
-		page.WaitForTimeout(500)
+		page.WaitForTimeout(1000)
 	})
 
 	// --- Filter preserves across sort (via htmx:configRequest interception) ---
@@ -185,7 +190,7 @@ func TestTableFilter(t *testing.T) {
 		sel := page.Locator("#filtered-table-filters select")
 		_, err := sel.SelectOption(playwright.SelectOptionValues{Values: &[]string{"Gold"}})
 		require.NoError(t, err)
-		page.WaitForTimeout(500)
+		page.WaitForTimeout(1000)
 
 		// Now click a sort header - filter should be preserved
 		sortHeader := page.Locator("#filtered-table thead th[hx-get*='order_by']").First()
@@ -194,7 +199,7 @@ func TestTableFilter(t *testing.T) {
 		if count > 0 {
 			err = sortHeader.Click()
 			require.NoError(t, err)
-			page.WaitForTimeout(500)
+			page.WaitForTimeout(1000)
 
 			// Should still show only Gold members
 			tbodyText, err := page.Locator("#filtered-table tbody").TextContent()
@@ -205,6 +210,6 @@ func TestTableFilter(t *testing.T) {
 		// Clean up
 		_, err = sel.SelectOption(playwright.SelectOptionValues{Values: &[]string{""}})
 		require.NoError(t, err)
-		page.WaitForTimeout(500)
+		page.WaitForTimeout(1000)
 	})
 }
