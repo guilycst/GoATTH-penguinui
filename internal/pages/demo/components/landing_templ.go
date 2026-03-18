@@ -8,6 +8,23 @@ package components
 import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
+type stackInfo struct {
+	Title string
+	Desc  string
+	URL   string
+}
+
+func getStackItems() []stackInfo {
+	return []stackInfo{
+		{Title: "Go", Desc: "The backbone. Compiles to a single binary, serves HTML, handles routing. No Node.js, no bundlers, no package.json.", URL: "https://go.dev/"},
+		{Title: "Templ", Desc: "Type-safe HTML templates that compile to Go code. Components are functions, not strings. Catch errors at build time.", URL: "https://templ.guide/"},
+		{Title: "Tailwind CSS v4", Desc: "Utility-first styling with a CSS-first config. 14 built-in themes with design tokens that switch instantly.", URL: "https://tailwindcss.com/"},
+		{Title: "Alpine.js", Desc: "Lightweight reactivity where you need it — dropdowns, toggles, modals. No virtual DOM, no build step. Just HTML attributes.", URL: "https://alpinejs.dev/"},
+		{Title: "HTMX", Desc: "Server-rendered partials over HTTP. Sort a table, paginate, filter — all without writing fetch calls or managing client state.", URL: "https://htmx.org/"},
+		{Title: "PenguinUI", Desc: "The design system. 22 components faithfully ported from PenguinUI's Tailwind originals, with 99.99% visual parity.", URL: "https://penguinui.com/"},
+	}
+}
+
 func LandingPage() templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
@@ -29,11 +46,15 @@ func LandingPage() templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<!doctype html><html lang=\"en\"><head><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"><title>GoATTH — Go + Alpine.js + Tailwind CSS + Templ + HTMX</title><link rel=\"stylesheet\" href=\"/assets/styles.css\"><link rel=\"preconnect\" href=\"https://fonts.googleapis.com\"><link rel=\"preconnect\" href=\"https://fonts.gstatic.com\" crossorigin><link href=\"https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Montserrat:wght@400;500;600;700&display=swap\" rel=\"stylesheet\"></head><body class=\"min-h-screen bg-surface text-on-surface dark:bg-surface-dark dark:text-on-surface-dark\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<!doctype html><html lang=\"en\" x-data x-init=\"\n\t\tconst t = localStorage.getItem('theme') || 'minimal';\n\t\tdocument.documentElement.setAttribute('data-theme', t);\n\t\tif (localStorage.getItem('darkMode') === 'true') document.documentElement.classList.add('dark');\n\t\"><head><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"><title>GoATTH — Go + Alpine.js + Tailwind CSS + Templ + HTMX</title><link rel=\"stylesheet\" href=\"/assets/styles.css\"><link rel=\"preconnect\" href=\"https://fonts.googleapis.com\"><link rel=\"preconnect\" href=\"https://fonts.gstatic.com\" crossorigin><link href=\"https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Montserrat:wght@400;500;600;700&display=swap\" rel=\"stylesheet\"><script defer src=\"/assets/js/vendor/alpine.min.js\"></script><style>[x-cloak] { display: none !important; }</style></head><body class=\"min-h-screen bg-surface text-on-surface dark:bg-surface-dark dark:text-on-surface-dark\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = landingContent().Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = cookieConsent().Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -66,35 +87,56 @@ func landingContent() templ.Component {
 			templ_7745c5c3_Var2 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<div class=\"mx-auto max-w-5xl px-6 space-y-16 py-16\"><!-- Hero --><div class=\"flex flex-col items-center text-center\"><img src=\"/assets/images/goatth.png\" alt=\"GoATTH mascot — a Go gopher with ram horns by a campfire\" class=\"w-64 h-auto rounded-radius mb-8\"><h1 class=\"text-4xl md:text-5xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong\">GoATTH</h1><p class=\"mt-2 text-lg text-on-surface dark:text-on-surface-dark\"><strong>Go</strong> + <strong>A</strong>lpine.js + <strong>T</strong>ailwind CSS + <strong>T</strong>empl + <strong>H</strong>TMX</p><p class=\"mt-4 max-w-2xl text-on-surface dark:text-on-surface-dark\">A UI component library that replicates <a href=\"https://penguinui.com\" target=\"_blank\" class=\"text-primary dark:text-primary-dark underline underline-offset-2\">PenguinUI</a> components using Go's templating ecosystem. Ship server-rendered, interactive UIs without writing JavaScript build tooling.</p><div class=\"mt-8 flex flex-wrap gap-4 justify-center\"><a href=\"/components/button\" class=\"px-6 py-2.5 rounded-radius bg-primary text-on-primary dark:bg-primary-dark dark:text-on-primary-dark font-medium text-sm hover:opacity-90 transition-opacity\">Browse Components</a> <a href=\"/docs/theme\" class=\"px-6 py-2.5 rounded-radius border border-outline dark:border-outline-dark text-on-surface-strong dark:text-on-surface-dark-strong font-medium text-sm hover:bg-surface-alt dark:hover:bg-surface-dark-alt transition-colors\">Explore Themes</a> <a href=\"https://github.com/guilycst/GoATTH-penguinui\" target=\"_blank\" class=\"px-6 py-2.5 rounded-radius border border-outline dark:border-outline-dark text-on-surface dark:text-on-surface-dark font-medium text-sm hover:bg-surface-alt dark:hover:bg-surface-dark-alt transition-colors\">GitHub</a></div></div><!-- The Stack --><div><h2 class=\"text-2xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong mb-6 text-center\">The Stack</h2><div class=\"grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<div class=\"mx-auto max-w-5xl px-6 space-y-16 py-16\"><!-- Hero --><div class=\"flex flex-col items-center text-center\"><img src=\"/assets/images/goatth.png\" alt=\"GoATTH mascot — a Go gopher with ram horns by a campfire\" class=\"w-64 h-auto rounded-radius mb-8\"><h1 class=\"text-4xl md:text-5xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong\">GoATTH</h1><p class=\"mt-2 text-lg text-on-surface dark:text-on-surface-dark\"><a href=\"https://go.dev/\" target=\"_blank\" class=\"font-bold hover:text-primary dark:hover:text-primary-dark\">Go</a> + <a href=\"https://alpinejs.dev/\" target=\"_blank\" class=\"font-bold hover:text-primary dark:hover:text-primary-dark\">Alpine.js</a> + <a href=\"https://tailwindcss.com/\" target=\"_blank\" class=\"font-bold hover:text-primary dark:hover:text-primary-dark\">Tailwind CSS</a> + <a href=\"https://templ.guide/\" target=\"_blank\" class=\"font-bold hover:text-primary dark:hover:text-primary-dark\">Templ</a> + <a href=\"https://htmx.org/\" target=\"_blank\" class=\"font-bold hover:text-primary dark:hover:text-primary-dark\">HTMX</a></p><p class=\"mt-4 max-w-2xl text-on-surface dark:text-on-surface-dark\">A UI component library that replicates <a href=\"https://penguinui.com\" target=\"_blank\" class=\"text-primary dark:text-primary-dark underline underline-offset-2\">PenguinUI</a> components using Go's templating ecosystem. Ship server-rendered, interactive UIs without writing JavaScript build tooling.</p><div class=\"mt-8 flex flex-wrap gap-4 justify-center\"><a href=\"/components/button\" class=\"px-6 py-2.5 rounded-radius bg-primary text-on-primary dark:bg-primary-dark dark:text-on-primary-dark font-medium text-sm hover:opacity-90 transition-opacity\">Browse Components</a> <a href=\"/docs/theme\" class=\"px-6 py-2.5 rounded-radius border border-outline dark:border-outline-dark text-on-surface-strong dark:text-on-surface-dark-strong font-medium text-sm hover:bg-surface-alt dark:hover:bg-surface-dark-alt transition-colors\">Explore Themes</a> <a href=\"https://github.com/guilycst/GoATTH-penguinui\" target=\"_blank\" class=\"px-6 py-2.5 rounded-radius border border-outline dark:border-outline-dark text-on-surface dark:text-on-surface-dark font-medium text-sm hover:bg-surface-alt dark:hover:bg-surface-dark-alt transition-colors\">GitHub</a></div></div><!-- The Stack --><div><h2 class=\"text-2xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong mb-6 text-center\">The Stack</h2><div class=\"grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = stackCard("Go", "The backbone. Compiles to a single binary, serves HTML, handles routing. No Node.js, no bundlers, no package.json.", "go").Render(ctx, templ_7745c5c3_Buffer)
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
+		for _, s := range getStackItems() {
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "<a href=\"")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var3 templ.SafeURL
+			templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinURLErrs(templ.SafeURL(s.URL))
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/components/landing.templ`, Line: 87, Col: 35}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "\" target=\"_blank\" class=\"block border border-outline dark:border-outline-dark rounded-radius p-6 bg-surface dark:bg-surface-dark hover:border-primary dark:hover:border-primary-dark transition-colors group\"><h3 class=\"text-lg font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong mb-2 group-hover:text-primary dark:group-hover:text-primary-dark transition-colors\">")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var4 string
+			templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(s.Title)
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/components/landing.templ`, Line: 89, Col: 16}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "</h3><p class=\"text-sm text-on-surface dark:text-on-surface-dark leading-relaxed\">")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var5 string
+			templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(s.Desc)
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/components/landing.templ`, Line: 92, Col: 15}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "</p></a>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
 		}
-		templ_7745c5c3_Err = stackCard("Templ", "Type-safe HTML templates that compile to Go code. Components are functions, not strings. Catch errors at build time.", "templ").Render(ctx, templ_7745c5c3_Buffer)
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = stackCard("Tailwind CSS v4", "Utility-first styling with a CSS-first config. 13 built-in themes with design tokens that switch instantly.", "tailwind").Render(ctx, templ_7745c5c3_Buffer)
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = stackCard("Alpine.js", "Lightweight reactivity where you need it — dropdowns, toggles, modals. No virtual DOM, no build step. Just HTML attributes.", "alpine").Render(ctx, templ_7745c5c3_Buffer)
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = stackCard("HTMX", "Server-rendered partials over HTTP. Sort a table, paginate, filter — all without writing fetch calls or managing client state.", "htmx").Render(ctx, templ_7745c5c3_Buffer)
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = stackCard("PenguinUI", "The design system. 22 components faithfully ported from PenguinUI's Tailwind originals, with 99.99% visual parity.", "penguin").Render(ctx, templ_7745c5c3_Buffer)
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "</div></div><!-- Why --><div class=\"max-w-3xl mx-auto\"><h2 class=\"text-2xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong mb-4 text-center\">Why?</h2><div class=\"space-y-4 text-on-surface dark:text-on-surface-dark\"><p>Modern frontend is complex. React, Next.js, Vite, npm, TypeScript, state management, hydration — a mountain of tooling between you and shipping a page.</p><p>GoATTH takes a different path: <strong class=\"text-on-surface-strong dark:text-on-surface-dark-strong\">the server renders HTML, the browser shows it.</strong> When you need interactivity, HTMX swaps fragments and Alpine.js handles local state. No JavaScript bundle, no virtual DOM, no client-side routing.</p><p>The result is a <strong class=\"text-on-surface-strong dark:text-on-surface-dark-strong\">single binary</strong> that serves a complete UI with theme switching, dark mode, sortable tables, filterable data, collapsible sidebars, and 22 production-ready components — all in a <strong class=\"text-on-surface-strong dark:text-on-surface-dark-strong\">37MB Docker image</strong>.</p></div></div><!-- Components count --><div class=\"text-center pb-8\"><p class=\"text-sm text-on-surface/60 dark:text-on-surface-dark/60\">22 components · 14 themes · 386 E2E tests · <a href=\"/components/button\" class=\"text-primary dark:text-primary-dark underline underline-offset-2\">Start exploring</a></p></div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "</div></div><!-- Why --><div class=\"max-w-3xl mx-auto\"><h2 class=\"text-2xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong mb-4 text-center\">Why?</h2><div class=\"space-y-4 text-on-surface dark:text-on-surface-dark\"><p>Modern frontend is complex. React, Next.js, Vite, npm, TypeScript, state management, hydration — a mountain of tooling between you and shipping a page.</p><p>GoATTH takes a different path: <strong class=\"text-on-surface-strong dark:text-on-surface-dark-strong\">the server renders HTML, the browser shows it.</strong> When you need interactivity, HTMX swaps fragments and Alpine.js handles local state. No JavaScript bundle, no virtual DOM, no client-side routing.</p><p>The result is a <strong class=\"text-on-surface-strong dark:text-on-surface-dark-strong\">single binary</strong> that serves a complete UI with theme switching, dark mode, sortable tables, filterable data, collapsible sidebars, and 22 production-ready components — all in a <strong class=\"text-on-surface-strong dark:text-on-surface-dark-strong\">37MB Docker image</strong>.</p></div></div><!-- Footer --><div class=\"text-center pb-8\"><p class=\"text-sm text-on-surface/60 dark:text-on-surface-dark/60\">22 components · 14 themes · 386 E2E tests · <a href=\"/getting-started\" class=\"text-primary dark:text-primary-dark underline underline-offset-2\">Get started</a></p></div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -102,7 +144,8 @@ func landingContent() templ.Component {
 	})
 }
 
-func stackCard(title string, description string, id string) templ.Component {
+// cookieConsent renders a cookie consent banner that shows once per browser
+func cookieConsent() templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -118,38 +161,12 @@ func stackCard(title string, description string, id string) templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var3 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var3 == nil {
-			templ_7745c5c3_Var3 = templ.NopComponent
+		templ_7745c5c3_Var6 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var6 == nil {
+			templ_7745c5c3_Var6 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "<div class=\"border border-outline dark:border-outline-dark rounded-radius p-6 bg-surface dark:bg-surface-dark\"><h3 class=\"text-lg font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong mb-2\">")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		var templ_7745c5c3_Var4 string
-		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(title)
-		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/components/landing.templ`, Line: 100, Col: 10}
-		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "</h3><p class=\"text-sm text-on-surface dark:text-on-surface-dark leading-relaxed\">")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		var templ_7745c5c3_Var5 string
-		templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(description)
-		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/components/landing.templ`, Line: 103, Col: 16}
-		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "</p></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "<div x-data=\"{ show: !localStorage.getItem('cookieConsent') }\" x-show=\"show\" x-cloak x-transition class=\"fixed bottom-4 right-4 z-50 max-w-sm rounded-radius border border-outline bg-surface p-4 shadow-lg dark:border-outline-dark dark:bg-surface-dark\"><p class=\"text-sm text-on-surface dark:text-on-surface-dark mb-3\">This site uses localStorage to remember your theme preference. No tracking cookies.</p><div class=\"flex gap-2 justify-end\"><button @click=\"localStorage.setItem('cookieConsent', 'accepted'); show = false\" class=\"px-3 py-1.5 text-xs font-medium rounded-radius bg-primary text-on-primary dark:bg-primary-dark dark:text-on-primary-dark hover:opacity-90 transition-opacity\">Got it</button></div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

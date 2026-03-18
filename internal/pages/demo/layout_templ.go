@@ -101,7 +101,7 @@ func Layout(title string, activeComponent string, content templ.Component) templ
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "</div></main></div></body></html>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "</div></main></div><!-- Cookie Consent --><div x-data=\"{ show: !localStorage.getItem('cookieConsent') }\" x-show=\"show\" x-cloak x-transition class=\"fixed bottom-4 right-4 z-50 max-w-sm rounded-radius border border-outline bg-surface p-4 shadow-lg dark:border-outline-dark dark:bg-surface-dark\"><p class=\"text-sm text-on-surface dark:text-on-surface-dark mb-3\">This site uses localStorage to remember your theme preference. No tracking cookies.</p><div class=\"flex gap-2 justify-end\"><button @click=\"localStorage.setItem('cookieConsent', 'accepted'); show = false\" class=\"px-3 py-1.5 text-xs font-medium rounded-radius bg-primary text-on-primary dark:bg-primary-dark dark:text-on-primary-dark hover:opacity-90 transition-opacity\">Got it</button></div></div></body></html>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

@@ -1,8 +1,29 @@
 package components
 
+type stackInfo struct {
+	Title string
+	Desc  string
+	URL   string
+}
+
+func getStackItems() []stackInfo {
+	return []stackInfo{
+		{Title: "Go", Desc: "The backbone. Compiles to a single binary, serves HTML, handles routing. No Node.js, no bundlers, no package.json.", URL: "https://go.dev/"},
+		{Title: "Templ", Desc: "Type-safe HTML templates that compile to Go code. Components are functions, not strings. Catch errors at build time.", URL: "https://templ.guide/"},
+		{Title: "Tailwind CSS v4", Desc: "Utility-first styling with a CSS-first config. 14 built-in themes with design tokens that switch instantly.", URL: "https://tailwindcss.com/"},
+		{Title: "Alpine.js", Desc: "Lightweight reactivity where you need it — dropdowns, toggles, modals. No virtual DOM, no build step. Just HTML attributes.", URL: "https://alpinejs.dev/"},
+		{Title: "HTMX", Desc: "Server-rendered partials over HTTP. Sort a table, paginate, filter — all without writing fetch calls or managing client state.", URL: "https://htmx.org/"},
+		{Title: "PenguinUI", Desc: "The design system. 22 components faithfully ported from PenguinUI's Tailwind originals, with 99.99% visual parity.", URL: "https://penguinui.com/"},
+	}
+}
+
 templ LandingPage() {
 	<!DOCTYPE html>
-	<html lang="en">
+	<html lang="en" x-data x-init="
+		const t = localStorage.getItem('theme') || 'minimal';
+		document.documentElement.setAttribute('data-theme', t);
+		if (localStorage.getItem('darkMode') === 'true') document.documentElement.classList.add('dark');
+	">
 		<head>
 			<meta charset="UTF-8"/>
 			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
@@ -11,9 +32,12 @@ templ LandingPage() {
 			<link rel="preconnect" href="https://fonts.googleapis.com"/>
 			<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 			<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+			<script defer src="/assets/js/vendor/alpine.min.js"></script>
+			<style>[x-cloak] { display: none !important; }</style>
 		</head>
 		<body class="min-h-screen bg-surface text-on-surface dark:bg-surface-dark dark:text-on-surface-dark">
 			@landingContent()
+			@cookieConsent()
 		</body>
 	</html>
 }
@@ -31,7 +55,11 @@ templ landingContent() {
 				GoATTH
 			</h1>
 			<p class="mt-2 text-lg text-on-surface dark:text-on-surface-dark">
-				<strong>Go</strong> + <strong>A</strong>lpine.js + <strong>T</strong>ailwind CSS + <strong>T</strong>empl + <strong>H</strong>TMX
+				<a href="https://go.dev/" target="_blank" class="font-bold hover:text-primary dark:hover:text-primary-dark">Go</a> +
+				<a href="https://alpinejs.dev/" target="_blank" class="font-bold hover:text-primary dark:hover:text-primary-dark">Alpine.js</a> +
+				<a href="https://tailwindcss.com/" target="_blank" class="font-bold hover:text-primary dark:hover:text-primary-dark">Tailwind CSS</a> +
+				<a href="https://templ.guide/" target="_blank" class="font-bold hover:text-primary dark:hover:text-primary-dark">Templ</a> +
+				<a href="https://htmx.org/" target="_blank" class="font-bold hover:text-primary dark:hover:text-primary-dark">HTMX</a>
 			</p>
 			<p class="mt-4 max-w-2xl text-on-surface dark:text-on-surface-dark">
 				A UI component library that replicates
@@ -55,12 +83,16 @@ templ landingContent() {
 		<div>
 			<h2 class="text-2xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong mb-6 text-center">The Stack</h2>
 			<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-				@stackCard("Go", "The backbone. Compiles to a single binary, serves HTML, handles routing. No Node.js, no bundlers, no package.json.", "go")
-				@stackCard("Templ", "Type-safe HTML templates that compile to Go code. Components are functions, not strings. Catch errors at build time.", "templ")
-				@stackCard("Tailwind CSS v4", "Utility-first styling with a CSS-first config. 13 built-in themes with design tokens that switch instantly.", "tailwind")
-				@stackCard("Alpine.js", "Lightweight reactivity where you need it — dropdowns, toggles, modals. No virtual DOM, no build step. Just HTML attributes.", "alpine")
-				@stackCard("HTMX", "Server-rendered partials over HTTP. Sort a table, paginate, filter — all without writing fetch calls or managing client state.", "htmx")
-				@stackCard("PenguinUI", "The design system. 22 components faithfully ported from PenguinUI's Tailwind originals, with 99.99% visual parity.", "penguin")
+				for _, s := range getStackItems() {
+					<a href={ templ.SafeURL(s.URL) } target="_blank" class="block border border-outline dark:border-outline-dark rounded-radius p-6 bg-surface dark:bg-surface-dark hover:border-primary dark:hover:border-primary-dark transition-colors group">
+						<h3 class="text-lg font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong mb-2 group-hover:text-primary dark:group-hover:text-primary-dark transition-colors">
+							{ s.Title }
+						</h3>
+						<p class="text-sm text-on-surface dark:text-on-surface-dark leading-relaxed">
+							{ s.Desc }
+						</p>
+					</a>
+				}
 			</div>
 		</div>
 
@@ -84,23 +116,35 @@ templ landingContent() {
 			</div>
 		</div>
 
-		<!-- Components count -->
+		<!-- Footer -->
 		<div class="text-center pb-8">
 			<p class="text-sm text-on-surface/60 dark:text-on-surface-dark/60">
 				22 components · 14 themes · 386 E2E tests ·
-				<a href="/components/button" class="text-primary dark:text-primary-dark underline underline-offset-2">Start exploring</a>
+				<a href="/getting-started" class="text-primary dark:text-primary-dark underline underline-offset-2">Get started</a>
 			</p>
 		</div>
 	</div>
 }
 
-templ stackCard(title string, description string, id string) {
-	<div class="border border-outline dark:border-outline-dark rounded-radius p-6 bg-surface dark:bg-surface-dark">
-		<h3 class="text-lg font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong mb-2">
-			{ title }
-		</h3>
-		<p class="text-sm text-on-surface dark:text-on-surface-dark leading-relaxed">
-			{ description }
+// cookieConsent renders a cookie consent banner that shows once per browser
+templ cookieConsent() {
+	<div
+		x-data="{ show: !localStorage.getItem('cookieConsent') }"
+		x-show="show"
+		x-cloak
+		x-transition
+		class="fixed bottom-4 right-4 z-50 max-w-sm rounded-radius border border-outline bg-surface p-4 shadow-lg dark:border-outline-dark dark:bg-surface-dark"
+	>
+		<p class="text-sm text-on-surface dark:text-on-surface-dark mb-3">
+			This site uses localStorage to remember your theme preference. No tracking cookies.
 		</p>
+		<div class="flex gap-2 justify-end">
+			<button
+				@click="localStorage.setItem('cookieConsent', 'accepted'); show = false"
+				class="px-3 py-1.5 text-xs font-medium rounded-radius bg-primary text-on-primary dark:bg-primary-dark dark:text-on-primary-dark hover:opacity-90 transition-opacity"
+			>
+				Got it
+			</button>
+		</div>
 	</div>
 }
