@@ -18,27 +18,25 @@
 ## Quick Commands
 
 ```bash
-# Install all dependencies
-make install
-
 # Generate templ files (REQUIRED after editing .templ files)
-make generate
+templ generate
+# or: just gp-generate
 
 # Build Tailwind CSS (REQUIRED after editing CSS)
-make css
+tailwindcss -i css/main.css -o assets/styles.css
 
 # Run dev server (default port 8090)
-make dev
-# or with live reload:
-make dev-air
+go run cmd/server/main.go
+# or: just gp-dev
 
-# Run tests
-make test          # unit tests
-make test-e2e      # E2E tests (Playwright)
+# Run E2E tests
+go test ./tests/e2e/... -count=1 -timeout 15m
 
-# Format & lint
-make fmt
-make lint
+# Run specific E2E test
+go test ./tests/e2e/... -count=1 -timeout 5m -run TestTableFilter
+
+# Build server binary
+go build -o bin/server ./cmd/server
 ```
 
 ## Repository Structure
@@ -46,17 +44,17 @@ make lint
 ```
 GoATTH-penguinui/
 ├── cmd/server/main.go          # Server entry point
-├── components/                 # Reusable UI components
+├── components/                 # Reusable UI components (22 total)
 │   └── <name>/
 │       ├── <name>.templ        # Component template
 │       ├── types.go            # Config types and variant classes
 │       └── <name>_templ.go     # Generated (DO NOT EDIT)
 ├── internal/
-│   ├── server/server.go        # Route handlers
+│   ├── server/
+│   │   ├── server.go           # Route handlers
+│   │   └── table_handler.go    # Table HTMX endpoint (/api/components/table/rows)
 │   └── pages/demo/
 │       ├── layout.templ        # Main layout, sidebar, theme selector
-│       ├── split_view.templ    # Side-by-side comparison view
-│       ├── tab_view.templ      # Tabbed comparison view
 │       └── components/         # Demo pages per component
 ├── css/main.css                # Tailwind source + theme imports
 ├── all-themes.css              # 13 theme definitions
@@ -64,7 +62,13 @@ GoATTH-penguinui/
 │   ├── js/darkmode.js          # Alpine.js dark mode store
 │   └── styles.css              # Generated CSS (DO NOT EDIT)
 ├── tests/e2e/                  # Playwright E2E tests
-└── Makefile                    # Build commands
+│   ├── e2e_test.go             # TestMain, shared browser, helpers
+│   ├── table_htmx_test.go      # Table API-level tests (pagination, sort, filter)
+│   ├── table_pagination_nav_test.go  # Browser paginator style tests
+│   ├── table_filter_test.go    # Browser filter interaction tests (WIP)
+│   └── sidebar_test.go         # All-components-present test
+├── <component-name>/           # Original PenguinUI HTML (for reference/parity)
+└── SESSION_STATE.md            # Current in-progress work state
 ```
 
 ## Component Development Workflow
@@ -72,112 +76,109 @@ GoATTH-penguinui/
 1. **Analyze reference** — Read PenguinUI HTML in `/<component-name>/` directory
 2. **Create component** — `components/<name>/types.go` + `<name>.templ`
 3. **Create demo page** — `internal/pages/demo/components/<name>.templ`
-4. **Register route** — Add handler in `internal/server/server.go`
-5. **Add to sidebar** — Update `internal/pages/demo/layout.templ`
+4. **Register route** — Add case in `internal/server/server.go:handleComponent()`
+5. **Add to sidebar** — Add entry in `internal/pages/demo/layout.templ:getSidebarItems()`
 6. **Write E2E tests** — `tests/e2e/<name>_test.go`
-7. **Build & verify** — `make generate && make dev`
+7. **Build & verify** — `templ generate && go build -o bin/server ./cmd/server`
 
 ## Critical Rules
 
-### After modifying `.templ` files, ALWAYS run:
-```bash
-make generate
+### Templ escaping — the #1 source of bugs
+
+Templ's `EscapeString` converts `"` → `&quot;`, `'` → `&#39;`, `&` → `&amp;` in HTML attributes. This silently breaks Alpine.js.
+
+**For simple Alpine.js x-data** (no JS code, just data):
+Use unquoted JS property names and avoid string literals with quotes:
+```go
+// GOOD — unquoted keys, no quotes to escape
+return fmt.Sprintf(`{ opened: [false,false], count: 0 }`)
 ```
 
-### After modifying CSS files, ALWAYS run:
-```bash
-make css
+**For complex Alpine.js with functions/strings**:
+Use `templ.Raw()` inside a `<script>` tag + `Alpine.data()` registration:
+```go
+// In types.go
+func myAlpineScript(cfg Config) string {
+    return fmt.Sprintf(`document.addEventListener('alpine:init', () => {
+        Alpine.data('myComponent', () => ({
+            value: '%s',
+            doThing() { htmx.ajax('GET', '/api/data', {target: '#target'}); }
+        }));
+    });`, cfg.DefaultValue)
+}
+
+// In .templ
+templ myScript(cfg Config) {
+    @templ.Raw("<script>" + myAlpineScript(cfg) + "</script>")
+}
+// Then reference with: <div x-data="myComponent">
 ```
 
-### Files marked "Generated" (`*_templ.go`, `assets/styles.css`) — NEVER edit manually
+**NEVER use `json.Marshal` or single/double quotes in x-data attribute values.**
 
-### Dark mode pattern — Always use both light and dark variants:
+### Generated files — NEVER edit manually
+- `*_templ.go` — regenerated by `templ generate`
+- `assets/styles.css` — regenerated by Tailwind
+- When resolving merge conflicts, resolve `.templ` source files then `templ generate`
+
+### Templ regeneration quirks
+- `templ generate` sometimes reports "0 updates" even when source changed
+- Force regeneration: `rm components/<name>/<name>_templ.go && templ generate`
+
+### Dark mode — always use both light and dark variants:
 ```css
 bg-surface text-on-surface dark:bg-surface-dark dark:text-on-surface-dark
 ```
 
-### Alpine.js arrays — NEVER initialize as `null`, always use `[]`:
-```go
-if string(selectedJSON) == "null" {
-    selectedJSON = []byte("[]")
-}
+### Port 8090 is reserved for manual development
+E2E tests use a random free port (see `freePort()` in `e2e_test.go`). Never hardcode 8090 in tests.
+
+## E2E Testing Architecture
+
+```
+TestMain (e2e_test.go)
+├── Builds server binary
+├── Finds free port, starts server
+├── Launches single shared Chromium (Playwright)
+└── Runs all tests with shared browser
+
+Each test:
+├── Gets shared browser via setupPlaywright()
+├── Creates new page/tab via newPage(t, browser)
+├── Page auto-closes via t.Cleanup()
+└── Uses 2s element timeout / 3s navigation timeout
 ```
 
-### Templ HTML escaping breaks Alpine.js `x-data` — NEVER use `json.Marshal` for inline JS:
-Templ's `EscapeString` converts `"` to `&quot;` inside HTML attributes. This silently
-breaks Alpine.js object literals in `x-data`. Use single-quoted JS string literals instead:
-```go
-// BAD — json.Marshal produces double quotes, templ escapes them to &quot;
-optsJSON, _ := json.Marshal(cfg.Options)
-return fmt.Sprintf(`{ options: %s }`, optsJSON)  // broken in browser
+Key helpers:
+- `newPage(t, browser, ...opts)` — creates tab with tight timeouts + auto-close
+- `setupServer(t)` / `setupPlaywright(t)` — no-ops (backward compat, TestMain handles everything)
+- `takeScreenshot(t, page, name)` — saves debug screenshots
 
-// GOOD — build JS literals with single quotes
-func optionsToJS(options []Option) string {
-    result := "["
-    for i, opt := range options {
-        if i > 0 { result += "," }
-        result += fmt.Sprintf("{value:'%s',label:'%s'}", jsEscapeSingle(opt.Value), jsEscapeSingle(opt.Label))
-    }
-    return result + "]"
-}
-```
+**Alpine.js in tests**: Use `page.Evaluate("el => el.getAttribute('aria-expanded')", nil)` instead of `GetAttribute()` for Alpine-bound attributes. Wait for Alpine with `WaitForFunction("() => typeof Alpine !== 'undefined'")`.
 
-### Layout — sidebar component is used without logo in the demo layout:
-The demo layout (`layout.templ`) already has a header with "GoATTH PenguinUI" branding.
-The sidebar component's logo section is conditional — only renders when `Logo` or `LogoText`
-is set. Don't pass `LogoText` in the layout to avoid a duplicate header appearance.
+## Table Component
+
+The table is the most complex component. Key features:
+- Static, striped, checkbox variants
+- Sortable columns (sort cycles: neutral → asc → desc → neutral)
+- Pagination with HTMX OOB swap (paginator updates active state)
+- Infinite scroll with sentinel row
+- Lazy loading
+- Filter bar (search, select, toggle) — **in progress**
+
+HTMX endpoint: `/api/components/table/rows`
+Query params: `order_by`, `order_dir`, `page`, `per_page`, `search`, `membership`, `variant`
 
 ## Theme System
 
 - Themes defined in `all-themes.css` using `[data-theme="name"]` selectors
 - Dark mode uses `.dark` class on `<html>` via Alpine.js store
-- CSS custom variant: `@custom-variant dark (&:where(.dark, .dark *))`
 - Default theme: **Minimal** (black/white, no border radius)
-
-## Component Patterns
-
-### types.go structure:
-```go
-package componentname
-
-type Config struct {
-    ID    string
-    Label string
-    // ...
-}
-
-func (cfg Config) Classes() string { ... }
-```
-
-### .templ structure:
-```templ
-templ ComponentName(cfg Config) {
-    // Main entry point, delegates to private helpers
-}
-
-templ helperTemplate(cfg Config) {
-    // Private implementation
-}
-```
-
-### Alpine.js data generation (use single-quoted JS, NOT json.Marshal):
-```go
-func alpineData(cfg Config) string {
-    // Use single-quoted JS literals to avoid templ's HTML escaping of double quotes
-    opts := optionsToJS(cfg.Options)  // returns [{value:'a',label:'A'},...]
-    return fmt.Sprintf(`{ options: %s }`, opts)
-}
-```
-
-## Testing
-
-- E2E tests use Playwright Go bindings
-- Wait for Alpine.js: use `page.WaitForTimeout(800)` or `WaitForSelector`
-- Each test should reload page for clean state
-- Test visual parity between Original and GoATTH columns
-- Run specific test: `make test-e2e-one TEST=TestButtonVariants`
 
 ## Current Status
 
-**Completed (8):** Button, Accordion, Sidebar, Avatar, Badge, Banner, Card, Combobox
-**Pending (16+):** Modal, Alert, Input, Select, Checkbox, Radio, Toggle, Toast, Table, Tabs, Pagination, Progress, Skeleton, Spinner, Tooltip, Dropdown, and more.
+**Completed (22):** Accordion, Alert, Avatar, Badge, Banner, Button, Card, Checkbox, Combobox, Dropdown, Modal, Pagination, Select, Sidebar, Spinner, Table, Tabs, Textarea, Text Input, Toast, Toggle, Tooltip
+
+**In Progress:**
+- Table filter bar (types + templ done, Alpine.js timing issue in E2E tests)
+- Sort header cycling (neutral→asc→desc→neutral, uncommitted)
