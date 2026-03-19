@@ -38,6 +38,7 @@ func getThemeInfos() []ThemeInfo {
 		{Key: "news", Label: "News", PrimaryClass: "bg-sky-700", SecondaryClass: "bg-black"},
 		{Key: "industrial", Label: "Industrial", PrimaryClass: "bg-amber-500", SecondaryClass: "bg-stone-900"},
 		{Key: "totvs", Label: "TOTVS", PrimaryClass: "bg-cyan-400", SecondaryClass: "bg-violet-500"},
+		{Key: "dracula", Label: "Dracula", PrimaryClass: "bg-purple-400", SecondaryClass: "bg-pink-400"},
 	}
 }
 
@@ -505,6 +506,39 @@ func getThemeCSSBlocks() map[string]string {
     --color-on-danger: var(--color-white);
     --radius-radius: var(--radius-lg);
 }`,
+		"dracula": `[data-theme=dracula] {
+    --font-body: 'Fira Code', 'JetBrains Mono', monospace;
+    --font-title: 'Fira Code', 'JetBrains Mono', monospace;
+    --color-surface: #f8f8f2;
+    --color-surface-alt: #eaeada;
+    --color-on-surface: #44475a;
+    --color-on-surface-strong: #282a36;
+    --color-primary: #bd93f9;
+    --color-on-primary: #282a36;
+    --color-secondary: #ff79c6;
+    --color-on-secondary: #282a36;
+    --color-outline: #6272a4;
+    --color-outline-strong: #44475a;
+    --color-surface-dark: #282a36;
+    --color-surface-dark-alt: #44475a;
+    --color-on-surface-dark: #f8f8f2;
+    --color-on-surface-dark-strong: #f8f8f2;
+    --color-primary-dark: #bd93f9;
+    --color-on-primary-dark: #282a36;
+    --color-secondary-dark: #ff79c6;
+    --color-on-secondary-dark: #282a36;
+    --color-outline-dark: #6272a4;
+    --color-outline-dark-strong: #f8f8f2;
+    --color-info: #8be9fd;
+    --color-on-info: #282a36;
+    --color-success: #50fa7b;
+    --color-on-success: #282a36;
+    --color-warning: #f1fa8c;
+    --color-on-warning: #282a36;
+    --color-danger: #ff5555;
+    --color-on-danger: #282a36;
+    --radius-radius: var(--radius-md);
+}`,
 	}
 }
 
@@ -687,7 +721,7 @@ func themeGrid() templ.Component {
 			var templ_7745c5c3_Var5 string
 			templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(t.Key)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/components/theme.templ`, Line: 572, Col: 26}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/components/theme.templ`, Line: 606, Col: 26}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 			if templ_7745c5c3_Err != nil {
@@ -700,7 +734,7 @@ func themeGrid() templ.Component {
 			var templ_7745c5c3_Var6 string
 			templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("theme === '%s' ? 'ring-2 ring-primary dark:ring-primary-dark' : 'hover:border-on-surface/30 dark:hover:border-on-surface-dark/30'", t.Key))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/components/theme.templ`, Line: 575, Col: 164}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/components/theme.templ`, Line: 609, Col: 164}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 			if templ_7745c5c3_Err != nil {
@@ -713,7 +747,7 @@ func themeGrid() templ.Component {
 			var templ_7745c5c3_Var7 string
 			templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("theme === '%s' ? '' : 'hidden'", t.Key))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/components/theme.templ`, Line: 582, Col: 68}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/components/theme.templ`, Line: 616, Col: 68}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 			if templ_7745c5c3_Err != nil {
@@ -726,7 +760,7 @@ func themeGrid() templ.Component {
 			var templ_7745c5c3_Var8 string
 			templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(t.Label)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/components/theme.templ`, Line: 585, Col: 106}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/components/theme.templ`, Line: 619, Col: 106}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
 			if templ_7745c5c3_Err != nil {

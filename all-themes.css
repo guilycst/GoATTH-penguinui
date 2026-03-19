@@ -524,4 +524,43 @@
         --radius-radius: var(--radius-lg);
     }
 
+    [data-theme=dracula] {
+        /* Dracula Theme — https://draculatheme.com */
+        --font-body: 'Fira Code', 'JetBrains Mono', monospace;
+        --font-title: 'Fira Code', 'JetBrains Mono', monospace;
+        /* Light (Dracula uses dark-first, light mode is inverted) */
+        --color-surface: #f8f8f2;
+        --color-surface-alt: #eaeada;
+        --color-on-surface: #44475a;
+        --color-on-surface-strong: #282a36;
+        --color-primary: #bd93f9;
+        --color-on-primary: #282a36;
+        --color-secondary: #ff79c6;
+        --color-on-secondary: #282a36;
+        --color-outline: #6272a4;
+        --color-outline-strong: #44475a;
+        /* Dark (canonical Dracula) */
+        --color-surface-dark: #282a36;
+        --color-surface-dark-alt: #44475a;
+        --color-on-surface-dark: #f8f8f2;
+        --color-on-surface-dark-strong: #f8f8f2;
+        --color-primary-dark: #bd93f9;
+        --color-on-primary-dark: #282a36;
+        --color-secondary-dark: #ff79c6;
+        --color-on-secondary-dark: #282a36;
+        --color-outline-dark: #6272a4;
+        --color-outline-dark-strong: #f8f8f2;
+        /* Status */
+        --color-info: #8be9fd;
+        --color-on-info: #282a36;
+        --color-success: #50fa7b;
+        --color-on-success: #282a36;
+        --color-warning: #f1fa8c;
+        --color-on-warning: #282a36;
+        --color-danger: #ff5555;
+        --color-on-danger: #282a36;
+        /* Border */
+        --radius-radius: var(--radius-md);
+    }
+
 }

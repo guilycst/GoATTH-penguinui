@@ -30,6 +30,7 @@ func getThemeInfos() []ThemeInfo {
 		{Key: "news", Label: "News", PrimaryClass: "bg-sky-700", SecondaryClass: "bg-black"},
 		{Key: "industrial", Label: "Industrial", PrimaryClass: "bg-amber-500", SecondaryClass: "bg-stone-900"},
 		{Key: "totvs", Label: "TOTVS", PrimaryClass: "bg-cyan-400", SecondaryClass: "bg-violet-500"},
+		{Key: "dracula", Label: "Dracula", PrimaryClass: "bg-purple-400", SecondaryClass: "bg-pink-400"},
 	}
 }
 
@@ -496,6 +497,39 @@ func getThemeCSSBlocks() map[string]string {
     --color-danger: #ff009e;
     --color-on-danger: var(--color-white);
     --radius-radius: var(--radius-lg);
+}`,
+		"dracula": `[data-theme=dracula] {
+    --font-body: 'Fira Code', 'JetBrains Mono', monospace;
+    --font-title: 'Fira Code', 'JetBrains Mono', monospace;
+    --color-surface: #f8f8f2;
+    --color-surface-alt: #eaeada;
+    --color-on-surface: #44475a;
+    --color-on-surface-strong: #282a36;
+    --color-primary: #bd93f9;
+    --color-on-primary: #282a36;
+    --color-secondary: #ff79c6;
+    --color-on-secondary: #282a36;
+    --color-outline: #6272a4;
+    --color-outline-strong: #44475a;
+    --color-surface-dark: #282a36;
+    --color-surface-dark-alt: #44475a;
+    --color-on-surface-dark: #f8f8f2;
+    --color-on-surface-dark-strong: #f8f8f2;
+    --color-primary-dark: #bd93f9;
+    --color-on-primary-dark: #282a36;
+    --color-secondary-dark: #ff79c6;
+    --color-on-secondary-dark: #282a36;
+    --color-outline-dark: #6272a4;
+    --color-outline-dark-strong: #f8f8f2;
+    --color-info: #8be9fd;
+    --color-on-info: #282a36;
+    --color-success: #50fa7b;
+    --color-on-success: #282a36;
+    --color-warning: #f1fa8c;
+    --color-on-warning: #282a36;
+    --color-danger: #ff5555;
+    --color-on-danger: #282a36;
+    --radius-radius: var(--radius-md);
 }`,
 	}
 }
