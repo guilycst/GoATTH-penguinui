@@ -117,6 +117,8 @@ func (s *Server) handleComponent(w http.ResponseWriter, r *http.Request) {
 		components.ToastDemoPage().Render(r.Context(), w)
 	case "tooltip":
 		components.TooltipDemoPage().Render(r.Context(), w)
+	case "breadcrumbs":
+		components.BreadcrumbsDemoPage().Render(r.Context(), w)
 	default:
 		http.NotFound(w, r)
 	}

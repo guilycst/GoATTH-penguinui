@@ -1,0 +1,80 @@
+package breadcrumbs
+
+// Breadcrumbs renders a breadcrumb navigation component based on PenguinUI
+// Usage:
+//
+//	@breadcrumbs.Breadcrumbs(breadcrumbs.Config{
+//	    Items: []breadcrumbs.Item{
+//	        {Label: "Home", Href: "/"},
+//	        {Label: "Components", Href: "/components"},
+//	    },
+//	    Current: "Breadcrumb",
+//	})
+templ Breadcrumbs(cfg Config) {
+	<nav
+		class={ "text-sm font-medium text-on-surface dark:text-on-surface-dark" + extraClass(cfg.Class) }
+		aria-label="breadcrumb"
+		{ cfg.NavAttrs... }
+	>
+		<ol class={ listClasses(cfg.Separator) }>
+			for _, item := range cfg.Items {
+				<li class={ itemClasses(cfg.Separator) }>
+					<a
+						href={ templ.SafeURL(item.Href) }
+						{ item.LinkAttrs... }
+						class="flex items-center gap-1 hover:text-on-surface-strong dark:hover:text-on-surface-dark-strong"
+					>
+						if item.Icon != nil {
+							<span
+								if item.Tooltip != "" {
+									title={ item.Tooltip }
+								}
+								class="opacity-60 shrink-0"
+							>
+								@item.Icon
+							</span>
+						}
+						{ item.Label }
+					</a>
+					@separator(cfg.Separator)
+				</li>
+			}
+			if cfg.Current != "" {
+				<li class="flex items-center gap-1 font-bold text-on-surface-strong dark:text-on-surface-dark-strong" aria-current="page">
+					{ cfg.Current }
+				</li>
+			}
+		</ol>
+	</nav>
+}
+
+templ separator(style SeparatorStyle) {
+	if style == Slash {
+		<span aria-hidden="true">/</span>
+	} else {
+		<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" aria-hidden="true" stroke-width="2" stroke="currentColor" class="size-4 shrink-0">
+			<path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5"></path>
+		</svg>
+	}
+}
+
+func extraClass(class string) string {
+	if class == "" {
+		return ""
+	}
+	return " " + class
+}
+
+func listClasses(sep SeparatorStyle) string {
+	if sep == Slash {
+		return "flex flex-wrap items-center gap-2"
+	}
+	return "flex flex-wrap items-center gap-1"
+}
+
+func itemClasses(sep SeparatorStyle) string {
+	if sep == Slash {
+		return "flex items-center gap-2"
+	}
+	return "flex items-center gap-1"
+}

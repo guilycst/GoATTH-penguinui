@@ -20,6 +20,9 @@ type Item struct {
 	Badge string
 	// Items contains child items for nested navigation
 	Items []Item
+	// LinkAttrs are extra HTML attributes spread onto the <a> element.
+	// Use for HTMX, Alpine.js, or other consumer-specific attributes.
+	LinkAttrs templ.Attributes
 }
 
 // Config holds configuration for the sidebar
@@ -42,6 +45,11 @@ type Config struct {
 	SearchPlaceholder string
 	// Class allows additional CSS classes
 	Class string
+	// SearchSlot replaces the default search input with a custom component.
+	// When set, ShowSearch is ignored.
+	SearchSlot templ.Component
+	// FooterSlot renders content at the bottom of the sidebar (e.g., profile menu).
+	FooterSlot templ.Component
 }
 
 // Section represents a group of navigation items

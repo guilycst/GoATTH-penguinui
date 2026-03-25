@@ -1,0 +1,110 @@
+package components
+
+import (
+	"github.com/guilycst/GoATTH-penguinui/components/breadcrumbs"
+	"github.com/guilycst/GoATTH-penguinui/internal/pages/demo"
+)
+
+// BreadcrumbsDemoPage renders the Breadcrumbs component demo
+templ BreadcrumbsDemoPage() {
+	@demo.Layout("Breadcrumbs", "breadcrumbs", breadcrumbsDemoContent())
+}
+
+templ breadcrumbsDemoContent() {
+	<div class="space-y-12">
+		<div>
+			<h1 class="text-3xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong">Breadcrumbs</h1>
+			<p class="text-sm text-on-surface/60 dark:text-on-surface-dark/60">Tailwind CSS Breadcrumb Navigation</p>
+			<p class="mt-2 text-on-surface dark:text-on-surface-dark">Breadcrumbs show the user's current location in a site hierarchy. They support chevron and slash separators, optional icons, and custom attributes on links.</p>
+		</div>
+
+		@chevronBreadcrumbDemo()
+		@slashBreadcrumbDemo()
+		@iconBreadcrumbDemo()
+	</div>
+}
+
+// --- Variant 1: Chevron Separator ---
+
+templ chevronBreadcrumbDemo() {
+	<div class="not-prose">
+		<h3 class="text-lg font-semibold text-on-surface-strong dark:text-on-surface-dark-strong mb-2">Chevron Separator</h3>
+		<p class="text-sm text-on-surface/60 dark:text-on-surface-dark/60 mb-4">Default breadcrumb with chevron separators between items.</p>
+		<div class="border border-outline dark:border-outline-dark rounded-radius overflow-hidden">
+			<div class="flex items-center gap-1.5 bg-surface-alt dark:bg-surface-dark-alt px-3 py-2 border-b border-outline dark:border-outline-dark">
+				<span class="size-3 rounded-full bg-red-400"></span>
+				<span class="size-3 rounded-full bg-yellow-400"></span>
+				<span class="size-3 rounded-full bg-green-400"></span>
+				<span class="ml-2 text-xs text-on-surface/50 dark:text-on-surface-dark/50">Preview</span>
+			</div>
+			<div class="p-6 bg-surface dark:bg-surface-dark">
+				@breadcrumbs.Breadcrumbs(breadcrumbs.Config{
+					Items: []breadcrumbs.Item{
+						{Label: "Home", Href: "#"},
+						{Label: "Components", Href: "#"},
+					},
+					Current: "Breadcrumb",
+				})
+			</div>
+		</div>
+	</div>
+}
+
+// --- Variant 2: Slash Separator ---
+
+templ slashBreadcrumbDemo() {
+	<div class="not-prose">
+		<h3 class="text-lg font-semibold text-on-surface-strong dark:text-on-surface-dark-strong mb-2">Slash Separator</h3>
+		<p class="text-sm text-on-surface/60 dark:text-on-surface-dark/60 mb-4">Breadcrumb with slash separators for a minimal look.</p>
+		<div class="border border-outline dark:border-outline-dark rounded-radius overflow-hidden">
+			<div class="flex items-center gap-1.5 bg-surface-alt dark:bg-surface-dark-alt px-3 py-2 border-b border-outline dark:border-outline-dark">
+				<span class="size-3 rounded-full bg-red-400"></span>
+				<span class="size-3 rounded-full bg-yellow-400"></span>
+				<span class="size-3 rounded-full bg-green-400"></span>
+				<span class="ml-2 text-xs text-on-surface/50 dark:text-on-surface-dark/50">Preview</span>
+			</div>
+			<div class="p-6 bg-surface dark:bg-surface-dark">
+				@breadcrumbs.Breadcrumbs(breadcrumbs.Config{
+					Items: []breadcrumbs.Item{
+						{Label: "Home", Href: "#"},
+						{Label: "Components", Href: "#"},
+					},
+					Current:   "Breadcrumb",
+					Separator: breadcrumbs.Slash,
+				})
+			</div>
+		</div>
+	</div>
+}
+
+// --- Variant 3: With Icon ---
+
+templ breadcrumbHomeIcon() {
+	<svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true" class="size-4">
+		<path fill-rule="evenodd" clip-rule="evenodd" d="M9.293 2.293a1 1 0 0 1 1.414 0l7 7A1 1 0 0 1 17 11h-1v6a1 1 0 0 1-1 1h-2a1 1 0 0 1-1-1v-3a1 1 0 0 0-1-1H9a1 1 0 0 0-1 1v3a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-6H3a1 1 0 0 1-.707-1.707l7-7Z"></path>
+	</svg>
+}
+
+templ iconBreadcrumbDemo() {
+	<div class="not-prose">
+		<h3 class="text-lg font-semibold text-on-surface-strong dark:text-on-surface-dark-strong mb-2">With Icon</h3>
+		<p class="text-sm text-on-surface/60 dark:text-on-surface-dark/60 mb-4">Breadcrumb items can include icons for better visual context.</p>
+		<div class="border border-outline dark:border-outline-dark rounded-radius overflow-hidden">
+			<div class="flex items-center gap-1.5 bg-surface-alt dark:bg-surface-dark-alt px-3 py-2 border-b border-outline dark:border-outline-dark">
+				<span class="size-3 rounded-full bg-red-400"></span>
+				<span class="size-3 rounded-full bg-yellow-400"></span>
+				<span class="size-3 rounded-full bg-green-400"></span>
+				<span class="ml-2 text-xs text-on-surface/50 dark:text-on-surface-dark/50">Preview</span>
+			</div>
+			<div class="p-6 bg-surface dark:bg-surface-dark">
+				@breadcrumbs.Breadcrumbs(breadcrumbs.Config{
+					Items: []breadcrumbs.Item{
+						{Label: "", Href: "#", Icon: breadcrumbHomeIcon(), Tooltip: "Home"},
+						{Label: "Components", Href: "#"},
+					},
+					Current: "Breadcrumb",
+				})
+			</div>
+		</div>
+	</div>
+}
