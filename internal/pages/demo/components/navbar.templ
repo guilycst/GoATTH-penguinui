@@ -1,0 +1,134 @@
+package components
+
+import (
+	"github.com/guilycst/GoATTH-penguinui/components/navbar"
+	"github.com/guilycst/GoATTH-penguinui/internal/pages/demo"
+)
+
+// NavbarDemoPage renders the Navbar component demo
+templ NavbarDemoPage() {
+	@demo.Layout("Navbar", "navbar", navbarDemoContent())
+}
+
+templ navbarDemoContent() {
+	<div class="space-y-12">
+		<div>
+			<h1 class="text-3xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong">Navbar</h1>
+			<p class="text-sm text-on-surface/60 dark:text-on-surface-dark/60">Tailwind CSS and Alpine JS Responsive Navbar</p>
+			<p class="mt-2 text-on-surface dark:text-on-surface-dark">A responsive navigation bar with brand, links, user avatar dropdown, and mobile menu. Supports custom right-side slots for additional controls.</p>
+		</div>
+
+		@simpleNavbarDemo()
+		@navbarWithUserDemo()
+		@navbarWithRightSlotDemo()
+	</div>
+}
+
+// --- Variant 1: Simple Navbar ---
+
+templ simpleNavbarDemo() {
+	<div class="not-prose">
+		<h3 class="text-lg font-semibold text-on-surface-strong dark:text-on-surface-dark-strong mb-2">Simple Navbar</h3>
+		<p class="text-sm text-on-surface/60 dark:text-on-surface-dark/60 mb-4">Basic navbar with brand and navigation links.</p>
+		<div class="border border-outline dark:border-outline-dark rounded-radius overflow-hidden">
+			<div class="flex items-center gap-1.5 bg-surface-alt dark:bg-surface-dark-alt px-3 py-2 border-b border-outline dark:border-outline-dark">
+				<span class="size-3 rounded-full bg-red-400"></span>
+				<span class="size-3 rounded-full bg-yellow-400"></span>
+				<span class="size-3 rounded-full bg-green-400"></span>
+				<span class="ml-2 text-xs text-on-surface/50 dark:text-on-surface-dark/50">Preview</span>
+			</div>
+			<div class="bg-surface dark:bg-surface-dark">
+				@navbar.Navbar(navbar.Config{
+					Brand: demoBrandText(),
+					Links: []navbar.NavLink{
+						{Label: "Products", Href: "#", Active: true},
+						{Label: "Pricing", Href: "#"},
+						{Label: "Blog", Href: "#"},
+						{Label: "Login", Href: "#"},
+					},
+				})
+			</div>
+		</div>
+	</div>
+}
+
+// --- Variant 2: With User Profile ---
+
+templ navbarWithUserDemo() {
+	<div class="not-prose">
+		<h3 class="text-lg font-semibold text-on-surface-strong dark:text-on-surface-dark-strong mb-2">With User Profile</h3>
+		<p class="text-sm text-on-surface/60 dark:text-on-surface-dark/60 mb-4">Navbar with an avatar button that opens a user dropdown menu with name, email, and action items.</p>
+		<div class="border border-outline dark:border-outline-dark rounded-radius overflow-hidden">
+			<div class="flex items-center gap-1.5 bg-surface-alt dark:bg-surface-dark-alt px-3 py-2 border-b border-outline dark:border-outline-dark">
+				<span class="size-3 rounded-full bg-red-400"></span>
+				<span class="size-3 rounded-full bg-yellow-400"></span>
+				<span class="size-3 rounded-full bg-green-400"></span>
+				<span class="ml-2 text-xs text-on-surface/50 dark:text-on-surface-dark/50">Preview</span>
+			</div>
+			<div class="bg-surface dark:bg-surface-dark" style="min-height: 200px;">
+				@navbar.Navbar(navbar.Config{
+					Brand: demoBrandText(),
+					Links: []navbar.NavLink{
+						{Label: "Products", Href: "#", Active: true},
+						{Label: "Pricing", Href: "#"},
+						{Label: "Blog", Href: "#"},
+					},
+					User: &navbar.UserProfile{
+						Name:  "Alice Brown",
+						Email: "alice.brown@example.com",
+					},
+					UserMenu: []navbar.UserMenuItem{
+						{Label: "Dashboard", Href: "#"},
+						{Label: "Settings", Href: "#"},
+						{Label: "Sign Out", Href: "#", Danger: true},
+					},
+				})
+			</div>
+		</div>
+	</div>
+}
+
+// --- Variant 3: With Right Slot ---
+
+templ navbarWithRightSlotDemo() {
+	<div class="not-prose">
+		<h3 class="text-lg font-semibold text-on-surface-strong dark:text-on-surface-dark-strong mb-2">With Right Slot</h3>
+		<p class="text-sm text-on-surface/60 dark:text-on-surface-dark/60 mb-4">Navbar with a custom right slot for additional controls (e.g., dark mode toggle) alongside the user avatar.</p>
+		<div class="border border-outline dark:border-outline-dark rounded-radius overflow-hidden">
+			<div class="flex items-center gap-1.5 bg-surface-alt dark:bg-surface-dark-alt px-3 py-2 border-b border-outline dark:border-outline-dark">
+				<span class="size-3 rounded-full bg-red-400"></span>
+				<span class="size-3 rounded-full bg-yellow-400"></span>
+				<span class="size-3 rounded-full bg-green-400"></span>
+				<span class="ml-2 text-xs text-on-surface/50 dark:text-on-surface-dark/50">Preview</span>
+			</div>
+			<div class="bg-surface dark:bg-surface-dark" style="min-height: 200px;">
+				@navbar.Navbar(navbar.Config{
+					Brand:     demoBrandText(),
+					RightSlot: demoRightSlot(),
+					User: &navbar.UserProfile{
+						Name:  "Alice Brown",
+						Email: "alice.brown@example.com",
+					},
+					UserMenu: []navbar.UserMenuItem{
+						{Label: "Settings", Href: "#"},
+						{Label: "Sign Out", Href: "#", Danger: true},
+					},
+				})
+			</div>
+		</div>
+	</div>
+}
+
+// --- Demo Helpers ---
+
+templ demoBrandText() {
+	<span>Peng<span class="text-primary dark:text-primary-dark">ui</span>n</span>
+}
+
+templ demoRightSlot() {
+	<button class="p-2 text-on-surface hover:bg-surface-dark/5 dark:text-on-surface-dark dark:hover:bg-surface/5 transition-colors rounded-radius" aria-label="Toggle dark mode">
+		<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.2" stroke="currentColor" class="h-5 w-5">
+			<path stroke-linecap="round" stroke-linejoin="round" d="M21.752 15.002A9.72 9.72 0 0 1 18 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 0 0 3 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 0 0 9.002-5.998Z"></path>
+		</svg>
+	</button>
+}

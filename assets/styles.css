@@ -1187,6 +1187,9 @@
   .list-disc {
     list-style-type: disc;
   }
+  .list-none {
+    list-style-type: none;
+  }
   .appearance-none {
     appearance: none;
   }
@@ -3601,6 +3604,16 @@
       }
     }
   }
+  .hover\:scale-110 {
+    &:hover {
+      @media (hover: hover) {
+        --tw-scale-x: 110%;
+        --tw-scale-y: 110%;
+        --tw-scale-z: 110%;
+        scale: var(--tw-scale-x) var(--tw-scale-y);
+      }
+    }
+  }
   .hover\:scale-125 {
     &:hover {
       @media (hover: hover) {
@@ -3655,6 +3668,16 @@
     &:hover {
       @media (hover: hover) {
         border-bottom-color: var(--color-outline-strong);
+      }
+    }
+  }
+  .hover\:bg-danger\/5 {
+    &:hover {
+      @media (hover: hover) {
+        background-color: color-mix(in srgb, oklch(65.6% 0.241 354.308) 5%, transparent);
+        @supports (color: color-mix(in lab, red, red)) {
+          background-color: color-mix(in oklab, var(--color-danger) 5%, transparent);
+        }
       }
     }
   }
@@ -3914,6 +3937,14 @@
       border-color: var(--color-primary);
     }
   }
+  .focus-visible\:bg-danger\/10 {
+    &:focus-visible {
+      background-color: color-mix(in srgb, oklch(65.6% 0.241 354.308) 10%, transparent);
+      @supports (color: color-mix(in lab, red, red)) {
+        background-color: color-mix(in oklab, var(--color-danger) 10%, transparent);
+      }
+    }
+  }
   .focus-visible\:bg-surface-alt {
     &:focus-visible {
       background-color: var(--color-surface-alt);
@@ -4098,6 +4129,14 @@
   .focus-visible\:outline-warning {
     &:focus-visible {
       outline-color: var(--color-warning);
+    }
+  }
+  .active\:scale-95 {
+    &:active {
+      --tw-scale-x: 95%;
+      --tw-scale-y: 95%;
+      --tw-scale-z: 95%;
+      scale: var(--tw-scale-x) var(--tw-scale-y);
     }
   }
   .active\:bg-surface-dark\/5 {
@@ -5834,6 +5873,18 @@
       }
     }
   }
+  .dark\:hover\:bg-danger\/10 {
+    &:where(.dark, .dark *) {
+      &:hover {
+        @media (hover: hover) {
+          background-color: color-mix(in srgb, oklch(65.6% 0.241 354.308) 10%, transparent);
+          @supports (color: color-mix(in lab, red, red)) {
+            background-color: color-mix(in oklab, var(--color-danger) 10%, transparent);
+          }
+        }
+      }
+    }
+  }
   .dark\:hover\:bg-primary-dark\/5 {
     &:where(.dark, .dark *) {
       &:hover {
@@ -6981,6 +7032,36 @@
   }
   .theme-transition {
     transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+  }
+  .scrollbar-custom {
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-outline) transparent;
+  }
+  .dark .scrollbar-custom {
+    scrollbar-color: var(--color-outline-dark) transparent;
+  }
+  .scrollbar-custom::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  .scrollbar-custom::-webkit-scrollbar-track {
+    background: transparent;
+    border-radius: 9999px;
+  }
+  .scrollbar-custom::-webkit-scrollbar-thumb {
+    background-color: var(--color-outline);
+    border-radius: 9999px;
+    border: 2px solid transparent;
+    background-clip: content-box;
+  }
+  .scrollbar-custom::-webkit-scrollbar-thumb:hover {
+    background-color: var(--color-outline-strong);
+  }
+  .dark .scrollbar-custom::-webkit-scrollbar-thumb {
+    background-color: var(--color-outline-dark);
+  }
+  .dark .scrollbar-custom::-webkit-scrollbar-thumb:hover {
+    background-color: var(--color-outline-dark-strong);
   }
 }
 @property --tw-translate-x {

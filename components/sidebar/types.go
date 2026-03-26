@@ -69,5 +69,5 @@ func (cfg Config) ContainerClasses() string {
 
 // NavClasses returns the navigation container classes
 func (cfg Config) NavClasses() string {
-	return "flex-1 overflow-y-auto sidebar-scroll p-4"
+	return "flex-1 overflow-y-auto sidebar-scroll scrollbar-custom p-4"
 }

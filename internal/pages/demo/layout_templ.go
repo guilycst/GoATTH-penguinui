@@ -218,6 +218,7 @@ func getSidebarSections(activeComponent string) []sidebar.Section {
 			Title: "Navigation",
 			Items: []sidebar.Item{
 				{ID: "breadcrumbs", Label: "Breadcrumbs", Href: "/components/breadcrumbs", Active: activeComponent == "breadcrumbs"},
+				{ID: "navbar", Label: "Navbar", Href: "/components/navbar", Active: activeComponent == "navbar"},
 				{ID: "sidebar", Label: "Sidebar", Href: "/components/sidebar", Active: activeComponent == "sidebar"},
 			},
 		},
