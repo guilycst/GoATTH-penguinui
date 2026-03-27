@@ -1,6 +1,9 @@
 # Binaries
 bin/
+/server
+/tmp/
 *.exe
+examples/getting-started/getting-started
 *.dll
 *.so
 *.dylib
