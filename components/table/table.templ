@@ -456,10 +456,11 @@ templ scrollSentinel(cfg Config) {
 		hx-get={ cfg.NextPageURL() }
 		hx-trigger="revealed"
 		hx-swap="outerHTML"
-		hx-target="this"
+		aria-hidden="true"
 	>
-		<td colspan={ fmt.Sprintf("%d", len(cfg.Columns) + boolToInt(cfg.ShowCheckbox)) } class="p-4 text-center">
+		<td colspan={ fmt.Sprintf("%d", cfg.ColCount()) } class="p-4 text-center">
 			@loadingIndicator()
+			@templ.Raw(fmt.Sprintf(`<script>(function(){var el=document.getElementById('%s-sentinel');if(!el)return;var c=el.closest('.overflow-y-auto')||el.closest('[style*="overflow-y"]');if(!c){htmx.trigger(el,'revealed');return}var f=false;function ck(){if(f||!document.contains(el)){c.removeEventListener('scroll',ck);return}var r=el.getBoundingClientRect();var cr=c.getBoundingClientRect();if(r.top<cr.bottom+200){f=true;c.removeEventListener('scroll',ck);htmx.trigger(el,'revealed')}}c.addEventListener('scroll',ck,{passive:true});requestAnimationFrame(ck)})()</script>`, cfg.GetID()))
 		</td>
 	</tr>
 }
