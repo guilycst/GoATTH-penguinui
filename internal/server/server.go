@@ -7,6 +7,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/guilycst/GoATTH-penguinui/components/carousel"
 	"github.com/guilycst/GoATTH-penguinui/internal/pages/demo/components"
 )
 
@@ -47,6 +48,7 @@ func (s *Server) setupRoutes() {
 	s.mux.HandleFunc("/api/components/tab-content/", s.handleTabContent)
 	s.mux.HandleFunc("/api/components/table/rows", s.handleTableRows)
 	s.mux.HandleFunc("/api/components/toast", s.handleToastOOB)
+	s.mux.HandleFunc("/api/components/carousel/slides", s.handleCarouselSlides)
 
 	// Docs pages
 	s.mux.HandleFunc("/docs/theme", s.handleThemePage)
@@ -105,6 +107,8 @@ func (s *Server) handleComponent(w http.ResponseWriter, r *http.Request) {
 		components.CheckboxDemoPage().Render(r.Context(), w)
 	case "dropdown":
 		components.DropdownDemoPage().Render(r.Context(), w)
+	case "form":
+		components.FormDemoPage().Render(r.Context(), w)
 	case "select":
 		components.SelectDemoPage().Render(r.Context(), w)
 	case "spinner":
@@ -119,8 +123,16 @@ func (s *Server) handleComponent(w http.ResponseWriter, r *http.Request) {
 		components.TooltipDemoPage().Render(r.Context(), w)
 	case "breadcrumbs":
 		components.BreadcrumbsDemoPage().Render(r.Context(), w)
+	case "carousel":
+		components.CarouselDemoPage().Render(r.Context(), w)
 	case "navbar":
 		components.NavbarDemoPage().Render(r.Context(), w)
+	case "tags-list":
+		components.TagsListDemoPage().Render(r.Context(), w)
+	case "key-value":
+		components.KeyValueDemoPage().Render(r.Context(), w)
+	case "triplet":
+		components.TripletDemoPage().Render(r.Context(), w)
 	default:
 		http.NotFound(w, r)
 	}
@@ -224,6 +236,39 @@ func (s *Server) handleThemePage(w http.ResponseWriter, r *http.Request) {
 
 func (s *Server) handleGettingStarted(w http.ResponseWriter, r *http.Request) {
 	components.GettingStartedPage().Render(r.Context(), w)
+}
+
+func (s *Server) handleCarouselSlides(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "text/html")
+
+	// Simulate server processing delay
+	time.Sleep(500 * time.Millisecond)
+
+	// Return a rendered static carousel with sample slides
+	cfg := carousel.Config{
+		Variant: carousel.WithText,
+		Slides: []carousel.Slide{
+			{
+				ImgSrc:      "https://penguinui.s3.amazonaws.com/component-assets/carousel/default-slide-1.webp",
+				ImgAlt:      "Vibrant abstract painting with swirling blue and light pink hues on a canvas.",
+				Title:       "Loaded via HTMX",
+				Description: fmt.Sprintf("This carousel was fetched from the server at %s.", time.Now().Format("15:04:05")),
+			},
+			{
+				ImgSrc:      "https://penguinui.s3.amazonaws.com/component-assets/carousel/default-slide-2.webp",
+				ImgAlt:      "Vibrant abstract painting with swirling red, yellow, and pink hues on a canvas.",
+				Title:       "Dynamic Content",
+				Description: "Slides can come from a database, API, or any backend source.",
+			},
+			{
+				ImgSrc:      "https://penguinui.s3.amazonaws.com/component-assets/carousel/default-slide-3.webp",
+				ImgAlt:      "Vibrant abstract painting with swirling blue and purple hues on a canvas.",
+				Title:       "HTMX + Alpine.js",
+				Description: "Server delivers HTML fragments, Alpine handles interactivity.",
+			},
+		},
+	}
+	carousel.Carousel(cfg).Render(r.Context(), w)
 }
 
 // ServeHTTP implements http.Handler

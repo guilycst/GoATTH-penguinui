@@ -48,6 +48,44 @@ type Row struct {
 	ID string
 	// Cells maps column keys to cell content
 	Cells map[string]Cell
+	// Expandable shows a chevron toggle and an expandable detail section below the row
+	Expandable bool
+	// Detail is rendered in the expanded panel below the row when Expandable is true
+	Detail templ.Component
+	// Actions is rendered in a trailing actions column (e.g., edit/delete buttons)
+	Actions templ.Component
+}
+
+// HasExpandableRows returns true if any row is expandable
+func (cfg Config) HasExpandableRows() bool {
+	for _, r := range cfg.Rows {
+		if r.Expandable {
+			return true
+		}
+	}
+	return false
+}
+
+// HasActions returns true if any row has an Actions component
+func (cfg Config) HasActions() bool {
+	for _, r := range cfg.Rows {
+		if r.Actions != nil {
+			return true
+		}
+	}
+	return false
+}
+
+// ColCount returns the total number of visible columns (columns + optional checkbox + optional actions/expand)
+func (cfg Config) ColCount() int {
+	n := len(cfg.Columns)
+	if cfg.ShowCheckbox {
+		n++
+	}
+	if cfg.HasActions() || cfg.HasExpandableRows() {
+		n++
+	}
+	return n
 }
 
 // PaginationMode determines pagination behavior

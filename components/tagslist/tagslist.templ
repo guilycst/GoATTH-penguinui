@@ -1,0 +1,57 @@
+package tagslist
+
+// TagsList renders a dynamic list of text inputs powered by Alpine.js.
+// Users can add/remove string values. Submits as name[0], name[1], ...
+//
+// Usage:
+//
+//	@tagslist.TagsList(tagslist.Config{
+//	    ID:          "tags",
+//	    Name:        "tags",
+//	    Values:      []string{"prod", "critical"},
+//	    Placeholder: "e.g. prod, critical",
+//	})
+templ TagsList(cfg Config) {
+	<div
+		if cfg.ID != "" {
+			id={ cfg.ID }
+		}
+		class={ cfg.ContainerClasses() }
+		x-data={ cfg.AlpineData() }
+	>
+		<template x-for="(item, index) in items" x-bind:key="index">
+			<div class="flex gap-2 items-center">
+				<input
+					type="text"
+					x-model="items[index]"
+					x-bind:name="name + '[' + index + ']'"
+					placeholder={ cfg.Placeholder }
+					class="flex-1 min-w-0 px-3 py-2 text-sm rounded-radius border border-outline dark:border-outline-dark bg-surface-alt dark:bg-surface-dark-alt/50 text-on-surface dark:text-on-surface-dark placeholder:text-on-surface/50 dark:placeholder:text-on-surface-dark/50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary dark:focus-visible:outline-primary-dark"
+					if cfg.Disabled {
+						disabled
+					}
+				/>
+				if !cfg.Disabled {
+					<button
+						type="button"
+						x-on:click="items.splice(index, 1)"
+						class="shrink-0 p-2 rounded-radius text-on-surface/70 dark:text-on-surface-dark/70 hover:bg-outline/20 dark:hover:bg-outline-dark/20 hover:text-on-surface-strong dark:hover:text-on-surface-dark-strong transition"
+						aria-label="Remove tag"
+					>
+						<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg>
+					</button>
+				}
+			</div>
+		</template>
+		if !cfg.Disabled {
+			<button
+				type="button"
+				x-on:click="items.push('')"
+				class="self-start px-3 py-2 text-sm rounded-radius border border-dashed border-outline dark:border-outline-dark text-on-surface dark:text-on-surface-dark hover:bg-outline/10 dark:hover:bg-outline-dark/20 hover:border-outline-strong dark:hover:border-outline-dark-strong transition"
+				data-add-tag
+			>
+				{ cfg.GetAddLabel() }
+			</button>
+		}
+	</div>
+}

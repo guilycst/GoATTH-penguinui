@@ -187,6 +187,24 @@ templ selectDemoPreview() {
 				},
 			})
 		</div>
+
+		// Readonly Select
+		<div class="max-w-xs">
+			<h4 class="text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong">Readonly</h4>
+			<form id="readonlySelectForm" method="get" action="javascript:void(0)">
+				@selectfield.Select(selectfield.Config{
+					ID:       "os-readonly",
+					Name:     "os-readonly",
+					Label:    "Operating System",
+					Readonly: true,
+					Options: []selectfield.Option{
+						{Value: "mac", Label: "Mac"},
+						{Value: "windows", Label: "Windows", Selected: true},
+						{Value: "linux", Label: "Linux"},
+					},
+				})
+			</form>
+		</div>
 	</div>
 }
 

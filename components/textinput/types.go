@@ -1,5 +1,11 @@
 package textinput
 
+import (
+	"strconv"
+
+	"github.com/a-h/templ"
+)
+
 // State represents the validation state of the input
 type State string
 
@@ -48,8 +54,16 @@ type Config struct {
 	Autocomplete string
 	// Mask is an Alpine.js x-mask pattern (e.g. "(999) 999-9999")
 	Mask string
+	// Pattern is an HTML pattern attribute for regex validation (e.g. "[a-z0-9]{6}")
+	Pattern string
+	// MaxLength limits the number of characters (0 = no limit)
+	MaxLength int
+	// Readonly makes the input non-editable but still submittable
+	Readonly bool
 	// Class allows additional CSS classes on the container
 	Class string
+	// Attrs allows arbitrary HTML attributes on the <input> element (e.g., hx-post, hx-indicator)
+	Attrs templ.Attributes
 }
 
 // GetType returns the input type, defaulting to "text"
@@ -122,4 +136,19 @@ func (cfg Config) IsSearch() bool {
 // HasMask returns true if a mask pattern is set
 func (cfg Config) HasMask() bool {
 	return cfg.Mask != ""
+}
+
+// HasPattern returns true if a pattern is set
+func (cfg Config) HasPattern() bool {
+	return cfg.Pattern != ""
+}
+
+// HasMaxLength returns true if a max length is set
+func (cfg Config) HasMaxLength() bool {
+	return cfg.MaxLength > 0
+}
+
+// MaxLengthStr returns MaxLength as a string for the HTML attribute
+func (cfg Config) MaxLengthStr() string {
+	return strconv.Itoa(cfg.MaxLength)
 }

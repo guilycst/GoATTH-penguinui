@@ -1,5 +1,7 @@
 package selectfield
 
+import "github.com/a-h/templ"
+
 // State represents the validation state of the select
 type State string
 
@@ -42,6 +44,24 @@ type Config struct {
 	AlpineModel string
 	// AlpineBindDisabled sets x-bind:disabled on the select
 	AlpineBindDisabled string
+	// Readonly renders the select as disabled (grayed out) + hidden input with value so it still submits
+	Readonly bool
+	// Attrs allows arbitrary HTML attributes on the <select> element (e.g., hx-post, hx-indicator)
+	Attrs templ.Attributes
+}
+
+// ContainerClasses returns CSS classes for the outer wrapper.
+// When Label is set (standalone usage), max-w-xs is applied.
+// When Label is empty (inside form FieldGroup), full width.
+func (cfg Config) ContainerClasses() string {
+	base := "relative flex w-full flex-col gap-1 text-on-surface dark:text-on-surface-dark"
+	if cfg.Label != "" {
+		base += " max-w-xs"
+	}
+	if cfg.Class != "" {
+		base += " " + cfg.Class
+	}
+	return base
 }
 
 // SelectClasses returns CSS classes for the select element
@@ -78,4 +98,19 @@ func (cfg Config) GetPlaceholder() string {
 		return cfg.Placeholder
 	}
 	return "Please Select"
+}
+
+// SelectedValue returns the value of the first selected option, or empty string
+func (cfg Config) SelectedValue() string {
+	for _, opt := range cfg.Options {
+		if opt.Selected {
+			return opt.Value
+		}
+	}
+	return ""
+}
+
+// IsEffectivelyDisabled returns true if the select should render as disabled (Disabled or Readonly)
+func (cfg Config) IsEffectivelyDisabled() bool {
+	return cfg.Disabled || cfg.Readonly
 }

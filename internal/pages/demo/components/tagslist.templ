@@ -1,0 +1,78 @@
+package components
+
+import (
+	"github.com/guilycst/GoATTH-penguinui/components/tagslist"
+	"github.com/guilycst/GoATTH-penguinui/internal/pages/demo"
+)
+
+// TagsListDemoPage renders the Tags List component demo
+templ TagsListDemoPage() {
+	@demo.Layout("Tags List", "tags-list", tagsListDemoContent())
+}
+
+templ tagsListDemoContent() {
+	@demo.ComponentDemo(
+		demo.ComponentDemoProps{
+			Title:       "Tags List",
+			Description: "A dynamic list of text inputs for managing string values (tags). Add, remove, and edit items with Alpine.js reactivity.",
+			GoATTHLabel: "GoATTH Component",
+		},
+		tagsListDemoPreview(),
+		`// Tags List with initial values
+@tagslist.TagsList(tagslist.Config{
+    ID:          "tags",
+    Name:        "tags",
+    Values:      []string{"prod", "critical"},
+    Placeholder: "e.g. prod, critical",
+})
+
+// Empty Tags List
+@tagslist.TagsList(tagslist.Config{
+    ID:          "labels",
+    Name:        "labels",
+    Placeholder: "Add a label…",
+    AddLabel:    "Add label",
+})`,
+	)
+}
+
+templ tagsListDemoPreview() {
+	<div class="w-full max-w-4xl mx-auto space-y-8">
+		<div>
+			<h4 class="text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong">With Initial Values</h4>
+			<div class="max-w-md">
+				@tagslist.TagsList(tagslist.Config{
+					ID:          "tagsDemo",
+					Name:        "tags",
+					Values:      []string{"prod", "critical", "gpu"},
+					Placeholder: "e.g. prod, critical",
+				})
+			</div>
+		</div>
+
+		<div>
+			<h4 class="text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong">Empty (Start Adding)</h4>
+			<div class="max-w-md">
+				@tagslist.TagsList(tagslist.Config{
+					ID:          "labelsDemo",
+					Name:        "labels",
+					Placeholder: "Add a label…",
+					AddLabel:    "Add label",
+				})
+			</div>
+		</div>
+
+		<div>
+			<h4 class="text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong">Disabled</h4>
+			<div class="max-w-md">
+				@tagslist.TagsList(tagslist.Config{
+					ID:          "disabledTagsDemo",
+					Name:        "disabled-tags",
+					Values:      []string{"locked", "readonly"},
+					Placeholder: "Cannot edit",
+					Disabled:    true,
+				})
+			</div>
+		</div>
+	</div>
+}

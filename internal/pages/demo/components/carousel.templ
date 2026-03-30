@@ -1,0 +1,251 @@
+package components
+
+import (
+	"github.com/guilycst/GoATTH-penguinui/components/carousel"
+	"github.com/guilycst/GoATTH-penguinui/internal/pages/demo"
+)
+
+// CarouselDemoPage renders the Carousel component demo
+templ CarouselDemoPage() {
+	@demo.Layout("Carousel", "carousel", carouselDemoContent())
+}
+
+// carouselDemoContent renders all carousel variant demos
+templ carouselDemoContent() {
+	@demo.ComponentDemo(
+		demo.ComponentDemoProps{
+			Title:         "Carousel",
+			Description:   "A carousel component for cycling through slides with images, text overlays, autoplay, touch support, and HTMX dynamic loading.",
+			OriginalURL:   "/original/carousel/default-carousel.html",
+			OriginalLabel: "Original PenguinUI",
+			GoATTHLabel:   "GoATTH Component",
+		},
+		carouselDemoPreview(),
+		carouselDemoCode,
+	)
+}
+
+var carouselDemoCode = `// Default Carousel
+@carousel.Carousel(carousel.Config{
+    Slides: []carousel.Slide{
+        {ImgSrc: "img1.webp", ImgAlt: "Slide 1"},
+        {ImgSrc: "img2.webp", ImgAlt: "Slide 2"},
+    },
+})
+
+// With Text Overlay
+@carousel.Carousel(carousel.Config{
+    Variant: carousel.WithText,
+    Slides: []carousel.Slide{
+        {ImgSrc: "img1.webp", ImgAlt: "...", Title: "Hello", Description: "World"},
+    },
+})
+
+// With CTA Button
+@carousel.Carousel(carousel.Config{
+    Variant: carousel.WithCTA,
+    Slides: []carousel.Slide{
+        {ImgSrc: "img1.webp", ImgAlt: "...", Title: "Title", Description: "Desc", CTAUrl: "/link", CTAText: "Learn More"},
+    },
+})
+
+// With Autoplay
+@carousel.Carousel(carousel.Config{
+    Autoplay: &carousel.AutoplayConfig{Interval: 4000},
+    Variant:  carousel.WithText,
+    Slides:   slides,
+})
+
+// Fixed Aspect Ratio (3:1)
+@carousel.Carousel(carousel.Config{
+    AspectRatio: "3/1",
+    Slides:      slides,
+})
+
+// With Touch / Swipe
+@carousel.Carousel(carousel.Config{
+    Touch:  true,
+    Slides: slides,
+})
+
+// On Card
+@carousel.Carousel(carousel.Config{
+    Variant: carousel.OnCard,
+    Slides: []carousel.Slide{
+        {ImgSrc: "img.webp", ImgAlt: "...", Title: "Product", Description: "$29.99"},
+    },
+})
+
+// HTMX Dynamic Loading
+@carousel.Carousel(carousel.Config{
+    HTMX: &carousel.HTMXConfig{Get: "/api/components/carousel/slides"},
+})`
+
+templ carouselDemoPreview() {
+	<div class="space-y-12">
+		<!-- Default -->
+		<div>
+			<h4 class="mb-4 text-lg font-semibold text-on-surface-strong dark:text-on-surface-dark-strong">Default</h4>
+			@carousel.Carousel(carousel.Config{
+				Slides: defaultSlides(),
+			})
+		</div>
+
+		<!-- With Text -->
+		<div>
+			<h4 class="mb-4 text-lg font-semibold text-on-surface-strong dark:text-on-surface-dark-strong">With Text Overlay</h4>
+			@carousel.Carousel(carousel.Config{
+				Variant: carousel.WithText,
+				Slides:  textSlides(),
+			})
+		</div>
+
+		<!-- With CTA -->
+		<div>
+			<h4 class="mb-4 text-lg font-semibold text-on-surface-strong dark:text-on-surface-dark-strong">With CTA Button</h4>
+			@carousel.Carousel(carousel.Config{
+				Variant: carousel.WithCTA,
+				Slides:  ctaSlides(),
+			})
+		</div>
+
+		<!-- With Autoplay -->
+		<div>
+			<h4 class="mb-4 text-lg font-semibold text-on-surface-strong dark:text-on-surface-dark-strong">With Autoplay</h4>
+			@carousel.Carousel(carousel.Config{
+				Variant:  carousel.WithText,
+				Autoplay: &carousel.AutoplayConfig{Interval: 4000},
+				Slides:   textSlides(),
+			})
+		</div>
+
+		<!-- Fixed Aspect Ratio -->
+		<div>
+			<h4 class="mb-4 text-lg font-semibold text-on-surface-strong dark:text-on-surface-dark-strong">Fixed Aspect Ratio (3:1)</h4>
+			@carousel.Carousel(carousel.Config{
+				AspectRatio: "3/1",
+				Slides:      defaultSlides(),
+			})
+		</div>
+
+		<!-- With Touch -->
+		<div>
+			<h4 class="mb-4 text-lg font-semibold text-on-surface-strong dark:text-on-surface-dark-strong">With Touch / Swipe</h4>
+			<p class="mb-2 text-sm text-on-surface/70 dark:text-on-surface-dark/70">Swipe left or right on touch devices</p>
+			@carousel.Carousel(carousel.Config{
+				Touch:  true,
+				Slides: defaultSlides(),
+			})
+		</div>
+
+		<!-- On Card -->
+		<div>
+			<h4 class="mb-4 text-lg font-semibold text-on-surface-strong dark:text-on-surface-dark-strong">On Card</h4>
+			@carousel.Carousel(carousel.Config{
+				Variant: carousel.OnCard,
+				Slides:  cardSlides(),
+			})
+		</div>
+
+		<!-- HTMX Dynamic -->
+		<div>
+			<h4 class="mb-4 text-lg font-semibold text-on-surface-strong dark:text-on-surface-dark-strong">HTMX Dynamic Loading</h4>
+			<p class="mb-2 text-sm text-on-surface/70 dark:text-on-surface-dark/70">Slides fetched from the server via HTMX on page load</p>
+			@carousel.Carousel(carousel.Config{
+				HTMX: &carousel.HTMXConfig{Get: "/api/components/carousel/slides"},
+			})
+		</div>
+	</div>
+}
+
+func defaultSlides() []carousel.Slide {
+	return []carousel.Slide{
+		{
+			ImgSrc: "https://penguinui.s3.amazonaws.com/component-assets/carousel/default-slide-1.webp",
+			ImgAlt: "Vibrant abstract painting with swirling blue and light pink hues on a canvas.",
+		},
+		{
+			ImgSrc: "https://penguinui.s3.amazonaws.com/component-assets/carousel/default-slide-2.webp",
+			ImgAlt: "Vibrant abstract painting with swirling red, yellow, and pink hues on a canvas.",
+		},
+		{
+			ImgSrc: "https://penguinui.s3.amazonaws.com/component-assets/carousel/default-slide-3.webp",
+			ImgAlt: "Vibrant abstract painting with swirling blue and purple hues on a canvas.",
+		},
+	}
+}
+
+func textSlides() []carousel.Slide {
+	return []carousel.Slide{
+		{
+			ImgSrc:      "https://penguinui.s3.amazonaws.com/component-assets/carousel/default-slide-1.webp",
+			ImgAlt:      "Vibrant abstract painting with swirling blue and light pink hues on a canvas.",
+			Title:       "Front end developers",
+			Description: "The architects of the digital world, constantly battling against their mortal enemy - browser compatibility.",
+		},
+		{
+			ImgSrc:      "https://penguinui.s3.amazonaws.com/component-assets/carousel/default-slide-2.webp",
+			ImgAlt:      "Vibrant abstract painting with swirling red, yellow, and pink hues on a canvas.",
+			Title:       "Back end developers",
+			Description: "Because not all superheroes wear capes, some wear headphones and stare at terminal screens.",
+		},
+		{
+			ImgSrc:      "https://penguinui.s3.amazonaws.com/component-assets/carousel/default-slide-3.webp",
+			ImgAlt:      "Vibrant abstract painting with swirling blue and purple hues on a canvas.",
+			Title:       "Full stack developers",
+			Description: "Where \"burnout\" is just a fancy term for \"Tuesday\".",
+		},
+	}
+}
+
+func ctaSlides() []carousel.Slide {
+	return []carousel.Slide{
+		{
+			ImgSrc:      "https://penguinui.s3.amazonaws.com/component-assets/carousel/default-slide-1.webp",
+			ImgAlt:      "Vibrant abstract painting with swirling blue and light pink hues on a canvas.",
+			Title:       "Build faster with components",
+			Description: "Pre-built, accessible UI components for your next project.",
+			CTAUrl:      "#",
+			CTAText:     "Get Started",
+		},
+		{
+			ImgSrc:      "https://penguinui.s3.amazonaws.com/component-assets/carousel/default-slide-2.webp",
+			ImgAlt:      "Vibrant abstract painting with swirling red, yellow, and pink hues on a canvas.",
+			Title:       "Dark mode included",
+			Description: "Every component supports light and dark themes out of the box.",
+			CTAUrl:      "#",
+			CTAText:     "View Themes",
+		},
+		{
+			ImgSrc:      "https://penguinui.s3.amazonaws.com/component-assets/carousel/default-slide-3.webp",
+			ImgAlt:      "Vibrant abstract painting with swirling blue and purple hues on a canvas.",
+			Title:       "Tailwind CSS powered",
+			Description: "Built with utility-first CSS for maximum flexibility.",
+			CTAUrl:      "#",
+			CTAText:     "Learn More",
+		},
+	}
+}
+
+func cardSlides() []carousel.Slide {
+	return []carousel.Slide{
+		{
+			ImgSrc:      "https://penguinui.s3.amazonaws.com/component-assets/carousel/default-slide-1.webp",
+			ImgAlt:      "Abstract blue painting",
+			Title:       "Abstract Blue Series",
+			Description: "Limited edition canvas print. $49.99",
+		},
+		{
+			ImgSrc:      "https://penguinui.s3.amazonaws.com/component-assets/carousel/default-slide-2.webp",
+			ImgAlt:      "Abstract red painting",
+			Title:       "Sunset Collection",
+			Description: "Hand-painted original. $129.99",
+		},
+		{
+			ImgSrc:      "https://penguinui.s3.amazonaws.com/component-assets/carousel/default-slide-3.webp",
+			ImgAlt:      "Abstract purple painting",
+			Title:       "Purple Dreams",
+			Description: "Digital art print. $29.99",
+		},
+	}
+}

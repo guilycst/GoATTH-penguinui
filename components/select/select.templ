@@ -4,7 +4,7 @@ package selectfield
 // It matches PenguinUI's select component with support for error/success states,
 // disabled state, Alpine.js binding, and autocomplete.
 templ Select(cfg Config) {
-	<div class={ "relative flex w-full max-w-xs flex-col gap-1 text-on-surface dark:text-on-surface-dark", cfg.Class }>
+	<div class={ cfg.ContainerClasses() }>
 		if cfg.Label != "" {
 			<label for={ cfg.ID } class={ cfg.LabelClasses() }>
 				if cfg.State == StateError {
@@ -20,11 +20,16 @@ templ Select(cfg Config) {
 				{ cfg.Label }
 			</label>
 		}
-		// Chevron icon
-		<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="absolute pointer-events-none right-4 top-8 size-5">
-			<path fill-rule="evenodd" d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd"></path>
-		</svg>
-		@selectElement(cfg)
+		<!-- Chevron wrapper: relative container so chevron is positioned over the select -->
+		<div class="relative">
+			<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="absolute pointer-events-none right-4 top-1/2 -translate-y-1/2 size-5">
+				<path fill-rule="evenodd" d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd"></path>
+			</svg>
+			@selectElement(cfg)
+			if cfg.Readonly {
+				<input type="hidden" name={ cfg.Name } value={ cfg.SelectedValue() }/>
+			}
+		</div>
 		if cfg.HelperText != "" {
 			<small class={ helperTextClasses(cfg.State) }>
 				{ cfg.HelperText }
@@ -37,42 +42,51 @@ templ selectElement(cfg Config) {
 	if cfg.AlpineModel != "" && cfg.AlpineBindDisabled != "" {
 		<select
 			id={ cfg.ID }
-			name={ cfg.Name }
+			if !cfg.Readonly {
+				name={ cfg.Name }
+			}
 			class={ cfg.SelectClasses() }
 			x-model={ cfg.AlpineModel }
 			x-bind:disabled={ cfg.AlpineBindDisabled }
 			if cfg.Autocomplete != "" {
 				autocomplete={ cfg.Autocomplete }
 			}
+			{ cfg.Attrs... }
 		>
 			@selectOptions(cfg)
 		</select>
 	} else if cfg.AlpineModel != "" {
 		<select
 			id={ cfg.ID }
-			name={ cfg.Name }
+			if !cfg.Readonly {
+				name={ cfg.Name }
+			}
 			class={ cfg.SelectClasses() }
 			x-model={ cfg.AlpineModel }
-			if cfg.Disabled {
+			if cfg.IsEffectivelyDisabled() {
 				disabled
 			}
 			if cfg.Autocomplete != "" {
 				autocomplete={ cfg.Autocomplete }
 			}
+			{ cfg.Attrs... }
 		>
 			@selectOptions(cfg)
 		</select>
 	} else {
 		<select
 			id={ cfg.ID }
-			name={ cfg.Name }
+			if !cfg.Readonly {
+				name={ cfg.Name }
+			}
 			class={ cfg.SelectClasses() }
-			if cfg.Disabled {
+			if cfg.IsEffectivelyDisabled() {
 				disabled
 			}
 			if cfg.Autocomplete != "" {
 				autocomplete={ cfg.Autocomplete }
 			}
+			{ cfg.Attrs... }
 		>
 			@selectOptions(cfg)
 		</select>

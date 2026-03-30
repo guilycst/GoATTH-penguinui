@@ -62,9 +62,19 @@ templ defaultInput(cfg Config) {
 				if cfg.Required {
 					required
 				}
+				if cfg.Readonly {
+					readonly
+				}
 				if cfg.Autocomplete != "" {
 					autocomplete={ cfg.Autocomplete }
 				}
+				if cfg.HasPattern() {
+					pattern={ cfg.Pattern }
+				}
+				if cfg.HasMaxLength() {
+					maxlength={ cfg.MaxLengthStr() }
+				}
+				{ cfg.Attrs... }
 			/>
 		} else {
 			<input
@@ -80,9 +90,19 @@ templ defaultInput(cfg Config) {
 				if cfg.Required {
 					required
 				}
+				if cfg.Readonly {
+					readonly
+				}
 				if cfg.Autocomplete != "" {
 					autocomplete={ cfg.Autocomplete }
 				}
+				if cfg.HasPattern() {
+					pattern={ cfg.Pattern }
+				}
+				if cfg.HasMaxLength() {
+					maxlength={ cfg.MaxLengthStr() }
+				}
+				{ cfg.Attrs... }
 			/>
 		}
 		if cfg.HelperText != "" {
@@ -111,9 +131,19 @@ templ passwordInput(cfg Config) {
 				if cfg.Required {
 					required
 				}
+				if cfg.Readonly {
+					readonly
+				}
 				if cfg.Autocomplete != "" {
 					autocomplete={ cfg.Autocomplete }
 				}
+				if cfg.HasPattern() {
+					pattern={ cfg.Pattern }
+				}
+				if cfg.HasMaxLength() {
+					maxlength={ cfg.MaxLengthStr() }
+				}
+				{ cfg.Attrs... }
 			/>
 			<button
 				type="button"
@@ -154,7 +184,17 @@ templ searchInput(cfg Config) {
 			if cfg.Disabled {
 				disabled
 			}
+			if cfg.Readonly {
+				readonly
+			}
+			if cfg.HasPattern() {
+				pattern={ cfg.Pattern }
+			}
+			if cfg.HasMaxLength() {
+				maxlength={ cfg.MaxLengthStr() }
+			}
 			aria-label="search"
+			{ cfg.Attrs... }
 		/>
 	</div>
 }
