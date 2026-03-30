@@ -226,7 +226,7 @@ templ tableHeadRow(cfg Config) {
 			if col.Sortable && cfg.HTMXEndpoint != "" {
 				@sortableHeader(cfg, col)
 			} else {
-				<th scope="col" class={ cfg.HeaderCellClasses() }>{ col.Label }</th>
+				<th scope="col" class={ ColumnHeaderClasses(col) }>{ col.Label }</th>
 			}
 		}
 		if cfg.HasActions() || cfg.HasExpandableRows() {
@@ -311,12 +311,19 @@ func hasMoreRows(cfg Config) bool {
 	return false
 }
 
-// TableRow renders a single table row, optionally with expandable detail panel
+// TableRow renders a single table row, optionally with expandable detail panel or row link
 templ TableRow(cfg Config, row Row) {
 	<tr
-		class={ cfg.RowClasses() + expandableRowClasses(row) }
+		class={ cfg.RowClasses() + interactiveRowClasses(row) }
 		if row.Expandable {
 			x-on:click={ fmt.Sprintf("openRows['%s'] = !openRows['%s']", row.ID, row.ID) }
+		}
+		if row.Link != "" {
+			hx-get={ row.Link }
+			hx-target="#main-content-area"
+			hx-swap="innerHTML"
+			hx-push-url="true"
+			{ rowLinkAttrs(row.Link)... }
 		}
 	>
 		if cfg.ShowCheckbox {
@@ -325,21 +332,29 @@ templ TableRow(cfg Config, row Row) {
 			</td>
 		}
 		for _, col := range cfg.Columns {
-			<td class={ cfg.CellClasses() }>
+			<td class={ ColumnCellClasses(col) }>
 				if cell, ok := row.Cells[col.Key]; ok {
-					if cell.Component != nil {
-						@cell.Component
-					} else {
-						{ cell.Text }
-					}
+					@cellContent(cell)
 				}
 			</td>
 		}
-		if cfg.HasActions() || cfg.HasExpandableRows() {
+		if cfg.HasActions() || cfg.HasExpandableRows() || cfg.HasLinkedRows() {
 			<td class={ cfg.CellClasses() + " text-right whitespace-nowrap" }>
 				<div class="flex items-center justify-end gap-1">
 					if row.Actions != nil {
 						@row.Actions
+					}
+					if row.Link != "" && !row.Expandable {
+						<a
+							href={ templ.SafeURL(row.Link) }
+							class="text-on-surface/50 dark:text-on-surface-dark/50 hover:text-on-surface dark:hover:text-on-surface-dark"
+							aria-label="View details"
+							onclick="event.stopPropagation()"
+						>
+							<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-4">
+								<path fill-rule="evenodd" d="M3 10a.75.75 0 01.75-.75h10.638L10.23 5.29a.75.75 0 111.04-1.08l5.5 5.25a.75.75 0 010 1.08l-5.5 5.25a.75.75 0 11-1.04-1.08l4.158-3.96H3.75A.75.75 0 013 10z" clip-rule="evenodd"></path>
+							</svg>
+						</a>
 					}
 					if row.Expandable {
 						<svg
@@ -369,8 +384,33 @@ templ TableRow(cfg Config, row Row) {
 	}
 }
 
-func expandableRowClasses(row Row) string {
-	if row.Expandable {
+// cellContent renders a cell's content based on its configuration
+templ cellContent(cell Cell) {
+	if cell.Component != nil {
+		@cell.Component
+	} else if cell.BadgeColor != "" {
+		<span class={ BadgeCellClasses(cell.BadgeColor) }>{ cell.Text }</span>
+	} else if cell.Code {
+		<code class="font-mono text-xs bg-surface-alt dark:bg-surface-dark-alt px-1.5 py-0.5 rounded text-on-surface-strong dark:text-on-surface-dark-strong">{ cell.Text }</code>
+	} else if cell.Description != "" {
+		<div class="flex flex-col gap-0.5">
+			<span class="font-medium text-on-surface-strong dark:text-on-surface-dark-strong">{ cell.Text }</span>
+			<span class="text-xs text-on-surface/50 dark:text-on-surface-dark/50">{ cell.Description }</span>
+		</div>
+	} else {
+		{ cell.Text }
+	}
+}
+
+// rowLinkAttrs returns templ.Attributes for middle-click support on linked rows
+func rowLinkAttrs(link string) templ.Attributes {
+	return templ.Attributes{
+		"onauxclick": fmt.Sprintf("if(event.button===1){event.preventDefault();window.open('%s','_blank')}", link),
+	}
+}
+
+func interactiveRowClasses(row Row) string {
+	if row.Expandable || row.Link != "" {
 		return " cursor-pointer hover:bg-surface-alt/30 dark:hover:bg-surface-dark-alt/30"
 	}
 	return ""
@@ -412,6 +452,7 @@ templ sortIcon(cfg Config, key string) {
 
 templ scrollSentinel(cfg Config) {
 	<tr
+		id={ cfg.GetID() + "-sentinel" }
 		hx-get={ cfg.NextPageURL() }
 		hx-trigger="revealed"
 		hx-swap="outerHTML"

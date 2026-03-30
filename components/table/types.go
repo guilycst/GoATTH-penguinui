@@ -32,14 +32,24 @@ type Column struct {
 	Label string
 	// Sortable marks this column as sortable (renders clickable header)
 	Sortable bool
+	// Width is an optional Tailwind width class (e.g. "w-32", "min-w-[200px]")
+	Width string
+	// Align is "left" (default), "center", or "right"
+	Align string
 }
 
 // Cell holds the content for a single table cell
 type Cell struct {
 	// Text is plain text content
 	Text string
-	// Component is a templ component to render (overrides Text)
+	// Component is a templ component to render (overrides all other fields)
 	Component templ.Component
+	// Description renders a muted secondary line below Text (stacked layout for name+id pairs)
+	Description string
+	// BadgeColor wraps Text in a semi-solid badge. Accepts: "success", "danger", "warning", "info", "neutral", "primary", "secondary"
+	BadgeColor string
+	// Code renders Text in monospace style
+	Code bool
 }
 
 // Row represents a single table row
@@ -48,12 +58,25 @@ type Row struct {
 	ID string
 	// Cells maps column keys to cell content
 	Cells map[string]Cell
+	// Link makes the row clickable — navigates via HTMX SPA navigation (targets #main-content-area).
+	// Also supports middle-click to open in a new tab.
+	Link string
 	// Expandable shows a chevron toggle and an expandable detail section below the row
 	Expandable bool
 	// Detail is rendered in the expanded panel below the row when Expandable is true
 	Detail templ.Component
 	// Actions is rendered in a trailing actions column (e.g., edit/delete buttons)
 	Actions templ.Component
+}
+
+// HasLinkedRows returns true if any row has a Link
+func (cfg Config) HasLinkedRows() bool {
+	for _, r := range cfg.Rows {
+		if r.Link != "" {
+			return true
+		}
+	}
+	return false
 }
 
 // HasExpandableRows returns true if any row is expandable
@@ -76,13 +99,13 @@ func (cfg Config) HasActions() bool {
 	return false
 }
 
-// ColCount returns the total number of visible columns (columns + optional checkbox + optional actions/expand)
+// ColCount returns the total number of visible columns (columns + optional checkbox + optional actions/expand/link)
 func (cfg Config) ColCount() int {
 	n := len(cfg.Columns)
 	if cfg.ShowCheckbox {
 		n++
 	}
-	if cfg.HasActions() || cfg.HasExpandableRows() {
+	if cfg.HasActions() || cfg.HasExpandableRows() || cfg.HasLinkedRows() {
 		n++
 	}
 	return n
@@ -230,6 +253,11 @@ type Config struct {
 	// --- Filters ---
 	// Filters enables a filter bar above the table
 	Filters *FilterConfig
+
+	// --- Extra Query Params ---
+	// ExtraQueryParams are appended to all auto-generated HTMX URLs (sort, pagination, infinite scroll).
+	// Use for filter state that must persist across requests. Format: "&key=value&key2=value2"
+	ExtraQueryParams string
 }
 
 // GetID returns the table ID, defaulting to "table"
@@ -305,13 +333,13 @@ func (cfg Config) SortURL(key string) string {
 		if cfg.Pagination != nil {
 			url += "&per_page=" + itoa(cfg.Pagination.PerPage)
 		}
-		return url
+		return url + cfg.ExtraQueryParams
 	}
 	url := cfg.HTMXEndpoint + "?table_id=" + cfg.GetID() + "&order_by=" + key + "&order_dir=" + string(dir)
 	if cfg.Pagination != nil {
 		url += "&per_page=" + itoa(cfg.Pagination.PerPage)
 	}
-	return url
+	return url + cfg.ExtraQueryParams
 }
 
 // PageURL builds the HTMX URL for a specific page
@@ -323,7 +351,7 @@ func (cfg Config) PageURL(page int) string {
 	if cfg.SortBy != "" {
 		url += "&order_by=" + cfg.SortBy + "&order_dir=" + string(cfg.SortDir)
 	}
-	return url
+	return url + cfg.ExtraQueryParams
 }
 
 // NextPageURL builds the HTMX URL for infinite scroll
@@ -337,7 +365,7 @@ func (cfg Config) NextPageURL() string {
 		if cfg.SortBy != "" {
 			url += "&order_by=" + cfg.SortBy + "&order_dir=" + string(cfg.SortDir)
 		}
-		return url
+		return url + cfg.ExtraQueryParams
 	}
 	// Legacy InfiniteScrollConfig support
 	if cfg.InfiniteScroll == nil {
@@ -347,7 +375,7 @@ func (cfg Config) NextPageURL() string {
 	if cfg.SortBy != "" {
 		url += "&order_by=" + cfg.SortBy + "&order_dir=" + string(cfg.SortDir)
 	}
-	return url
+	return url + cfg.ExtraQueryParams
 }
 
 // ContainerClasses returns the outer wrapper CSS classes
@@ -390,6 +418,59 @@ func (cfg Config) CellClasses() string {
 // HeaderCellClasses returns CSS classes for a non-sortable header cell
 func (cfg Config) HeaderCellClasses() string {
 	return "p-4"
+}
+
+// ColumnCellClasses returns CSS classes for a cell in a specific column (applies width + alignment)
+func ColumnCellClasses(col Column) string {
+	cls := "p-4"
+	if col.Width != "" {
+		cls += " " + col.Width
+	}
+	switch col.Align {
+	case "center":
+		cls += " text-center"
+	case "right":
+		cls += " text-right"
+	}
+	return cls
+}
+
+// ColumnHeaderClasses returns CSS classes for a header cell in a specific column
+func ColumnHeaderClasses(col Column) string {
+	cls := "p-4"
+	if col.Width != "" {
+		cls += " " + col.Width
+	}
+	switch col.Align {
+	case "center":
+		cls += " text-center"
+	case "right":
+		cls += " text-right"
+	}
+	return cls
+}
+
+// BadgeCellClasses returns CSS classes for a badge based on color name
+func BadgeCellClasses(color string) string {
+	base := "inline-flex overflow-hidden rounded-radius px-2 py-0.5 text-xs font-medium"
+	switch color {
+	case "success":
+		return base + " bg-success/10 text-success"
+	case "danger":
+		return base + " bg-danger/10 text-danger"
+	case "warning":
+		return base + " bg-warning/10 text-warning"
+	case "info":
+		return base + " bg-info/10 text-info"
+	case "primary":
+		return base + " bg-primary/10 text-primary dark:text-primary-dark"
+	case "secondary":
+		return base + " bg-secondary/10 text-secondary"
+	case "neutral":
+		return base + " bg-on-surface/10 text-on-surface dark:text-on-surface-dark"
+	default:
+		return base
+	}
 }
 
 // SortableHeaderClasses returns CSS classes for a sortable header cell
