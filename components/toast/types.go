@@ -23,9 +23,11 @@ const (
 	Message Variant = "message"
 )
 
-// Sender holds information for the message variant
+// Sender represents the avatar and name shown in notification-style toasts.
 type Sender struct {
-	Name   string
+	// Name is the sender display name.
+	Name string
+	// Avatar is the sender avatar image URL.
 	Avatar string
 }
 

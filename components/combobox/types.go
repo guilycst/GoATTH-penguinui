@@ -17,12 +17,16 @@ const (
 	SizeLG Size = "lg"
 )
 
-// Option represents a single selectable item
+// Option represents a selectable item in the combobox dropdown.
 type Option struct {
-	Value string // The actual value (sent to server)
-	Label string // Display label
-	Img   string // Optional image URL (avatar, flag, etc.)
-	Meta  string // Optional secondary text (email, description, etc.)
+	// Value is the form submission value.
+	Value string
+	// Label is the display text shown to the user.
+	Label string
+	// Img is an optional image URL (e.g. avatar, flag).
+	Img string
+	// Meta is optional secondary text (e.g. email, description).
+	Meta string
 }
 
 // Config holds configuration for the combobox

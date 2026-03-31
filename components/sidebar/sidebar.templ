@@ -17,7 +17,7 @@ templ Sidebar(cfg Config) {
 	<!-- Skip to main content link for accessibility -->
 	<a href="#main-content" class="sr-only">skip to the main content</a>
 	
-	<nav 
+	<nav
 		class={ cfg.ContainerClasses() + " " + cfg.Class }
 		aria-label="sidebar navigation"
 	>
@@ -138,7 +138,7 @@ templ sidebarItem(item Item) {
 
 // sidebarSection renders a grouped section with PenguinUI-style left border items
 templ sidebarSection(section Section, index int) {
-	<div>
+	<div data-sidebar-section={ section.Title }>
 		if section.Title != "" {
 			<h3 class="mb-2 mt-6 first:mt-0 text-sm font-bold text-on-surface-strong dark:text-on-surface-dark-strong">
 				{ section.Title }

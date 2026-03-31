@@ -25,8 +25,9 @@ type Item struct {
 	ShortcutIcon templ.Component
 }
 
-// Section represents a group of items separated by dividers
+// Section groups items with an optional heading.
 type Section struct {
+	// Items is the list of items in this section.
 	Items []Item
 }
 

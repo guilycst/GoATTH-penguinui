@@ -49,11 +49,16 @@ type AccordionItem struct {
 
 // AccordionItemData is used internally for rendering
 type AccordionItemData struct {
-	Item          AccordionItem
-	Index         int
+	// Item is the accordion section being rendered.
+	Item AccordionItem
+	// Index is the zero-based position of the item in the accordion.
+	Index int
+	// AllowMultiple indicates whether multiple sections can be open simultaneously.
 	AllowMultiple bool
-	Variant       Variant
-	ContainerID   string
+	// Variant is the visual style variant inherited from the parent accordion.
+	Variant Variant
+	// ContainerID is the parent accordion's element ID for accessibility.
+	ContainerID string
 }
 
 // ContainerClasses returns the container CSS classes based on variant

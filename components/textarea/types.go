@@ -35,9 +35,10 @@ type Config struct {
 	Class string
 }
 
-// ContainerClasses returns CSS classes for the outer container
+// ContainerClasses returns CSS classes for the outer container.
+// Width is determined by the parent layout — no max-width is imposed.
 func (cfg Config) ContainerClasses() string {
-	base := "flex w-full max-w-md flex-col gap-1 text-on-surface dark:text-on-surface-dark"
+	base := "flex w-full flex-col gap-1 text-on-surface dark:text-on-surface-dark"
 	if cfg.Class != "" {
 		return base + " " + cfg.Class
 	}

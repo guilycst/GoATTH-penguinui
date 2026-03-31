@@ -18,6 +18,27 @@ type Option struct {
 	Selected bool
 }
 
+// ToOptions converts a slice of any type into []Option using the provided accessor functions.
+// The selected parameter is compared against each value to set the Selected flag.
+//
+// Example:
+//
+//	type Region struct { Code, Name string }
+//	regions := []Region{{Code: "us-east-1", Name: "US East"}, {Code: "eu-west-1", Name: "EU West"}}
+//	opts := selectfield.ToOptions(regions, func(r Region) string { return r.Code }, func(r Region) string { return r.Name }, "eu-west-1")
+func ToOptions[T any](items []T, valueFn func(T) string, labelFn func(T) string, selected string) []Option {
+	opts := make([]Option, len(items))
+	for i, item := range items {
+		v := valueFn(item)
+		opts[i] = Option{
+			Value:    v,
+			Label:    labelFn(item),
+			Selected: v == selected,
+		}
+	}
+	return opts
+}
+
 // Config holds configuration for the select component
 type Config struct {
 	// ID is a unique identifier for the select element
@@ -51,13 +72,9 @@ type Config struct {
 }
 
 // ContainerClasses returns CSS classes for the outer wrapper.
-// When Label is set (standalone usage), max-w-xs is applied.
-// When Label is empty (inside form FieldGroup), full width.
+// Width is determined by the parent layout — no max-width is imposed.
 func (cfg Config) ContainerClasses() string {
 	base := "relative flex w-full flex-col gap-1 text-on-surface dark:text-on-surface-dark"
-	if cfg.Label != "" {
-		base += " max-w-xs"
-	}
 	if cfg.Class != "" {
 		base += " " + cfg.Class
 	}

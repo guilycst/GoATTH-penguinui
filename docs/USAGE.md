@@ -46,7 +46,44 @@ For components using Alpine.js collapse plugin (like Accordion):
 <script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/collapse@3.x.x/dist/cdn.min.js"></script>
 ```
 
-## Available Components
+## Component Catalog
+
+All components are imported from `github.com/guilycst/GoATTH-penguinui/components/<name>`. Run the demo server (`go run cmd/server/main.go`) to see interactive examples.
+
+| Component | Import | Description |
+|-----------|--------|-------------|
+| `accordion` | `components/accordion` | Collapsible sections with multiple variants (default, no-background, bordered) |
+| `alert` | `components/alert` | Dismissable alert banners with info/success/warning/danger variants |
+| `avatar` | `components/avatar` | User avatar with image, initials fallback, status indicator |
+| `badge` | `components/badge` | Inline status badges with solid/soft variants and sizes |
+| `banner` | `components/banner` | Full-width notification banners with CTAs, cookie consent variant |
+| `breadcrumbs` | `components/breadcrumbs` | Navigation breadcrumb trail with custom separators |
+| `button` | `components/button` | Buttons with 8 variants, 4 sizes, HTMX and Alpine.js integration |
+| `card` | `components/card` | Content cards with image, rating, price, and multiple layouts |
+| `carousel` | `components/carousel` | Image carousel with autoplay, navigation, and HTMX lazy loading |
+| `checkbox` | `components/checkbox` | Checkboxes with 6 color variants, group layout, indeterminate state |
+| `codeblock` | `components/codeblock` | Code display block with copy button and max-height scrolling |
+| `combobox` | `components/combobox` | Searchable dropdown with single/multi-select, HTMX server search |
+| `dropdown` | `components/dropdown` | Context menus, action menus with icons, shortcuts, sections |
+| `form` | `components/form` | Form orchestrator: Section, FlipSection, CollapsibleSection, FieldGroup |
+| `keyvalue` | `components/keyvalue` | Dynamic key-value pair editor (for labels, env vars) |
+| `modal` | `components/modal` | Dialogs with info/danger/warning variants, custom actions |
+| `navbar` | `components/navbar` | Top navigation bar with links, user profile dropdown, action items |
+| `pagination` | `components/pagination` | Page navigation with HTMX, ellipsis, prev/next buttons |
+| `select` | `components/select` | HTML select dropdown with validation states, readonly mode |
+| `sidebar` | `components/sidebar` | Collapsible sidebar with sections, nested items, badges |
+| `spinner` | `components/spinner` | Loading spinner with size and color variants |
+| `table` | `components/table` | Data table with sorting, pagination, infinite scroll, filters, row links |
+| `tabs` | `components/tabs` | Tab navigation with badges, HTMX lazy content loading |
+| `tagslist` | `components/tagslist` | Dynamic tag list editor (add/remove string tags) |
+| `textarea` | `components/textarea` | Multi-line text input with validation states |
+| `textinput` | `components/textinput` | Text input with types (text, email, password, number), validation |
+| `toast` | `components/toast` | Toast notifications with auto-dismiss, position, sender avatar |
+| `toggle` | `components/toggle` | Toggle switch with 6 color variants |
+| `tooltip` | `components/tooltip` | Hover tooltips with position options, rich content support |
+| `triplet` | `components/triplet` | Key-value-effect editor (for Kubernetes taints) |
+
+## Detailed Examples
 
 ### Accordion
 
@@ -372,6 +409,67 @@ func TestAccordion_Integration(t *testing.T) {
     // Use GoATTH's visual testing utilities
     // See GoATTH tests for examples
 }
+```
+
+## Known Pitfalls
+
+### HTMX History Cache vs Alpine.js State
+
+When using HTMX SPA navigation (`hx-get` + `hx-target="#main-content-area"` + `hx-push-url`), HTMX caches the raw `document.body.innerHTML` for back-button history restore. The problem: Alpine-generated DOM nodes (from `x-for`, `x-text`, etc.) are saved in the cache, but Alpine scope objects are lost. On back-button restore, the page shows stale Alpine-generated elements with no reactivity — combobox dropdowns with blank items, broken toggles, etc.
+
+**Recommended approaches (pick one per use case):**
+
+1. **`LinkMode: LinkBoost`** on table rows — swaps the full `<body>` via `hx-select="body"` + `hx-target="body"`. Back-button re-fetches from server, so Alpine re-initializes cleanly. No stale cache.
+
+2. **`LinkMode: LinkFull`** on table rows — plain `window.location.href` navigation. Simplest, safest. Use when the target page has complex Alpine state.
+
+3. **`hx-history="false"`** on a container — tells HTMX not to cache this page. Back-button will fetch from server. Useful when you can't control the navigation source.
+
+4. **Alpine re-init on history restore** — listen for `htmx:historyRestore` and call `Alpine.initTree(document.body)`. Works in theory but is fragile: HTMX strips `<script>` tags from cached HTML, so Alpine data registrations may be missing.
+
+```go
+// Example: table rows with boost mode (recommended for lists → detail navigation)
+row := table.Row{
+    ID:       "cluster-1",
+    Link:     "/clusters/abc-123",
+    LinkMode: table.LinkBoost,
+    Cells:    cells,
+}
+```
+
+### IntersectionObserver in Nested Scroll Containers
+
+HTMX's `intersect` and `revealed` triggers use `IntersectionObserver` with the **viewport** as root. If the table is inside a container with `overflow-y-auto` (e.g., a scrollable main content area), the sentinel element may already be in the viewport even though it's scrolled out of view within its parent. The observer fires immediately or never fires on scroll.
+
+GoATTH's table infinite scroll sentinel includes a built-in scroll-listener fallback that attaches to the nearest `.overflow-y-auto` ancestor. This handles the nested-scroll case automatically.
+
+If you're building custom infinite scroll outside the table component, use this pattern:
+
+```html
+<tr id="sentinel"
+    hx-get="/next-page"
+    hx-trigger="intersect once"
+    hx-swap="outerHTML">
+</tr>
+<script>
+// Fallback for nested scroll containers
+(function() {
+    var sentinel = document.getElementById('sentinel');
+    if (!sentinel) return;
+    var container = sentinel.closest('.overflow-y-auto');
+    if (!container) return;
+    function check() {
+        var rect = sentinel.getBoundingClientRect();
+        var cRect = container.getBoundingClientRect();
+        if (rect.top < cRect.bottom + 200) {
+            container.removeEventListener('scroll', check);
+            htmx.trigger(sentinel, 'intersect');
+        }
+    }
+    container.addEventListener('scroll', check);
+    check(); // check immediately in case already visible
+})();
+</script>
 ```
 
 ## Troubleshooting

@@ -2,16 +2,21 @@ package triplet
 
 import "encoding/json"
 
-// Entry is a single row with key, value, and effect/category
+// Entry represents a single key-value-effect row.
 type Entry struct {
-	Key    string `json:"key"`
-	Value  string `json:"value"`
+	// Key is the entry key.
+	Key string `json:"key"`
+	// Value is the entry value.
+	Value string `json:"value"`
+	// Effect is the selected effect/category.
 	Effect string `json:"effect"`
 }
 
-// EffectOption is a dropdown option for the third column
+// EffectOption represents a selectable effect in the dropdown.
 type EffectOption struct {
-	Value   string
+	// Value is the form submission value.
+	Value string
+	// Display is the display text.
 	Display string
 }
 

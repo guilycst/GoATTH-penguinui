@@ -26,39 +26,65 @@ const (
 
 // HTMXConfig holds HTMX attributes for server-side interactions
 type HTMXConfig struct {
-	Get       string
-	Post      string
-	Put       string
-	Delete    string
-	Patch     string
-	Target    string
-	Swap      string
-	Trigger   string
+	// Get is the URL for an HTMX GET request.
+	Get string
+	// Post is the URL for an HTMX POST request.
+	Post string
+	// Put is the URL for an HTMX PUT request.
+	Put string
+	// Delete is the URL for an HTMX DELETE request.
+	Delete string
+	// Patch is the URL for an HTMX PATCH request.
+	Patch string
+	// Target is the CSS selector for the element to swap the response into.
+	Target string
+	// Swap is the htmx swap strategy (e.g. "innerHTML", "outerHTML").
+	Swap string
+	// Trigger is the htmx trigger that initiates the request.
+	Trigger string
+	// Indicator is the CSS selector for the loading indicator element.
 	Indicator string
-	PushURL   bool
-	Confirm   string
-	Vals      string
+	// PushURL pushes the request URL to the browser history.
+	PushURL bool
+	// Confirm is a confirmation message shown before the request is sent.
+	Confirm string
+	// Vals is additional values to submit with the request as JSON.
+	Vals string
 }
 
 // AlpineConfig holds Alpine.js directives for client-side interactions
 type AlpineConfig struct {
-	OnClick      string
+	// OnClick is the Alpine x-on:click expression.
+	OnClick string
+	// BindDisabled is the x-bind:disabled expression.
 	BindDisabled string
-	Show         string
-	Transition   bool
-	Data         string
+	// Show is the x-show expression controlling visibility.
+	Show string
+	// Transition enables x-transition on the element.
+	Transition bool
+	// Data is the x-data expression for component state.
+	Data string
 }
 
 // Config holds all configuration for a Button component
 type Config struct {
-	Variant     Variant
-	Size        Size
-	Type        string
-	Disabled    bool
-	ID          string
-	Class       string
-	HTMX        *HTMXConfig
-	Alpine      *AlpineConfig
+	// Variant is the visual style variant of the button.
+	Variant Variant
+	// Size is the button size, defaults to SizeMedium.
+	Size Size
+	// Type is the HTML button type attribute (e.g. "button", "submit").
+	Type string
+	// Disabled disables the button, preventing interaction.
+	Disabled bool
+	// ID is the HTML id attribute for the button element.
+	ID string
+	// Class is additional CSS classes appended to the button.
+	Class string
+	// HTMX is an optional HTMX config for server-side interaction.
+	HTMX *HTMXConfig
+	// Alpine is an optional Alpine.js config for client-side behavior.
+	Alpine *AlpineConfig
+	// LoadingText is the text shown during an HTMX request.
 	LoadingText string
 }
 

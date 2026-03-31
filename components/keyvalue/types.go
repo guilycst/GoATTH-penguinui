@@ -2,9 +2,11 @@ package keyvalue
 
 import "encoding/json"
 
-// Entry is a single key-value row
+// Entry represents a single key-value pair.
 type Entry struct {
-	Key   string `json:"key"`
+	// Key is the entry key.
+	Key string `json:"key"`
+	// Value is the entry value.
 	Value string `json:"value"`
 }
 

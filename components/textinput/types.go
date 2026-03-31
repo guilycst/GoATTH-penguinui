@@ -114,9 +114,10 @@ func (cfg Config) HelperTextClasses() string {
 	}
 }
 
-// ContainerClasses returns the CSS classes for the outer container
+// ContainerClasses returns the CSS classes for the outer container.
+// Width is determined by the parent layout — no max-width is imposed.
 func (cfg Config) ContainerClasses() string {
-	base := "flex w-full max-w-xs flex-col gap-1 text-on-surface dark:text-on-surface-dark"
+	base := "flex w-full flex-col gap-1 text-on-surface dark:text-on-surface-dark"
 	if cfg.Class != "" {
 		return base + " " + cfg.Class
 	}

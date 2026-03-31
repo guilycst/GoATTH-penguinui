@@ -319,11 +319,7 @@ templ TableRow(cfg Config, row Row) {
 			x-on:click={ fmt.Sprintf("openRows['%s'] = !openRows['%s']", row.ID, row.ID) }
 		}
 		if row.Link != "" {
-			hx-get={ row.Link }
-			hx-target="#main-content-area"
-			hx-swap="innerHTML"
-			hx-push-url="true"
-			{ rowLinkAttrs(row.Link)... }
+			{ rowLinkAttrs(row)... }
 		}
 	>
 		if cfg.ShowCheckbox {
@@ -402,11 +398,36 @@ templ cellContent(cell Cell) {
 	}
 }
 
-// rowLinkAttrs returns templ.Attributes for middle-click support on linked rows
-func rowLinkAttrs(link string) templ.Attributes {
-	return templ.Attributes{
-		"onauxclick": fmt.Sprintf("if(event.button===1){event.preventDefault();window.open('%s','_blank')}", link),
+// rowLinkAttrs returns templ.Attributes for clickable linked rows.
+// Behavior depends on Row.LinkMode:
+//   - LinkSPA (default): swaps #main-content-area via HTMX
+//   - LinkBoost: swaps full <body> via HTMX (like hx-boost, avoids white flash)
+//   - LinkFull: plain JS navigation (window.location.href), no HTMX
+func rowLinkAttrs(row Row) templ.Attributes {
+	auxclick := fmt.Sprintf("if(event.button===1){event.preventDefault();window.open('%s','_blank')}", row.Link)
+
+	if row.LinkMode == LinkFull {
+		return templ.Attributes{
+			"onclick":    fmt.Sprintf("window.location.href='%s'", row.Link),
+			"onauxclick": auxclick,
+		}
 	}
+
+	attrs := templ.Attributes{
+		"hx-get":      row.Link,
+		"hx-push-url": "true",
+		"onauxclick":  auxclick,
+	}
+	if row.LinkMode == LinkBoost {
+		attrs["hx-target"] = "body"
+		attrs["hx-select"] = "body"
+		attrs["hx-swap"] = "outerHTML"
+	} else {
+		// SPA mode (default) — swap only the content area
+		attrs["hx-target"] = "#main-content-area"
+		attrs["hx-swap"] = "innerHTML"
+	}
+	return attrs
 }
 
 func interactiveRowClasses(row Row) string {

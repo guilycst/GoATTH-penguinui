@@ -52,15 +52,33 @@ type Cell struct {
 	Code bool
 }
 
+// LinkMode controls how Row.Link navigates when clicked.
+type LinkMode string
+
+const (
+	// LinkSPA swaps only #main-content-area via HTMX (default, fast, but HTMX history
+	// cache may break Alpine.js state on back-button — see USAGE.md pitfalls).
+	LinkSPA LinkMode = ""
+	// LinkBoost swaps the full <body> via HTMX hx-select="body" (no white flash,
+	// Alpine re-initializes cleanly, back-button re-fetches from server).
+	LinkBoost LinkMode = "boost"
+	// LinkFull uses a plain <a href> — full page navigation with no HTMX.
+	// Safest for pages with complex Alpine state that breaks on history restore.
+	LinkFull LinkMode = "full"
+)
+
 // Row represents a single table row
 type Row struct {
 	// ID is a unique identifier for the row (used for checkbox IDs)
 	ID string
 	// Cells maps column keys to cell content
 	Cells map[string]Cell
-	// Link makes the row clickable — navigates via HTMX SPA navigation (targets #main-content-area).
-	// Also supports middle-click to open in a new tab.
+	// Link makes the row clickable — navigates when clicked.
+	// The navigation strategy is controlled by LinkMode.
 	Link string
+	// LinkMode controls how Link navigates. Default (empty) = SPA swap of #main-content-area.
+	// Use LinkBoost for full-body swap, or LinkFull for plain navigation.
+	LinkMode LinkMode
 	// Expandable shows a chevron toggle and an expandable detail section below the row
 	Expandable bool
 	// Detail is rendered in the expanded panel below the row when Expandable is true
