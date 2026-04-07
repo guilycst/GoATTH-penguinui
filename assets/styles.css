@@ -617,6 +617,9 @@
   .-mt-14 {
     margin-top: calc(var(--spacing) * -14);
   }
+  .mt-0\.5 {
+    margin-top: calc(var(--spacing) * 0.5);
+  }
   .mt-1 {
     margin-top: calc(var(--spacing) * 1);
   }
@@ -3585,6 +3588,14 @@
         --tw-scale-y: 125%;
         --tw-scale-z: 125%;
         scale: var(--tw-scale-x) var(--tw-scale-y);
+      }
+    }
+  }
+  .checked\:before\:scale-\[0\.55\] {
+    &:checked {
+      &::before {
+        content: var(--tw-content);
+        scale: 0.55;
       }
     }
   }

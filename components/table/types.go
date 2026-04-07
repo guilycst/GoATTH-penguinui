@@ -79,6 +79,20 @@ type Row struct {
 	// LinkMode controls how Link navigates. Default (empty) = SPA swap of #main-content-area.
 	// Use LinkBoost for full-body swap, or LinkFull for plain navigation.
 	LinkMode LinkMode
+	// OnClick is a JS/Alpine expression executed on row click.
+	// Use for opening modals, toggling state, etc.
+	// Ignored when Link is set (Link takes precedence).
+	OnClick string
+	// HXGet triggers an HTMX GET request when the row is clicked.
+	// Ignored when Link or OnClick is set.
+	HXGet string
+	// HXPost triggers an HTMX POST request when the row is clicked.
+	// Ignored when Link, OnClick, or HXGet is set.
+	HXPost string
+	// HXTarget is the CSS selector for the HTMX swap target (used with HXGet/HXPost).
+	HXTarget string
+	// HXSwap is the HTMX swap strategy (used with HXGet/HXPost). Defaults to "innerHTML".
+	HXSwap string
 	// Expandable shows a chevron toggle and an expandable detail section below the row
 	Expandable bool
 	// Detail is rendered in the expanded panel below the row when Expandable is true
@@ -87,10 +101,26 @@ type Row struct {
 	Actions templ.Component
 }
 
+// IsActionable returns true if the row has any interactive behavior
+// (link, click handler, HTMX action, expandable, or custom actions).
+func (r Row) IsActionable() bool {
+	return r.Link != "" || r.OnClick != "" || r.HXGet != "" || r.HXPost != "" || r.Expandable || r.Actions != nil
+}
+
 // HasLinkedRows returns true if any row has a Link
 func (cfg Config) HasLinkedRows() bool {
 	for _, r := range cfg.Rows {
 		if r.Link != "" {
+			return true
+		}
+	}
+	return false
+}
+
+// HasActionableRows returns true if any row is actionable (link, click, HTMX, expandable, or has actions).
+func (cfg Config) HasActionableRows() bool {
+	for _, r := range cfg.Rows {
+		if r.IsActionable() {
 			return true
 		}
 	}
@@ -117,13 +147,13 @@ func (cfg Config) HasActions() bool {
 	return false
 }
 
-// ColCount returns the total number of visible columns (columns + optional checkbox + optional actions/expand/link)
+// ColCount returns the total number of visible columns (columns + optional checkbox + optional actions/expand)
 func (cfg Config) ColCount() int {
 	n := len(cfg.Columns)
 	if cfg.ShowCheckbox {
 		n++
 	}
-	if cfg.HasActions() || cfg.HasExpandableRows() || cfg.HasLinkedRows() {
+	if cfg.HasActions() || cfg.HasExpandableRows() {
 		n++
 	}
 	return n

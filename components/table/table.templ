@@ -315,11 +315,14 @@ func hasMoreRows(cfg Config) bool {
 templ TableRow(cfg Config, row Row) {
 	<tr
 		class={ cfg.RowClasses() + interactiveRowClasses(row) }
-		if row.Expandable {
+		if row.Expandable && row.Link == "" && row.OnClick == "" && row.HXGet == "" && row.HXPost == "" {
 			x-on:click={ fmt.Sprintf("openRows['%s'] = !openRows['%s']", row.ID, row.ID) }
 		}
 		if row.Link != "" {
 			{ rowLinkAttrs(row)... }
+		}
+		if row.Link == "" {
+			{ rowActionAttrs(row)... }
 		}
 	>
 		if cfg.ShowCheckbox {
@@ -334,23 +337,11 @@ templ TableRow(cfg Config, row Row) {
 				}
 			</td>
 		}
-		if cfg.HasActions() || cfg.HasExpandableRows() || cfg.HasLinkedRows() {
+		if cfg.HasActions() || cfg.HasExpandableRows() {
 			<td class={ cfg.CellClasses() + " text-right whitespace-nowrap" }>
 				<div class="flex items-center justify-end gap-1">
 					if row.Actions != nil {
 						@row.Actions
-					}
-					if row.Link != "" && !row.Expandable {
-						<a
-							href={ templ.SafeURL(row.Link) }
-							class="text-on-surface/50 dark:text-on-surface-dark/50 hover:text-on-surface dark:hover:text-on-surface-dark"
-							aria-label="View details"
-							onclick="event.stopPropagation()"
-						>
-							<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-4">
-								<path fill-rule="evenodd" d="M3 10a.75.75 0 01.75-.75h10.638L10.23 5.29a.75.75 0 111.04-1.08l5.5 5.25a.75.75 0 010 1.08l-5.5 5.25a.75.75 0 11-1.04-1.08l4.158-3.96H3.75A.75.75 0 013 10z" clip-rule="evenodd"></path>
-							</svg>
-						</a>
 					}
 					if row.Expandable {
 						<svg
@@ -431,10 +422,49 @@ func rowLinkAttrs(row Row) templ.Attributes {
 }
 
 func interactiveRowClasses(row Row) string {
-	if row.Expandable || row.Link != "" {
+	if row.IsActionable() {
 		return " cursor-pointer hover:bg-surface-alt/30 dark:hover:bg-surface-dark-alt/30"
 	}
 	return ""
+}
+
+// rowActionAttrs returns HTMX/JS attributes for row click actions (OnClick, HXGet, HXPost).
+// Link and Expandable are handled separately in the template.
+func rowActionAttrs(row Row) templ.Attributes {
+	if row.Link != "" {
+		return nil // handled by rowLinkAttrs
+	}
+	if row.OnClick != "" {
+		// Use onclick (not x-on:click) so it works without an Alpine x-data ancestor on the table container.
+		return templ.Attributes{
+			"onclick": row.OnClick,
+		}
+	}
+	if row.HXGet != "" {
+		attrs := templ.Attributes{
+			"hx-get":    row.HXGet,
+			"hx-target": row.HXTarget,
+		}
+		if row.HXSwap != "" {
+			attrs["hx-swap"] = row.HXSwap
+		} else {
+			attrs["hx-swap"] = "innerHTML"
+		}
+		return attrs
+	}
+	if row.HXPost != "" {
+		attrs := templ.Attributes{
+			"hx-post":   row.HXPost,
+			"hx-target": row.HXTarget,
+		}
+		if row.HXSwap != "" {
+			attrs["hx-swap"] = row.HXSwap
+		} else {
+			attrs["hx-swap"] = "innerHTML"
+		}
+		return attrs
+	}
+	return nil
 }
 
 templ sortableHeader(cfg Config, col Column) {
