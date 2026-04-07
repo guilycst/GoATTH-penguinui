@@ -505,26 +505,27 @@ func ColumnHeaderClasses(col Column) string {
 	return cls
 }
 
-// BadgeCellClasses returns CSS classes for a badge based on color name
+// BadgeCellClasses returns CSS classes for a badge based on color name.
+// Uses soft style with border for better contrast (matches gobadge.Badge StyleSoft).
 func BadgeCellClasses(color string) string {
-	base := "inline-flex overflow-hidden rounded-radius px-2 py-0.5 text-xs font-medium"
+	base := "inline-flex overflow-hidden rounded-radius px-2 py-0.5 text-xs font-medium border"
 	switch color {
 	case "success":
-		return base + " bg-success/10 text-success"
+		return base + " border-success bg-success/10 text-success"
 	case "danger":
-		return base + " bg-danger/10 text-danger"
+		return base + " border-danger bg-danger/10 text-danger"
 	case "warning":
-		return base + " bg-warning/10 text-warning"
+		return base + " border-warning bg-warning/10 text-warning"
 	case "info":
-		return base + " bg-info/10 text-info"
+		return base + " border-info bg-info/10 text-info"
 	case "primary":
-		return base + " bg-primary/10 text-primary dark:text-primary-dark"
+		return base + " border-primary bg-primary/10 text-primary dark:border-primary-dark dark:text-primary-dark"
 	case "secondary":
-		return base + " bg-secondary/10 text-secondary"
+		return base + " border-secondary bg-secondary/10 text-secondary dark:border-secondary-dark"
 	case "neutral":
-		return base + " bg-on-surface/10 text-on-surface dark:text-on-surface-dark"
+		return base + " border-outline bg-on-surface/10 text-on-surface dark:border-outline-dark dark:text-on-surface-dark"
 	default:
-		return base
+		return base + " border-outline dark:border-outline-dark"
 	}
 }
 

@@ -6,31 +6,38 @@ This guide explains how to use GoATTH (Go + Alpine.js + Tailwind CSS + HTMX + Te
 
 ### 1. Add Dependency
 
-In your `go.mod`:
-
-```go
-require github.com/guilycst/GoATTH-penguinui v0.1.0
-```
-
-Or install via go get:
-
 ```bash
 go get github.com/guilycst/GoATTH-penguinui@latest
 ```
 
-### 2. Install Tailwind CSS Dependencies
+### 2. Extract GoATTH CSS
 
-Your project must have Tailwind CSS v4+ configured with the same theme variables as GoATTH:
+GoATTH ships a CLI that extracts the pre-built CSS from embedded assets. Register it as a Go tool for version-pinned reproducibility:
 
-**Required CSS files:**
-- Copy `all-themes.css` from GoATTH to your project's CSS directory
-- Import it in your main CSS file
+```bash
+# Add to go.mod (alongside your other tools)
+# tool github.com/guilycst/GoATTH-penguinui/cmd/goatth
+go mod tidy
+
+# Extract CSS
+go tool goatth -out=css/goatth-base.css
+```
+
+Or use `go run` for one-off extraction:
+
+```bash
+go run github.com/guilycst/GoATTH-penguinui/cmd/goatth@latest -out=css/goatth-base.css
+```
+
+Then import it in your Tailwind entry point:
 
 ```css
 /* your-project/css/main.css */
 @import "tailwindcss";
-@import "../all-themes.css";
+@import "./goatth-base.css";
 ```
+
+The extracted CSS includes all GoATTH component styles, the theme system (13 themes), and base utilities. Add it to `.gitignore` since it's a build artifact.
 
 ### 3. Required JavaScript
 

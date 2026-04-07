@@ -26,13 +26,19 @@ Then run:
 go mod tidy
 ```
 
-### 2. Verify CSS Compatibility
+### 2. Extract GoATTH CSS
 
-Check that your `css/main.css` includes the required theme variables. Compare with:
-- `GoATTH-penguinui/all-themes.css`
-- `GoATTH-penguinui/css/main.css`
+tks-console uses GoATTH's CLI tool to extract the pre-built CSS:
 
-The tks-console already uses similar theme variables, so integration should be seamless.
+```bash
+# Already registered in go.mod as a tool dependency
+go tool goatth -out=css/goatth-base.css
+
+# Or via Makefile
+make sync-goatth-css
+```
+
+This replaces the old manual `cp` approach. The extracted CSS is imported in `css/main.css` and is gitignored as a build artifact. `make generate` runs this automatically.
 
 ### 3. Test Component
 

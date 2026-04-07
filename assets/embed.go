@@ -29,3 +29,9 @@ var files embed.FS
 func Handler() http.Handler {
 	return http.StripPrefix("/assets/", http.FileServer(http.FS(files)))
 }
+
+// StylesCSS returns the compiled GoATTH Tailwind CSS.
+// Use this to extract the CSS to disk for Tailwind's @import directive.
+func StylesCSS() ([]byte, error) {
+	return files.ReadFile("styles.css")
+}

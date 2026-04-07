@@ -83,7 +83,11 @@ templ gettingStartedContent() {
 func step1Code() string {
 	return `mkdir dog-breeds && cd dog-breeds
 go mod init dog-breeds
-go get github.com/a-h/templ@latest`
+go get github.com/a-h/templ@latest
+go get github.com/guilycst/GoATTH-penguinui@latest
+
+# Extract GoATTH CSS (themes, component styles, utilities)
+go run github.com/guilycst/GoATTH-penguinui/cmd/goatth@latest -out=goatth.css`
 }
 
 // readExampleFile reads a source file from examples/getting-started/

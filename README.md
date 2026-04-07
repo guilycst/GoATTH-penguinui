@@ -23,20 +23,47 @@ This is a hard fork of [Penguin UI](https://www.penguinui.com) by Salar Houshvan
 - **Original**: [Penguin UI](https://www.penguinui.com) by [Salar Houshvand](https://x.com/salar_houshvand)
 - **License**: MIT (preserved from original)
 
+## CSS Integration
+
+GoATTH ships a CLI tool that extracts the pre-built Tailwind CSS from the embedded assets. Client applications use this instead of manually copying CSS files.
+
+```bash
+# Via go tool (recommended — version-pinned in go.mod)
+go tool goatth -out=css/goatth-base.css
+
+# Or via go run (for one-off use)
+go run github.com/guilycst/GoATTH-penguinui/cmd/goatth@latest -out=goatth-base.css
+```
+
+Then import it in your Tailwind entry point:
+
+```css
+@import "tailwindcss";
+@import "./goatth-base.css";
+```
+
+See [docs/USAGE.md](docs/USAGE.md) for full setup instructions.
+
 ## Project Structure
 
 ```
 GoATTH-penguinui/
-├── cmd/server/              # Demo server
-├── components/              # GoATTH component library
-│   └── button/             # Button component
-│       ├── types.go        # Configuration types
-│       └── button.templ    # Templ component
+├── cmd/
+│   ├── server/              # Demo server
+│   └── goatth/              # CSS extraction CLI tool
+├── components/              # GoATTH component library (32 components)
+│   └── badge/
+│       ├── types.go         # Configuration types
+│       └── badge.templ      # Templ component
+├── assets/
+│   ├── embed.go             # Embedded assets + StylesCSS() accessor
+│   ├── styles.css           # Compiled Tailwind CSS
+│   ├── js/                  # Alpine.js, HTMX, plugins
+│   └── fonts/               # TOTVS brand fonts
 ├── internal/
-│   └── pages/demo/         # Demo pages
-├── assets/css/             # Styles
-├── tests/e2e/              # Playwright E2E tests
-└── buttons/                # Original PenguinUI (preserved)
+│   └── pages/demo/          # Demo pages
+├── tests/e2e/               # Playwright E2E tests
+└── docs/                    # Integration guides
 ```
 
 ## Running the Demo
