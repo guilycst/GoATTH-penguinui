@@ -98,7 +98,7 @@ func avatarLayers(cfg Config) templ.Component {
 			templ_7745c5c3_Var2 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		containerClasses := "relative inline-flex " + cfg.SizeClasses() + " " + cfg.ShapeClasses() + " overflow-hidden " + cfg.Class
+		containerClasses := "relative inline-flex " + cfg.SizeClasses() + " " + cfg.ShapeClasses() + " overflow-hidden " + cfg.VariantClasses() + " " + cfg.Class
 		if cfg.HasImage() {
 			var templ_7745c5c3_Var3 = []any{containerClasses}
 			templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var3...)
@@ -196,7 +196,7 @@ func layerInitials(cfg Config) templ.Component {
 			templ_7745c5c3_Var7 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		classes := "absolute inset-0 flex items-center justify-center font-bold tracking-wider " + cfg.VariantClasses()
+		classes := "absolute inset-0 flex items-center justify-center font-bold tracking-wider"
 		var templ_7745c5c3_Var8 = []any{classes}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var8...)
 		if templ_7745c5c3_Err != nil {

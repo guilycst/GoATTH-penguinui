@@ -42,7 +42,7 @@ templ Avatar(cfg Config) {
 
 // avatarLayers renders the 3-layer stack
 templ avatarLayers(cfg Config) {
-	{{ containerClasses := "relative inline-flex " + cfg.SizeClasses() + " " + cfg.ShapeClasses() + " overflow-hidden " + cfg.Class }}
+	{{ containerClasses := "relative inline-flex " + cfg.SizeClasses() + " " + cfg.ShapeClasses() + " overflow-hidden " + cfg.VariantClasses() + " " + cfg.Class }}
 	if cfg.HasImage() {
 		<div
 			x-data="{ imgLoaded: false, imgError: false }"
@@ -61,7 +61,7 @@ templ avatarLayers(cfg Config) {
 
 // layerInitials renders the base initials/icon layer (always visible, sits behind image)
 templ layerInitials(cfg Config) {
-	{{ classes := "absolute inset-0 flex items-center justify-center font-bold tracking-wider " + cfg.VariantClasses() }}
+	{{ classes := "absolute inset-0 flex items-center justify-center font-bold tracking-wider" }}
 	<span class={ classes } aria-hidden="true">
 		if cfg.Icon != nil {
 			<span class="w-full h-full mt-3">
