@@ -427,15 +427,11 @@ func (cfg Config) NextPageURL() string {
 }
 
 // ContainerClasses returns the outer wrapper CSS classes.
-// Uses overflow-hidden for standard tables but allows vertical overflow for legacy infinite scroll
-// (where the page itself scrolls, not a fixed-height container).
+// Uses overflow-x-auto so tables can scroll horizontally on narrow screens
+// without pushing the parent layout wider. Legacy infinite scroll also uses
+// overflow-x-auto (page-level vertical scrolling, don't clip vertically).
 func (cfg Config) ContainerClasses() string {
-	overflow := "overflow-hidden"
-	if cfg.InfiniteScroll != nil && (cfg.Pagination == nil || !cfg.Pagination.IsInfiniteScroll()) {
-		// Legacy infinite scroll: page-level scrolling, don't clip vertically
-		overflow = "overflow-x-auto"
-	}
-	base := overflow + " w-full rounded-radius border border-outline dark:border-outline-dark"
+	base := "overflow-x-auto w-full rounded-radius border border-outline dark:border-outline-dark"
 	if cfg.Class != "" {
 		base += " " + cfg.Class
 	}
