@@ -190,3 +190,40 @@ func (cfg Config) HasImage() bool {
 func (cfg Config) HasInitials() bool {
 	return cfg.Initials != ""
 }
+
+// GetInitials derives 1-2 character initials from a name, falling back to email.
+// Examples: "John Doe" → "JD", "Alice" → "A", "" with "alice@x.com" → "a", "" with "" → "U"
+func GetInitials(name, email string) string {
+	if name != "" {
+		parts := splitWords(name)
+		if len(parts) >= 2 {
+			return string(parts[0][0]) + string(parts[len(parts)-1][0])
+		}
+		if len(parts) == 1 && len(parts[0]) > 0 {
+			return string(parts[0][0])
+		}
+	}
+	if len(email) > 0 {
+		return string(email[0])
+	}
+	return "U"
+}
+
+func splitWords(s string) []string {
+	var result []string
+	var current string
+	for i := 0; i < len(s); i++ {
+		if s[i] == ' ' {
+			if current != "" {
+				result = append(result, current)
+				current = ""
+			}
+		} else {
+			current += string(s[i])
+		}
+	}
+	if current != "" {
+		result = append(result, current)
+	}
+	return result
+}

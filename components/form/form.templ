@@ -4,8 +4,7 @@ import (
 	"github.com/guilycst/GoATTH-penguinui/components/checkbox"
 	"github.com/guilycst/GoATTH-penguinui/components/combobox"
 	"github.com/guilycst/GoATTH-penguinui/components/keyvalue"
-	goatthselect "github.com/guilycst/GoATTH-penguinui/components/select"
-	"github.com/guilycst/GoATTH-penguinui/components/tagslist"
+"github.com/guilycst/GoATTH-penguinui/components/tagslist"
 	"github.com/guilycst/GoATTH-penguinui/components/textarea"
 	"github.com/guilycst/GoATTH-penguinui/components/textinput"
 	"github.com/guilycst/GoATTH-penguinui/components/toggle"
@@ -267,8 +266,6 @@ templ FieldGroup(cfg FieldGroupConfig) {
 		}
 		if cfg.Input != nil {
 			@textinput.TextInput(*cfg.Input)
-		} else if cfg.Select != nil {
-			@goatthselect.Select(*cfg.Select)
 		} else if cfg.Combobox != nil {
 			@combobox.Combobox(*cfg.Combobox)
 		} else if cfg.Textarea != nil {

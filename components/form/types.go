@@ -6,8 +6,7 @@ import (
 	"github.com/guilycst/GoATTH-penguinui/components/checkbox"
 	"github.com/guilycst/GoATTH-penguinui/components/combobox"
 	"github.com/guilycst/GoATTH-penguinui/components/keyvalue"
-	goatthselect "github.com/guilycst/GoATTH-penguinui/components/select"
-	"github.com/guilycst/GoATTH-penguinui/components/tagslist"
+"github.com/guilycst/GoATTH-penguinui/components/tagslist"
 	"github.com/guilycst/GoATTH-penguinui/components/textarea"
 	"github.com/guilycst/GoATTH-penguinui/components/textinput"
 	"github.com/guilycst/GoATTH-penguinui/components/toggle"
@@ -196,7 +195,6 @@ type FieldGroupConfig struct {
 	// Built-in GoATTH field types (mutually exclusive — first non-nil wins).
 	// If none are set, FieldGroup renders { children... } instead.
 	Input    *textinput.Config
-	Select   *goatthselect.Config
 	Combobox *combobox.Config
 	Textarea *textarea.Config
 	Toggle   *toggle.Config
@@ -208,7 +206,7 @@ type FieldGroupConfig struct {
 
 // hasBuiltinField returns true if a built-in field type is configured
 func (c FieldGroupConfig) hasBuiltinField() bool {
-	return c.Input != nil || c.Select != nil || c.Combobox != nil ||
+	return c.Input != nil || c.Combobox != nil ||
 		c.Textarea != nil || c.Toggle != nil || c.Checkbox != nil ||
 		c.TagsList != nil || c.KeyValue != nil || c.Triplet != nil
 }

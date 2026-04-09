@@ -3,6 +3,7 @@ package table
 import (
 	"fmt"
 
+	"github.com/guilycst/GoATTH-penguinui/components/avatar"
 	"github.com/guilycst/GoATTH-penguinui/components/pagination"
 )
 
@@ -584,12 +585,29 @@ templ StatusBadge(label string, status string) {
 	<span class={ StatusBadgeClasses(status) }>{ label }</span>
 }
 
-// UserCell renders a user cell with avatar, name, and email
+// UserCell renders a user cell with avatar, name, and email.
+// When avatarURL is provided, shows the image; otherwise falls back to initials
+// derived from the name/email.
 templ UserCell(avatarURL string, name string, email string) {
 	<div class="flex w-max items-center gap-2">
-		<img class="size-10 rounded-full object-cover" src={ avatarURL } alt="user avatar"/>
+		if avatarURL != "" {
+			@avatar.Avatar(avatar.Config{
+				Src:   avatarURL,
+				Alt:   name,
+				Size:  avatar.SizeSM,
+				Shape: avatar.ShapeCircle,
+			})
+		} else {
+			@avatar.Avatar(avatar.Config{
+				Initials: avatar.GetInitials(name, email),
+				Size:     avatar.SizeSM,
+				Shape:    avatar.ShapeCircle,
+			})
+		}
 		<div class="flex flex-col">
-			<span class="text-neutral-900 dark:text-white">{ name }</span>
+			if name != "" {
+				<span class="text-neutral-900 dark:text-white">{ name }</span>
+			}
 			<span class="text-sm text-neutral-600 opacity-85 dark:text-neutral-300">{ email }</span>
 		</div>
 	</div>

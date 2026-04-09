@@ -9,8 +9,8 @@ import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
 import (
+	gocombobox "github.com/guilycst/GoATTH-penguinui/components/combobox"
 	"github.com/guilycst/GoATTH-penguinui/components/form"
-	goatthselect "github.com/guilycst/GoATTH-penguinui/components/select"
 	"github.com/guilycst/GoATTH-penguinui/components/textarea"
 	"github.com/guilycst/GoATTH-penguinui/components/textinput"
 	"github.com/guilycst/GoATTH-penguinui/components/toggle"
@@ -84,14 +84,14 @@ func formDemoContent() templ.Component {
 	})
 }
 
-var formDemoCode = `// Built-in field types — set Input, Select, Textarea, Toggle, etc. directly
+var formDemoCode = `// Built-in field types — set Input, Combobox, Textarea, Toggle, etc. directly
 @form.FieldGroup(form.FieldGroupConfig{
     ID: "name", Label: "Name", Required: true,
     Input: &textinput.Config{ID: "name", Name: "name"},
 })
 @form.FieldGroup(form.FieldGroupConfig{
     ID: "provider", Label: "Provider",
-    Select: &goatthselect.Config{ID: "provider", Name: "provider", Options: opts},
+    Combobox: &gocombobox.Config{ID: "provider", Name: "provider", Options: opts},
 })
 
 // Custom component — use { children... } for anything not built-in
@@ -203,15 +203,16 @@ func formDemoPreview() templ.Component {
 				templ_7745c5c3_Err = form.FieldGroup(form.FieldGroupConfig{
 					ID:    "provider",
 					Label: "Provider",
-					Select: &goatthselect.Config{
+					Combobox: &gocombobox.Config{
 						ID:   "provider",
 						Name: "provider",
-						Options: []goatthselect.Option{
+						Options: []gocombobox.Option{
 							{Value: "aws", Label: "AWS"},
 							{Value: "azure", Label: "Azure"},
 							{Value: "gcp", Label: "GCP"},
-							{Value: "maas", Label: "MAAS", Selected: true},
+							{Value: "maas", Label: "MAAS"},
 						},
+						Selected: []string{"maas"},
 					},
 				}).Render(ctx, templ_7745c5c3_Buffer)
 				if templ_7745c5c3_Err != nil {
@@ -343,15 +344,16 @@ func formDemoPreview() templ.Component {
 				templ_7745c5c3_Err = form.FieldGroup(form.FieldGroupConfig{
 					ID:    "log-level",
 					Label: "Log Level",
-					Select: &goatthselect.Config{
+					Combobox: &gocombobox.Config{
 						ID:   "log-level",
 						Name: "log_level",
-						Options: []goatthselect.Option{
-							{Value: "info", Label: "Info", Selected: true},
+						Options: []gocombobox.Option{
+							{Value: "info", Label: "Info"},
 							{Value: "debug", Label: "Debug"},
 							{Value: "warn", Label: "Warning"},
 							{Value: "error", Label: "Error"},
 						},
+						Selected: []string{"info"},
 					},
 				}).Render(ctx, templ_7745c5c3_Buffer)
 				if templ_7745c5c3_Err != nil {
@@ -432,13 +434,14 @@ func formDemoPreview() templ.Component {
 					templ_7745c5c3_Err = form.FieldGroup(form.FieldGroupConfig{
 						ID:    "cp-instance",
 						Label: "Instance Type",
-						Select: &goatthselect.Config{
+						Combobox: &gocombobox.Config{
 							ID:   "cp-instance",
 							Name: "cp_instance_type",
-							Options: []goatthselect.Option{
-								{Value: "m5.large", Label: "m5.large (2 vCPU, 8 GB)", Selected: true},
+							Options: []gocombobox.Option{
+								{Value: "m5.large", Label: "m5.large (2 vCPU, 8 GB)"},
 								{Value: "m5.xlarge", Label: "m5.xlarge (4 vCPU, 16 GB)"},
 							},
+							Selected: []string{"m5.large"},
 						},
 					}).Render(ctx, templ_7745c5c3_Buffer)
 					if templ_7745c5c3_Err != nil {
@@ -486,13 +489,14 @@ func formDemoPreview() templ.Component {
 					templ_7745c5c3_Err = form.FieldGroup(form.FieldGroupConfig{
 						ID:    "worker-instance",
 						Label: "Instance Type",
-						Select: &goatthselect.Config{
+						Combobox: &gocombobox.Config{
 							ID:   "worker-instance",
 							Name: "worker_instance_type",
-							Options: []goatthselect.Option{
-								{Value: "m5.xlarge", Label: "m5.xlarge (4 vCPU, 16 GB)", Selected: true},
+							Options: []gocombobox.Option{
+								{Value: "m5.xlarge", Label: "m5.xlarge (4 vCPU, 16 GB)"},
 								{Value: "m5.2xlarge", Label: "m5.2xlarge (8 vCPU, 32 GB)"},
 							},
+							Selected: []string{"m5.xlarge"},
 						},
 					}).Render(ctx, templ_7745c5c3_Buffer)
 					if templ_7745c5c3_Err != nil {
@@ -627,14 +631,15 @@ func formDemoPreview() templ.Component {
 				templ_7745c5c3_Err = form.FieldGroup(form.FieldGroupConfig{
 					ID:    "version",
 					Label: "Target Version",
-					Select: &goatthselect.Config{
+					Combobox: &gocombobox.Config{
 						ID:   "version",
 						Name: "version",
-						Options: []goatthselect.Option{
+						Options: []gocombobox.Option{
 							{Value: "1.32.0", Label: "v1.32.0"},
-							{Value: "1.31.5", Label: "v1.31.5", Selected: true},
+							{Value: "1.31.5", Label: "v1.31.5"},
 							{Value: "1.30.8", Label: "v1.30.8"},
 						},
+						Selected: []string{"1.31.5"},
 					},
 				}).Render(ctx, templ_7745c5c3_Buffer)
 				if templ_7745c5c3_Err != nil {

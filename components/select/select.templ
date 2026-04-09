@@ -1,8 +1,10 @@
 package selectfield
 
-// Select renders a native select dropdown with label and optional validation states.
-// It matches PenguinUI's select component with support for error/success states,
-// disabled state, Alpine.js binding, and autocomplete.
+import "fmt"
+
+// Select renders a custom dropdown select with Alpine.js, matching
+// the combobox component styling. Supports validation states,
+// disabled/readonly, Alpine.js binding, and hidden input for form submission.
 templ Select(cfg Config) {
 	<div class={ cfg.ContainerClasses() }>
 		if cfg.Label != "" {
@@ -20,15 +22,99 @@ templ Select(cfg Config) {
 				{ cfg.Label }
 			</label>
 		}
-		<!-- Chevron wrapper: relative container so chevron is positioned over the select -->
-		<div class="relative">
-			<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="absolute pointer-events-none right-4 top-1/2 -translate-y-1/2 size-5">
-				<path fill-rule="evenodd" d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd"></path>
-			</svg>
-			@selectElement(cfg)
-			if cfg.Readonly {
-				<input type="hidden" name={ cfg.Name } value={ cfg.SelectedValue() }/>
-			}
+		<div
+			x-data={ selectData(cfg) }
+			x-on:keydown.esc.window="isOpen = false; openedWithKeyboard = false"
+			class="relative"
+		>
+			<!-- Trigger button -->
+			<button
+				type="button"
+				role="combobox"
+				id={ cfg.ID + "-trigger" }
+				x-bind:aria-expanded="isOpen || openedWithKeyboard"
+				x-on:click="isOpen = !isOpen"
+				x-on:keydown.down.prevent="openedWithKeyboard = true"
+				x-on:keydown.enter.prevent="openedWithKeyboard = true"
+				x-on:keydown.space.prevent="openedWithKeyboard = true"
+				x-bind:aria-label="selectedOption ? selectedOption.label : placeholder"
+				disabled?={ cfg.IsEffectivelyDisabled() }
+				class={ cfg.TriggerClasses() }
+			>
+				<span
+					class="truncate text-sm font-normal"
+					x-text="selectedOption ? selectedOption.label : placeholder"
+				></span>
+				<!-- Chevron -->
+				<svg
+					xmlns="http://www.w3.org/2000/svg"
+					viewBox="0 0 20 20"
+					fill="currentColor"
+					class="size-5 shrink-0 transition-transform duration-150"
+					x-bind:class="isOpen || openedWithKeyboard ? 'rotate-180' : ''"
+					aria-hidden="true"
+				>
+					<path
+						fill-rule="evenodd"
+						d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z"
+						clip-rule="evenodd"
+					/>
+				</svg>
+			</button>
+			<!-- Hidden input for form submission -->
+			<input
+				id={ cfg.ID }
+				name={ cfg.Name }
+				type="text"
+				hidden
+				x-ref="hiddenInput"
+				x-bind:value="selectedOption ? selectedOption.value : ''"
+			/>
+			<!-- Dropdown -->
+			<div
+				x-cloak
+				x-show="isOpen || openedWithKeyboard"
+				x-transition
+				x-on:click.outside="isOpen = false; openedWithKeyboard = false"
+				class="absolute left-0 top-full z-30 mt-1 min-w-full overflow-hidden rounded-radius border border-outline bg-surface-alt shadow-lg dark:border-outline-dark dark:bg-surface-dark-alt"
+				role="listbox"
+				x-bind:aria-label={ cfg.Label + " list" }
+				x-trap="openedWithKeyboard"
+			>
+				<ul class="flex max-h-52 flex-col overflow-y-auto py-1" role="listbox">
+					<template x-for="(item, index) in allOptions" x-bind:key="item.value">
+						<li
+							role="option"
+							class="combobox-option inline-flex justify-between items-center gap-4 bg-surface-alt px-4 py-2 text-sm text-on-surface hover:bg-surface-dark-alt/5 hover:text-on-surface-strong focus-visible:bg-surface-dark-alt/5 focus-visible:text-on-surface-strong focus-visible:outline-hidden dark:bg-surface-dark-alt dark:text-on-surface-dark dark:hover:bg-surface-alt/5 dark:hover:text-on-surface-dark-strong dark:focus-visible:bg-surface-alt/10 dark:focus-visible:text-on-surface-dark-strong cursor-pointer"
+							x-on:click="selectOption(item)"
+							x-on:keydown.enter.prevent="selectOption(item)"
+							x-bind:id={ "'" + cfg.ID + "-option-' + index" }
+							tabindex="0"
+							x-on:keydown.down.prevent="$focus.wrap().next()"
+							x-on:keydown.up.prevent="$focus.wrap().previous()"
+						>
+							<span
+								x-bind:class="selectedOption && selectedOption.value === item.value ? 'font-bold' : ''"
+								x-text="item.label"
+							></span>
+							<!-- Checkmark for selected item -->
+							<svg
+								x-cloak
+								x-show="selectedOption && selectedOption.value === item.value"
+								xmlns="http://www.w3.org/2000/svg"
+								viewBox="0 0 24 24"
+								stroke="currentColor"
+								fill="none"
+								stroke-width="2"
+								class="size-4"
+								aria-hidden="true"
+							>
+								<path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5"/>
+							</svg>
+						</li>
+					</template>
+				</ul>
+			</div>
 		</div>
 		if cfg.HelperText != "" {
 			<small class={ helperTextClasses(cfg.State) }>
@@ -36,83 +122,6 @@ templ Select(cfg Config) {
 			</small>
 		}
 	</div>
-}
-
-templ selectElement(cfg Config) {
-	if cfg.AlpineModel != "" && cfg.AlpineBindDisabled != "" {
-		<select
-			id={ cfg.ID }
-			if !cfg.Readonly {
-				name={ cfg.Name }
-			}
-			class={ cfg.SelectClasses() }
-			x-model={ cfg.AlpineModel }
-			x-bind:disabled={ cfg.AlpineBindDisabled }
-			if cfg.Autocomplete != "" {
-				autocomplete={ cfg.Autocomplete }
-			}
-			{ cfg.Attrs... }
-		>
-			@selectOptions(cfg)
-		</select>
-	} else if cfg.AlpineModel != "" {
-		<select
-			id={ cfg.ID }
-			if !cfg.Readonly {
-				name={ cfg.Name }
-			}
-			class={ cfg.SelectClasses() }
-			x-model={ cfg.AlpineModel }
-			if cfg.IsEffectivelyDisabled() {
-				disabled
-			}
-			if cfg.Autocomplete != "" {
-				autocomplete={ cfg.Autocomplete }
-			}
-			{ cfg.Attrs... }
-		>
-			@selectOptions(cfg)
-		</select>
-	} else {
-		<select
-			id={ cfg.ID }
-			if !cfg.Readonly {
-				name={ cfg.Name }
-			}
-			class={ cfg.SelectClasses() }
-			if cfg.IsEffectivelyDisabled() {
-				disabled
-			}
-			if cfg.Autocomplete != "" {
-				autocomplete={ cfg.Autocomplete }
-			}
-			{ cfg.Attrs... }
-		>
-			@selectOptions(cfg)
-		</select>
-	}
-}
-
-templ selectOptions(cfg Config) {
-	if !hasSelected(cfg.Options) {
-		<option selected>{ cfg.GetPlaceholder() }</option>
-	}
-	for _, opt := range cfg.Options {
-		if opt.Selected {
-			<option value={ opt.Value } selected>{ opt.Label }</option>
-		} else {
-			<option value={ opt.Value }>{ opt.Label }</option>
-		}
-	}
-}
-
-func hasSelected(options []Option) bool {
-	for _, opt := range options {
-		if opt.Selected {
-			return true
-		}
-	}
-	return false
 }
 
 func helperTextClasses(state State) string {
@@ -124,4 +133,81 @@ func helperTextClasses(state State) string {
 	default:
 		return "pl-0.5 text-on-surface/70 dark:text-on-surface-dark/70"
 	}
+}
+
+func jsEscapeSingle(s string) string {
+	result := ""
+	for _, c := range s {
+		switch c {
+		case '\'':
+			result += `\'`
+		case '\\':
+			result += `\\`
+		default:
+			result += string(c)
+		}
+	}
+	return result
+}
+
+func optionsToJS(options []Option) string {
+	if len(options) == 0 {
+		return "[]"
+	}
+	result := "["
+	for i, opt := range options {
+		if i > 0 {
+			result += ","
+		}
+		result += fmt.Sprintf("{value:'%s',label:'%s'}", jsEscapeSingle(opt.Value), jsEscapeSingle(opt.Label))
+	}
+	result += "]"
+	return result
+}
+
+func selectedValueJS(options []Option) string {
+	for _, opt := range options {
+		if opt.Selected {
+			return fmt.Sprintf("['%s']", jsEscapeSingle(opt.Value))
+		}
+	}
+	return "[]"
+}
+
+func selectData(cfg Config) string {
+	optsJS := optionsToJS(cfg.Options)
+	selectedJS := selectedValueJS(cfg.Options)
+	placeholder := cfg.GetPlaceholder()
+
+	alpineModelSync := ""
+	if cfg.AlpineModel != "" {
+		alpineModelSync = fmt.Sprintf(`
+			init() {
+				this.$watch('selectedOption', (opt) => { if (opt) { %s = opt.value; } });
+				const initial = %s;
+				if (initial) {
+					const opt = this.allOptions.find(o => o.value === initial);
+					if (opt) this.selectedValues = [opt.value];
+				}
+			},`, cfg.AlpineModel, cfg.AlpineModel)
+	}
+
+	return fmt.Sprintf(`{
+		placeholder: '%s',
+		allOptions: %s,
+		selectedValues: %s,
+		isOpen: false,
+		openedWithKeyboard: false,
+		%s
+		get selectedOption() {
+			if (!this.selectedValues || this.selectedValues.length === 0) return null;
+			const value = this.selectedValues[0];
+			return this.allOptions.find(o => o.value === value) || null;
+		},
+		selectOption(option) {
+			this.selectedValues = [option.value];
+			this.isOpen = false;
+			this.openedWithKeyboard = false;
+		}
+	}`, jsEscapeSingle(placeholder), optsJS, selectedJS, alpineModelSync)
 }

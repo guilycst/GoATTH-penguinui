@@ -68,9 +68,9 @@ templ singleSelectCombobox(cfg Config) {
 		class={ "relative " + cfg.SizeClasses() + " " + cfg.Class }
 	>
 		if cfg.Label != "" {
-			<label 
-				for={ cfg.ID } 
-				class="block pb-1 text-sm text-on-surface dark:text-on-surface-dark"
+			<label
+				for={ cfg.ID }
+				class={ cfg.LabelClasses() }
 			>
 				{ cfg.Label }
 			</label>
@@ -90,10 +90,19 @@ templ singleSelectCombobox(cfg Config) {
 			class={ cfg.TriggerClasses() }
 			x-bind:class={ "selectedOption ? '" + cfg.TriggerStateClasses(true) + "' : '" + cfg.TriggerStateClasses(false) + "'" }
 		>
-			<span 
-				class="truncate text-sm font-normal"
-				x-text="selectedOption ? selectedOption.label : placeholder"
-			></span>
+			<span class="flex items-center gap-2 truncate">
+				<!-- Selected option avatar -->
+				<template x-if="selectedOption && selectedOption.img">
+					<img x-bind:src="selectedOption.img" class="size-6 shrink-0 rounded-full object-cover" alt="" aria-hidden="true"/>
+				</template>
+				<template x-if="selectedOption && !selectedOption.img && selectedOption.initials">
+					<span class="flex size-6 shrink-0 items-center justify-center rounded-full border border-outline bg-surface-alt text-xs font-bold dark:border-outline-dark dark:bg-surface-dark-alt" x-text="selectedOption.initials"></span>
+				</template>
+				<span
+					class="truncate text-sm font-normal"
+					x-text="selectedOption ? selectedOption.label : placeholder"
+				></span>
+			</span>
 			<!-- Chevron -->
 			<svg 
 				xmlns="http://www.w3.org/2000/svg" 
@@ -197,24 +206,36 @@ templ singleSelectCombobox(cfg Config) {
 						x-on:keydown.up.prevent="$focus.wrap().previous()"
 					>
 						<div class="flex items-center gap-2">
-							<!-- Optional image -->
+							<!-- Avatar: image or initials -->
 							<template x-if="item.img">
-								<img 
-									x-bind:src="item.img" 
-									class="size-8 rounded-full object-cover"
+								<img
+									x-bind:src="item.img"
+									class="size-8 shrink-0 rounded-full object-cover"
 									alt=""
 									aria-hidden="true"
 								/>
 							</template>
+							<template x-if="!item.img && item.initials">
+								<span class="flex size-8 shrink-0 items-center justify-center rounded-full border border-outline bg-surface-alt text-xs font-bold dark:border-outline-dark dark:bg-surface-dark-alt" x-text="item.initials"></span>
+							</template>
 							<div class="flex flex-col">
-								<!-- Label -->
-								<span 
-									x-bind:class="selectedOption && selectedOption.value === item.value ? 'font-bold' : ''"
-									x-text="item.label"
-								></span>
+								<!-- Label + optional badge -->
+								<span class="flex items-center gap-1.5">
+									<span
+										x-bind:class="selectedOption && selectedOption.value === item.value ? 'font-bold' : ''"
+										x-text="item.label"
+									></span>
+									<template x-if="item.badge">
+										<span
+											class="inline-flex overflow-hidden rounded-radius px-2 py-0.5 text-xs font-medium border"
+											x-bind:class="(() => { switch(item.badgeColor) { case 'info': return 'border-info bg-info/10 text-info'; case 'success': return 'border-success bg-success/10 text-success'; case 'warning': return 'border-warning bg-warning/10 text-warning'; case 'danger': return 'border-danger bg-danger/10 text-danger'; case 'primary': return 'border-primary bg-primary/10 text-primary dark:border-primary-dark dark:text-primary-dark'; case 'secondary': return 'border-secondary bg-secondary/10 text-secondary dark:border-secondary-dark'; case 'neutral': return 'border-outline bg-on-surface/10 text-on-surface dark:border-outline-dark dark:text-on-surface-dark'; default: return 'border-outline dark:border-outline-dark'; } })()"
+											x-text="item.badge"
+										></span>
+									</template>
+								</span>
 								<!-- Optional meta text -->
 								<template x-if="item.meta">
-									<span 
+									<span
 										class="text-xs text-on-surface/60 dark:text-on-surface-dark/60"
 										x-text="item.meta"
 									></span>
@@ -259,9 +280,9 @@ templ multiSelectCombobox(cfg Config) {
 		class={ "relative " + cfg.SizeClasses() + " " + cfg.Class }
 	>
 		if cfg.Label != "" {
-			<label 
-				for={ cfg.ID } 
-				class="block pb-1 text-sm text-on-surface dark:text-on-surface-dark"
+			<label
+				for={ cfg.ID }
+				class={ cfg.LabelClasses() }
 			>
 				{ cfg.Label }
 			</label>
@@ -448,8 +469,17 @@ func optionsToJS(options []Option) string {
 		if opt.Img != "" {
 			result += fmt.Sprintf(",img:'%s'", jsEscapeSingle(opt.Img))
 		}
+		if opt.Initials != "" {
+			result += fmt.Sprintf(",initials:'%s'", jsEscapeSingle(opt.Initials))
+		}
 		if opt.Meta != "" {
 			result += fmt.Sprintf(",meta:'%s'", jsEscapeSingle(opt.Meta))
+		}
+		if opt.Badge != "" {
+			result += fmt.Sprintf(",badge:'%s'", jsEscapeSingle(opt.Badge))
+		}
+		if opt.BadgeColor != "" {
+			result += fmt.Sprintf(",badgeColor:'%s'", jsEscapeSingle(opt.BadgeColor))
 		}
 		result += "}"
 	}

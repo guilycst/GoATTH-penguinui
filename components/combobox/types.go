@@ -25,9 +25,45 @@ type Option struct {
 	Label string
 	// Img is an optional image URL (e.g. avatar, flag).
 	Img string
+	// Initials are displayed as avatar fallback when Img is empty (e.g. "JD").
+	Initials string
 	// Meta is optional secondary text (e.g. email, description).
 	Meta string
+	// Badge is an optional small label rendered next to the option (e.g. "Team", "User").
+	Badge string
+	// BadgeColor determines the badge color variant (info, success, warning, danger, neutral).
+	BadgeColor string
 }
+
+// ToOptions converts a slice of any type into []Option using the provided accessor functions.
+func ToOptions[T any](items []T, valueFn func(T) string, labelFn func(T) string) []Option {
+	opts := make([]Option, len(items))
+	for i, item := range items {
+		opts[i] = Option{
+			Value: valueFn(item),
+			Label: labelFn(item),
+		}
+	}
+	return opts
+}
+
+// SelectedValues returns the values of options that match the selected value.
+// Useful for converting a single selected string into the []string expected by Config.Selected.
+func SelectedValues(selected string) []string {
+	if selected == "" {
+		return nil
+	}
+	return []string{selected}
+}
+
+// State represents the validation state of the combobox
+type State string
+
+const (
+	StateDefault State = ""
+	StateError   State = "error"
+	StateSuccess State = "success"
+)
 
 // Config holds configuration for the combobox
 type Config struct {
@@ -39,6 +75,8 @@ type Config struct {
 	Label string
 	// Placeholder text when no selection
 	Placeholder string
+	// State is the validation state (error, success, or default)
+	State State
 	// Options is the list of available options (for static data)
 	Options []Option
 	// Selected contains the currently selected values
@@ -90,7 +128,27 @@ func (cfg Config) TriggerClasses() string {
 		return base + " border-outline bg-surface-alt/50 text-on-surface/50 cursor-not-allowed dark:border-outline-dark dark:bg-surface-dark-alt/30 dark:text-on-surface-dark/50"
 	}
 
-	return base
+	switch cfg.State {
+	case StateError:
+		return base + " border-danger"
+	case StateSuccess:
+		return base + " border-success"
+	default:
+		return base
+	}
+}
+
+// LabelClasses returns CSS classes for the label based on validation state
+func (cfg Config) LabelClasses() string {
+	base := "block pb-1 text-sm text-on-surface dark:text-on-surface-dark"
+	switch cfg.State {
+	case StateError:
+		return "flex w-fit gap-1 pb-1 text-sm text-danger"
+	case StateSuccess:
+		return "flex w-fit gap-1 pb-1 text-sm text-success"
+	default:
+		return base
+	}
 }
 
 // TriggerStateClasses returns dynamic classes based on selection state

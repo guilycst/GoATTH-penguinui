@@ -81,7 +81,7 @@ func (cfg Config) ContainerClasses() string {
 	return base
 }
 
-// SelectClasses returns CSS classes for the select element
+// SelectClasses returns CSS classes for the select element (legacy, kept for compatibility)
 func (cfg Config) SelectClasses() string {
 	base := "w-full appearance-none rounded-radius border bg-surface-alt px-4 py-2 text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:cursor-not-allowed disabled:opacity-75 dark:bg-surface-dark-alt/50 dark:focus-visible:outline-primary-dark"
 
@@ -92,6 +92,24 @@ func (cfg Config) SelectClasses() string {
 		return base + " border-success"
 	default:
 		return base + " border-outline dark:border-outline-dark"
+	}
+}
+
+// TriggerClasses returns CSS classes for the custom dropdown trigger button
+func (cfg Config) TriggerClasses() string {
+	base := "inline-flex w-full items-center justify-between gap-2 rounded-radius border px-4 py-2 text-sm transition hover:opacity-75 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary dark:focus-visible:outline-primary-dark"
+
+	if cfg.IsEffectivelyDisabled() {
+		return base + " border-outline bg-surface-alt/50 text-on-surface/50 cursor-not-allowed dark:border-outline-dark dark:bg-surface-dark-alt/30 dark:text-on-surface-dark/50"
+	}
+
+	switch cfg.State {
+	case StateError:
+		return base + " border-danger bg-surface-alt text-on-surface dark:bg-surface-dark-alt/50 dark:text-on-surface-dark"
+	case StateSuccess:
+		return base + " border-success bg-surface-alt text-on-surface dark:bg-surface-dark-alt/50 dark:text-on-surface-dark"
+	default:
+		return base + " border-outline bg-surface-alt text-on-surface dark:border-outline-dark dark:bg-surface-dark-alt/50 dark:text-on-surface-dark"
 	}
 }
 
