@@ -133,6 +133,8 @@ func (s *Server) handleComponent(w http.ResponseWriter, r *http.Request) {
 		components.KeyValueDemoPage().Render(r.Context(), w)
 	case "triplet":
 		components.TripletDemoPage().Render(r.Context(), w)
+	case "fileinput":
+		components.FileInputDemoPage().Render(r.Context(), w)
 	default:
 		http.NotFound(w, r)
 	}

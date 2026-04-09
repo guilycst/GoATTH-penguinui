@@ -1,90 +1,110 @@
 package avatar
 
-// Avatar renders an avatar component based on PenguinUI
+import "fmt"
+
+// Avatar renders a layered avatar component.
+//
+// Three layers (bottom to top):
+//  1. Initials — always rendered, solid background with text initials (or icon)
+//  2. Loading — spinner overlay, only when Src is set, hidden on image load or error
+//  3. Image — the actual image, only when Src is set, hidden on error
+//
+// When Src is provided, Alpine.js handles image onload/onerror:
+//   - onload: hide the loading spinner
+//   - onerror: hide both image and spinner (initials show through), log a console warning
+//
 // Usage:
 //
-//	// Image avatar
+//	// Image with initials fallback
 //	@avatar.Avatar(avatar.Config{
-//	    Src: "https://example.com/avatar.jpg",
-//	    Alt: "John Doe",
+//	    Src:  "https://example.com/avatar.jpg",
+//	    Name: "John Doe",
 //	    Size: avatar.SizeMD,
 //	})
 //
-//	// Initials avatar
+//	// Initials only
 //	@avatar.Avatar(avatar.Config{
-//	    Initials: "JS",
+//	    Name:    "dev-ops",
 //	    Variant: avatar.Primary,
-//	    Size: avatar.SizeLG,
 //	})
 //
-//	// With status indicator
+//	// Explicit initials
 //	@avatar.Avatar(avatar.Config{
-//	    Src: "https://example.com/avatar.jpg",
-//	    Status: avatar.StatusOnline,
+//	    Initials: "JS",
 //	})
 templ Avatar(cfg Config) {
 	if cfg.Status != "" {
 		@avatarWithStatus(cfg)
-	} else if cfg.HasImage() {
-		@imageAvatar(cfg)
-	} else if cfg.HasInitials() || cfg.Icon != nil {
-		@placeholderAvatar(cfg)
 	} else {
-		@defaultAvatar(cfg)
+		@avatarLayers(cfg)
 	}
 }
 
-// imageAvatar renders an image-based avatar
-templ imageAvatar(cfg Config) {
-	{{ classes := cfg.SizeClasses() + " " + cfg.ShapeClasses() + " object-cover object-center " + cfg.BorderClasses() + " " + cfg.Class }}
-	
-	<img 
-		class={ classes }
-		src={ cfg.Src }
-		alt={ cfg.Alt }
-	/>
+// avatarLayers renders the 3-layer stack
+templ avatarLayers(cfg Config) {
+	{{ containerClasses := "relative inline-flex " + cfg.SizeClasses() + " " + cfg.ShapeClasses() + " overflow-hidden " + cfg.Class }}
+	if cfg.HasImage() {
+		<div
+			x-data="{ imgLoaded: false, imgError: false }"
+			class={ containerClasses }
+		>
+			@layerInitials(cfg)
+			@layerLoading(cfg)
+			@layerImage(cfg)
+		</div>
+	} else {
+		<div class={ containerClasses }>
+			@layerInitials(cfg)
+		</div>
+	}
 }
 
-// placeholderAvatar renders initials or icon placeholder
-templ placeholderAvatar(cfg Config) {
-	{{ classes := "flex items-center justify-center overflow-hidden font-bold tracking-wider " + cfg.SizeClasses() + " " + cfg.ShapeClasses() + " " + cfg.VariantClasses() + " " + cfg.Class }}
-	
-	<span class={ classes }>
+// layerInitials renders the base initials/icon layer (always visible, sits behind image)
+templ layerInitials(cfg Config) {
+	{{ classes := "absolute inset-0 flex items-center justify-center font-bold tracking-wider " + cfg.VariantClasses() }}
+	<span class={ classes } aria-hidden="true">
 		if cfg.Icon != nil {
 			<span class="w-full h-full mt-3">
 				@cfg.Icon
 			</span>
 		} else {
-			{ cfg.Initials }
+			{ cfg.ResolvedInitials() }
 		}
 	</span>
 }
 
-// defaultAvatar renders a default avatar with user icon
-templ defaultAvatar(cfg Config) {
-	{{ classes := "flex items-center justify-center overflow-hidden " + cfg.SizeClasses() + " " + cfg.ShapeClasses() + " " + cfg.VariantClasses() + " " + cfg.Class }}
-	
-	<span class={ classes }>
-		<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" fill="currentColor" class="w-full h-full mt-3">
-			<path fill-rule="evenodd" d="M7.5 6a4.5 4.5 0 119 0 4.5 4.5 0 01-9 0zM3.751 20.105a8.25 8.25 0 0116.498 0 .75.75 0 01-.437.695A18.683 18.683 0 0112 22.5c-2.786 0-5.433-.608-7.812-1.7a.75.75 0 01-.437-.695z" clip-rule="evenodd"/>
+// layerLoading renders a spinner overlay while the image loads
+templ layerLoading(cfg Config) {
+	<span
+		x-show="!imgLoaded && !imgError"
+		class="absolute inset-0 flex items-center justify-center bg-surface-alt dark:bg-surface-dark-alt"
+		aria-hidden="true"
+	>
+		<svg class={ "animate-spin text-on-surface/40 dark:text-on-surface-dark/40 " + cfg.SpinnerSizeClasses() } xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+			<circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+			<path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
 		</svg>
 	</span>
 }
 
-// avatarWithStatus renders an avatar with a status indicator dot
+// layerImage renders the actual image, hidden on error
+templ layerImage(cfg Config) {
+	<img
+		x-show="!imgError"
+		x-on:load="imgLoaded = true"
+		x-on:error={ fmt.Sprintf("imgError = true; console.warn('[avatar] failed to load image:', '%s')", cfg.Src) }
+		src={ cfg.Src }
+		alt={ cfg.Alt }
+		class="absolute inset-0 h-full w-full object-cover object-center"
+	/>
+}
+
+// avatarWithStatus wraps the layered avatar with a status indicator dot
 templ avatarWithStatus(cfg Config) {
 	<div class="relative w-fit">
-		if cfg.HasImage() {
-			@imageAvatar(cfg)
-		} else if cfg.HasInitials() || cfg.Icon != nil {
-			@placeholderAvatar(cfg)
-		} else {
-			@defaultAvatar(cfg)
-		}
-		
+		@avatarLayers(cfg)
 		{{ positionClass := "bottom-0.5 end-0" }}
-		
-		<span 
+		<span
 			class={ "absolute rounded-full border-2 border-surface dark:border-surface-dark " + cfg.StatusSizeClasses() + " " + cfg.StatusClasses() + " " + positionClass }
 			aria-hidden="true"
 		></span>

@@ -1,0 +1,112 @@
+package components
+
+import (
+	"github.com/guilycst/GoATTH-penguinui/components/fileinput"
+	"github.com/guilycst/GoATTH-penguinui/internal/pages/demo"
+)
+
+// FileInputDemoPage renders the File Input component demo
+templ FileInputDemoPage() {
+	@demo.Layout("File Input", "fileinput", fileInputDemoContent())
+}
+
+// fileInputDemoContent renders the actual content inside the layout
+templ fileInputDemoContent() {
+	@demo.ComponentDemo(
+		demo.ComponentDemoProps{
+			Title:         "File Input",
+			Description:   "A drag-and-drop file input component that allows users to browse or drag files into a drop zone.",
+			OriginalURL:   "/original/file-input/file-input-with-drag-and-drop.html",
+			OriginalLabel: "Original PenguinUI",
+			GoATTHLabel:   "GoATTH Component",
+		},
+		fileInputDemoPreview(),
+		`// Basic file input with drag and drop
+@fileinput.FileInput(fileinput.Config{
+    ID:         "coverPicture",
+    Name:       "cover",
+    Label:      "Cover Picture",
+    Accept:     "image/*",
+    HelperText: "PNG, JPG, WebP - Max 5MB",
+})
+
+// Required file input
+@fileinput.FileInput(fileinput.Config{
+    ID:         "document",
+    Name:       "document",
+    Label:      "Upload Document",
+    Accept:     ".pdf,.doc,.docx",
+    HelperText: "PDF, DOC, DOCX - Max 10MB",
+    Required:   true,
+})
+
+// Disabled file input
+@fileinput.FileInput(fileinput.Config{
+    ID:       "disabled",
+    Name:     "disabled",
+    Label:    "Disabled Upload",
+    Disabled: true,
+})`,
+	)
+}
+
+// fileInputDemoPreview renders the GoATTH file input preview
+templ fileInputDemoPreview() {
+	<div class="w-full max-w-4xl mx-auto space-y-8">
+		// Default drag and drop
+		<div>
+			<h4 class="text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong">Drag and Drop</h4>
+			<div class="flex flex-wrap gap-4">
+				@fileinput.FileInput(fileinput.Config{
+					ID:         "demoCoverPicture",
+					Name:       "cover",
+					Label:      "Cover Picture",
+					Accept:     "image/*",
+					HelperText: "PNG, JPG, WebP - Max 5MB",
+				})
+			</div>
+		</div>
+
+		// Required
+		<div>
+			<h4 class="text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong">Required</h4>
+			<div class="flex flex-wrap gap-4">
+				@fileinput.FileInput(fileinput.Config{
+					ID:         "demoDocument",
+					Name:       "document",
+					Label:      "Upload Document",
+					Accept:     ".pdf,.doc,.docx",
+					HelperText: "PDF, DOC, DOCX - Max 10MB",
+					Required:   true,
+				})
+			</div>
+		</div>
+
+		// Disabled
+		<div>
+			<h4 class="text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong">Disabled</h4>
+			<div class="flex flex-wrap gap-4">
+				@fileinput.FileInput(fileinput.Config{
+					ID:         "demoDisabled",
+					Name:       "disabled",
+					Label:      "Disabled Upload",
+					HelperText: "Uploads are currently disabled",
+					Disabled:   true,
+				})
+			</div>
+		</div>
+
+		// No label
+		<div>
+			<h4 class="text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong">Without Label</h4>
+			<div class="flex flex-wrap gap-4">
+				@fileinput.FileInput(fileinput.Config{
+					ID:         "demoNoLabel",
+					Name:       "attachment",
+					Accept:     "image/*,.pdf",
+					HelperText: "Any image or PDF - Max 5MB",
+				})
+			</div>
+		</div>
+	</div>
+}

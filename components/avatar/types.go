@@ -46,13 +46,26 @@ const (
 	StatusDanger  Status = "danger"
 )
 
-// Config holds configuration for the avatar
+// Config holds configuration for the avatar.
+//
+// The avatar renders in 3 layers (bottom to top):
+//  1. Initials layer — always rendered as the base fallback
+//  2. Loading layer — spinner shown while the image loads (only when Src is set)
+//  3. Image layer — the actual image (only when Src is set, hidden on load error)
+//
+// When Src is provided, Alpine.js handles image load/error events:
+// on load success the spinner hides, on error both image and spinner hide
+// (falling back to the initials layer) and a console warning is logged.
 type Config struct {
-	// Src is the image URL (if using image avatar)
+	// Src is the image URL. When set, the image and loading layers are rendered.
 	Src string
 	// Alt is the alt text for accessibility
 	Alt string
-	// Initials are displayed when no image (e.g., "JS")
+	// Name is used to auto-derive initials via GetInitials(Name, "").
+	// Ignored if Initials is set explicitly.
+	Name string
+	// Initials are displayed as the base fallback (e.g., "JS").
+	// If empty, derived from Name via GetInitials.
 	Initials string
 	// Size of the avatar
 	Size Size
@@ -66,10 +79,21 @@ type Config struct {
 	BorderColor string
 	// Status adds a status indicator dot
 	Status Status
-	// Icon is an optional icon component (replaces initials)
+	// Icon is an optional icon component (replaces initials in the base layer)
 	Icon templ.Component
 	// Class allows additional CSS classes
 	Class string
+}
+
+// ResolvedInitials returns the initials to display: explicit Initials, or derived from Name.
+func (cfg Config) ResolvedInitials() string {
+	if cfg.Initials != "" {
+		return cfg.Initials
+	}
+	if cfg.Name != "" {
+		return GetInitials(cfg.Name, "")
+	}
+	return "?"
 }
 
 // SizeClasses returns the CSS classes for the size
@@ -181,6 +205,22 @@ func (cfg Config) StatusSizeClasses() string {
 	}
 }
 
+// SpinnerSizeClasses returns spinner size classes based on avatar size
+func (cfg Config) SpinnerSizeClasses() string {
+	switch cfg.Size {
+	case SizeXS:
+		return "size-4"
+	case SizeSM:
+		return "size-5"
+	case SizeLG:
+		return "size-8"
+	case SizeXL:
+		return "size-10"
+	default:
+		return "size-6"
+	}
+}
+
 // HasImage returns true if avatar uses an image
 func (cfg Config) HasImage() bool {
 	return cfg.Src != ""
@@ -192,28 +232,43 @@ func (cfg Config) HasInitials() bool {
 }
 
 // GetInitials derives 1-2 character initials from a name, falling back to email.
-// Examples: "John Doe" → "JD", "Alice" → "A", "" with "alice@x.com" → "a", "" with "" → "U"
+// Splits on whitespace, hyphens, and underscores.
+// Examples: "John Doe" → "JD", "dev-ops" → "DO", "Engineering" → "EN", "" with "alice@x.com" → "AL", "" with "" → "?"
 func GetInitials(name, email string) string {
 	if name != "" {
 		parts := splitWords(name)
 		if len(parts) >= 2 {
-			return string(parts[0][0]) + string(parts[len(parts)-1][0])
+			return toUpper(parts[0][0]) + toUpper(parts[1][0])
 		}
-		if len(parts) == 1 && len(parts[0]) > 0 {
-			return string(parts[0][0])
+		if len(parts) == 1 && len(parts[0]) >= 2 {
+			return toUpper(parts[0][0]) + toUpper(parts[0][1])
+		}
+		if len(parts) == 1 && len(parts[0]) == 1 {
+			return toUpper(parts[0][0])
 		}
 	}
-	if len(email) > 0 {
-		return string(email[0])
+	if len(email) >= 2 {
+		return toUpper(email[0]) + toUpper(email[1])
 	}
-	return "U"
+	if len(email) == 1 {
+		return toUpper(email[0])
+	}
+	return "?"
+}
+
+
+func toUpper(b byte) string {
+	if b >= 'a' && b <= 'z' {
+		return string(b - 32)
+	}
+	return string(b)
 }
 
 func splitWords(s string) []string {
 	var result []string
 	var current string
 	for i := 0; i < len(s); i++ {
-		if s[i] == ' ' {
+		if s[i] == ' ' || s[i] == '-' || s[i] == '_' {
 			if current != "" {
 				result = append(result, current)
 				current = ""
