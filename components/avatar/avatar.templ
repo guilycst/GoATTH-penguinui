@@ -95,10 +95,15 @@ templ layerLoading(cfg Config) {
 	</span>
 }
 
-// layerImage renders the actual image, hidden on error
+// layerImage renders the actual image, hidden on error.
+// x-init handles the cached-image race: if the browser already finished
+// loading the image before Alpine attached the x-on:load handler, the load
+// event never fires and imgLoaded stays false (stuck spinner). Checking
+// $el.complete + naturalWidth > 0 covers this case.
 templ layerImage(cfg Config) {
 	<img
 		x-show="!imgError"
+		x-init="if ($el.complete && $el.naturalWidth > 0) imgLoaded = true"
 		x-on:load="imgLoaded = true"
 		x-on:error={ fmt.Sprintf("imgError = true; console.warn('[avatar] failed to load image:', '%s')", cfg.Src) }
 		src={ cfg.Src }
