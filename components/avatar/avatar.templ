@@ -48,21 +48,29 @@ templ avatarLayers(cfg Config) {
 			x-data="{ imgLoaded: false, imgError: false }"
 			class={ containerClasses }
 		>
-			@layerInitials(cfg)
+			@layerInitials(cfg, true)
 			@layerLoading(cfg)
 			@layerImage(cfg)
 		</div>
 	} else {
 		<div class={ containerClasses }>
-			@layerInitials(cfg)
+			@layerInitials(cfg, false)
 		</div>
 	}
 }
 
-// layerInitials renders the base initials/icon layer (always visible, sits behind image)
-templ layerInitials(cfg Config) {
+// layerInitials renders the initials/icon layer. When withImageOverlay is true,
+// the layer is hidden on successful image load (so transparent pixels don't
+// bleed the initials through) and shown on error as a fallback.
+templ layerInitials(cfg Config, withImageOverlay bool) {
 	{{ classes := "absolute inset-0 flex items-center justify-center font-bold tracking-wider" }}
-	<span class={ classes } aria-hidden="true">
+	<span
+		class={ classes }
+		aria-hidden="true"
+		if withImageOverlay {
+			x-show="!imgLoaded || imgError"
+		}
+	>
 		if cfg.Icon != nil {
 			<span class="w-full h-full mt-3">
 				@cfg.Icon
