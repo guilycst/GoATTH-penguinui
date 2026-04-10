@@ -1,0 +1,271 @@
+package e2e
+
+import (
+	"fmt"
+	"strings"
+	"testing"
+
+	"github.com/playwright-community/playwright-go"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
+)
+
+const formValidationPath = "/components/form-validation"
+
+func navigateToFormValidation(t *testing.T, page playwright.Page) {
+	t.Helper()
+	_, err := page.Goto(baseURL+formValidationPath, playwright.PageGotoOptions{
+		WaitUntil: playwright.WaitUntilStateNetworkidle,
+	})
+	require.NoError(t, err)
+}
+
+// fillAndTriggerValidation sets a field value and triggers HTMX field-level
+// validation via htmx.ajax(). Uses htmx.ajax() directly because the native
+// change event -> hx-trigger pipeline produces empty XHR responses in
+// headless Chromium (the outerHTML swap receives 0 bytes despite a 200 status).
+func fillAndTriggerValidation(t *testing.T, page playwright.Page, fieldName, value string) {
+	t.Helper()
+
+	// Collect all current form values and override the target field
+	js := fmt.Sprintf(`() => {
+		const form = document.querySelector('#demo-validation');
+		const fd = new FormData(form);
+		const vals = {};
+		for (const [k, v] of fd.entries()) { vals[k] = v; }
+		vals[%q] = %q;
+		vals['X-GoATTH-Validation'] = 'field';
+
+		// Also set the input value in the DOM so the form state is consistent
+		const input = document.querySelector('input[name=%q]');
+		if (input) input.value = %q;
+
+		const el = document.querySelector('#goatth-field-' + %q);
+		return htmx.ajax('POST', '/api/components/form-validation', {
+			source: el,
+			target: el,
+			swap: 'outerHTML',
+			values: vals,
+			headers: {'HX-Trigger-Name': %q}
+		});
+	}`, fieldName, value, fieldName, value, fieldName, fieldName)
+
+	_, err := page.Evaluate(js)
+	require.NoError(t, err)
+
+	// Wait for the HTMX swap to settle
+	page.WaitForTimeout(500)
+}
+
+// fillWithoutValidation sets input value directly without triggering events.
+func fillWithoutValidation(t *testing.T, page playwright.Page, fieldName, value string) {
+	t.Helper()
+	input := page.Locator("input[name='" + fieldName + "']")
+	_, err := input.Evaluate("(el, val) => { el.value = val; }", value)
+	require.NoError(t, err)
+}
+
+func TestFormValidation_SubmitEmpty(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping E2E test in short mode")
+	}
+
+	page := newPage(t, sharedBrowser)
+	navigateToFormValidation(t, page)
+
+	// Submit without filling any fields
+	require.NoError(t, page.Locator("button[type='submit']").Click())
+	page.WaitForTimeout(800)
+
+	// Check for error messages on all 3 required fields
+	nameErrors := page.Locator("#goatth-field-name > .text-danger")
+	nameErrCount, err := nameErrors.Count()
+	require.NoError(t, err)
+	assert.GreaterOrEqual(t, nameErrCount, 1, "name field should have error messages")
+
+	slugErrors := page.Locator("#goatth-field-slug > .text-danger")
+	slugErrCount, err := slugErrors.Count()
+	require.NoError(t, err)
+	assert.GreaterOrEqual(t, slugErrCount, 1, "slug field should have error messages")
+
+	emailErrors := page.Locator("#goatth-field-email > .text-danger")
+	emailErrCount, err := emailErrors.Count()
+	require.NoError(t, err)
+	assert.GreaterOrEqual(t, emailErrCount, 1, "email field should have error messages")
+}
+
+func TestFormValidation_SubmitValid(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping E2E test in short mode")
+	}
+
+	page := newPage(t, sharedBrowser)
+	navigateToFormValidation(t, page)
+
+	// Fill all fields without triggering field-level validation
+	fillWithoutValidation(t, page, "name", "My Project")
+	fillWithoutValidation(t, page, "slug", "my-project")
+	fillWithoutValidation(t, page, "email", "test@example.com")
+
+	// Submit the form
+	require.NoError(t, page.Locator("button[type='submit']").Click())
+	page.WaitForTimeout(800)
+
+	// Verify success message
+	successMsg := page.Locator("#form-result")
+	text, err := successMsg.InnerText()
+	require.NoError(t, err)
+	assert.Contains(t, text, "Form submitted successfully!")
+}
+
+func TestFormValidation_FieldChange_NameTooShort(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping E2E test in short mode")
+	}
+
+	page := newPage(t, sharedBrowser)
+	navigateToFormValidation(t, page)
+
+	fillAndTriggerValidation(t, page, "name", "ab")
+
+	// Check name input has error border
+	nameInput := page.Locator("input[name='name']")
+	classes, err := nameInput.GetAttribute("class")
+	require.NoError(t, err)
+	assert.Contains(t, classes, "border-danger", "name input should have border-danger class")
+
+	// Check error text
+	nameField := page.Locator("#goatth-field-name")
+	text, err := nameField.InnerText()
+	require.NoError(t, err)
+	assert.Contains(t, strings.ToLower(text), "at least 3 characters")
+}
+
+func TestFormValidation_FieldChange_NameValid(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping E2E test in short mode")
+	}
+
+	page := newPage(t, sharedBrowser)
+	navigateToFormValidation(t, page)
+
+	fillAndTriggerValidation(t, page, "name", "My Project")
+
+	// Check name input has success border
+	nameInput := page.Locator("input[name='name']")
+	classes, err := nameInput.GetAttribute("class")
+	require.NoError(t, err)
+	assert.Contains(t, classes, "border-success", "name input should have border-success class")
+
+	// Check no error text in name field
+	nameErrors := page.Locator("#goatth-field-name > .text-danger")
+	count, err := nameErrors.Count()
+	require.NoError(t, err)
+	assert.Equal(t, 0, count, "name field should have no error messages")
+}
+
+func TestFormValidation_Dependency_SlugAutoUpdates(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping E2E test in short mode")
+	}
+
+	page := newPage(t, sharedBrowser)
+	navigateToFormValidation(t, page)
+
+	fillAndTriggerValidation(t, page, "name", "My Project")
+
+	// Verify the slug field's input value was auto-populated via OOB swap
+	slugInput := page.Locator("input[name='slug']")
+	slugVal, err := slugInput.InputValue()
+	require.NoError(t, err)
+	assert.Equal(t, "my-project", slugVal, "slug should be auto-generated from name")
+}
+
+func TestFormValidation_SlugTaken(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping E2E test in short mode")
+	}
+
+	page := newPage(t, sharedBrowser)
+	navigateToFormValidation(t, page)
+
+	fillAndTriggerValidation(t, page, "slug", "admin")
+
+	// Check error text
+	slugField := page.Locator("#goatth-field-slug")
+	text, err := slugField.InnerText()
+	require.NoError(t, err)
+	assert.Contains(t, strings.ToLower(text), "already taken")
+}
+
+func TestFormValidation_EmailInvalid(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping E2E test in short mode")
+	}
+
+	page := newPage(t, sharedBrowser)
+	navigateToFormValidation(t, page)
+
+	fillAndTriggerValidation(t, page, "email", "notanemail")
+
+	// Check error text
+	emailField := page.Locator("#goatth-field-email")
+	text, err := emailField.InnerText()
+	require.NoError(t, err)
+	assert.Contains(t, strings.ToLower(text), "valid email")
+}
+
+func TestFormValidation_ValuePreservation(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping E2E test in short mode")
+	}
+
+	page := newPage(t, sharedBrowser)
+	navigateToFormValidation(t, page)
+
+	// Fill name and trigger validation
+	fillAndTriggerValidation(t, page, "name", "My Project")
+
+	// Fill email and trigger validation
+	fillAndTriggerValidation(t, page, "email", "test@example.com")
+
+	// Verify name field still has its value
+	nameInput := page.Locator("input[name='name']")
+	nameVal, err := nameInput.InputValue()
+	require.NoError(t, err)
+	assert.Equal(t, "My Project", nameVal, "name field value should be preserved after email validation")
+}
+
+func TestFormValidation_ErrorClearing(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping E2E test in short mode")
+	}
+
+	page := newPage(t, sharedBrowser)
+	navigateToFormValidation(t, page)
+
+	// Type too-short name to trigger error
+	fillAndTriggerValidation(t, page, "name", "ab")
+
+	// Verify error is present
+	nameField := page.Locator("#goatth-field-name")
+	text, err := nameField.InnerText()
+	require.NoError(t, err)
+	assert.Contains(t, strings.ToLower(text), "at least 3 characters")
+
+	// Type valid name to clear error
+	fillAndTriggerValidation(t, page, "name", "Good Name")
+
+	// Verify error is gone and success state shows
+	nameInput := page.Locator("input[name='name']")
+	classes, err := nameInput.GetAttribute("class")
+	require.NoError(t, err)
+	assert.Contains(t, classes, "border-success", "name input should have border-success after correction")
+	assert.NotContains(t, classes, "border-danger", "name input should not have border-danger after correction")
+
+	// No error messages
+	nameErrors := page.Locator("#goatth-field-name > .text-danger")
+	count, err := nameErrors.Count()
+	require.NoError(t, err)
+	assert.Equal(t, 0, count, "name field should have no error messages after correction")
+}

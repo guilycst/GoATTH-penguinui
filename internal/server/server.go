@@ -49,6 +49,7 @@ func (s *Server) setupRoutes() {
 	s.mux.HandleFunc("/api/components/table/rows", s.handleTableRows)
 	s.mux.HandleFunc("/api/components/toast", s.handleToastOOB)
 	s.mux.HandleFunc("/api/components/carousel/slides", s.handleCarouselSlides)
+	s.mux.HandleFunc("/api/components/form-validation", s.handleFormValidation)
 
 	// Docs pages
 	s.mux.HandleFunc("/docs/theme", s.handleThemePage)
@@ -135,6 +136,8 @@ func (s *Server) handleComponent(w http.ResponseWriter, r *http.Request) {
 		components.TripletDemoPage().Render(r.Context(), w)
 	case "fileinput":
 		components.FileInputDemoPage().Render(r.Context(), w)
+	case "form-validation":
+		components.FormValidationDemoPage().Render(r.Context(), w)
 	default:
 		http.NotFound(w, r)
 	}

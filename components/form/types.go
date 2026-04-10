@@ -5,8 +5,9 @@ import (
 
 	"github.com/guilycst/GoATTH-penguinui/components/checkbox"
 	"github.com/guilycst/GoATTH-penguinui/components/combobox"
+	"github.com/guilycst/GoATTH-penguinui/components/fileinput"
 	"github.com/guilycst/GoATTH-penguinui/components/keyvalue"
-"github.com/guilycst/GoATTH-penguinui/components/tagslist"
+	"github.com/guilycst/GoATTH-penguinui/components/tagslist"
 	"github.com/guilycst/GoATTH-penguinui/components/textarea"
 	"github.com/guilycst/GoATTH-penguinui/components/textinput"
 	"github.com/guilycst/GoATTH-penguinui/components/toggle"
@@ -51,12 +52,13 @@ func (c Config) getMethod() string {
 
 // HTMXConfig configures HTMX-based form submission
 type HTMXConfig struct {
-	Post   string // hx-post
-	Get    string // hx-get
-	Put    string // hx-put
-	Delete string // hx-delete
-	Target string // hx-target
-	Swap   string // hx-swap
+	Post     string // hx-post
+	Get      string // hx-get
+	Put      string // hx-put
+	Delete   string // hx-delete
+	Target   string // hx-target
+	Swap     string // hx-swap
+	Encoding string // hx-encoding (e.g. "multipart/form-data")
 }
 
 // FooterConfig configures the form footer with action buttons
@@ -65,12 +67,22 @@ type FooterConfig struct {
 	SubmitText string
 	// CancelText is the cancel button label (e.g. "Cancel")
 	CancelText string
-	// CancelHref is the cancel link URL
+	// CancelHref is the cancel link URL (plain navigation)
 	CancelHref string
+	// CancelHTMX enables HTMX-powered cancel (SPA navigation). Overrides CancelHref when set.
+	CancelHTMX *CancelHTMXConfig
 	// SubmitDisabled is an Alpine.js expression for x-bind:disabled on submit
 	SubmitDisabled string
 	// Sticky makes the footer stick to the bottom of the viewport while scrolling (default: false)
 	Sticky bool
+}
+
+// CancelHTMXConfig configures HTMX attributes on the cancel link for SPA navigation.
+type CancelHTMXConfig struct {
+	Get     string // hx-get
+	Target  string // hx-target
+	Swap    string // hx-swap
+	PushURL bool   // hx-push-url
 }
 
 // footerClasses returns the CSS classes for the footer container
@@ -201,14 +213,33 @@ type FieldGroupConfig struct {
 	Checkbox *checkbox.Config
 	TagsList *tagslist.Config
 	KeyValue *keyvalue.Config
-	Triplet  *triplet.Config
+	Triplet   *triplet.Config
+	FileInput *fileinput.Config
+
+	// OOB enables hx-swap-oob="true" on the wrapper div for out-of-band HTMX updates.
+	OOB bool
+	// Meta holds validation metadata rendered as data-* attributes.
+	// Set by validation.FormDef.Bind(); do not set directly.
+	Meta *FieldMeta
+}
+
+// FieldMeta holds metadata embedded as data-* attributes on the FieldGroup wrapper div.
+// Used by the validation utility to identify fields and their dependencies.
+type FieldMeta struct {
+	// FormID identifies which FormDef to use for reconstruction.
+	FormID string
+	// FieldName is the canonical field name (matches the <input name="...">).
+	FieldName string
+	// DependsOn is a comma-separated list of field names this field depends on.
+	DependsOn string
 }
 
 // hasBuiltinField returns true if a built-in field type is configured
 func (c FieldGroupConfig) hasBuiltinField() bool {
 	return c.Input != nil || c.Combobox != nil ||
 		c.Textarea != nil || c.Toggle != nil || c.Checkbox != nil ||
-		c.TagsList != nil || c.KeyValue != nil || c.Triplet != nil
+		c.TagsList != nil || c.KeyValue != nil || c.Triplet != nil ||
+		c.FileInput != nil
 }
 
 // ValidationConfig configures HTMX field validation

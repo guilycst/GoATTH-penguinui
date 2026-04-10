@@ -3,8 +3,9 @@ package form
 import (
 	"github.com/guilycst/GoATTH-penguinui/components/checkbox"
 	"github.com/guilycst/GoATTH-penguinui/components/combobox"
+	"github.com/guilycst/GoATTH-penguinui/components/fileinput"
 	"github.com/guilycst/GoATTH-penguinui/components/keyvalue"
-"github.com/guilycst/GoATTH-penguinui/components/tagslist"
+	"github.com/guilycst/GoATTH-penguinui/components/tagslist"
 	"github.com/guilycst/GoATTH-penguinui/components/textarea"
 	"github.com/guilycst/GoATTH-penguinui/components/textinput"
 	"github.com/guilycst/GoATTH-penguinui/components/toggle"
@@ -48,6 +49,9 @@ templ Form(cfg Config) {
 		}
 		if cfg.HTMX != nil && cfg.HTMX.Swap != "" {
 			hx-swap={ cfg.HTMX.Swap }
+		}
+		if cfg.HTMX != nil && cfg.HTMX.Encoding != "" {
+			hx-encoding={ cfg.HTMX.Encoding }
 		}
 		class={ "relative " + cfg.Class }
 		if cfg.shouldPreventEnter() {
@@ -237,7 +241,20 @@ templ SubSection(cfg SubSectionConfig) {
 // a GoATTH component automatically. If none are set, renders { children... } instead.
 templ FieldGroup(cfg FieldGroupConfig) {
 	<div
+		if cfg.ID != "" {
+			id={ cfg.ID }
+		}
 		class={ "flex flex-col gap-2 " + cfg.Class }
+		if cfg.OOB {
+			hx-swap-oob="true"
+		}
+		if cfg.Meta != nil {
+			data-goatth-form={ cfg.Meta.FormID }
+			data-goatth-field={ cfg.Meta.FieldName }
+			if cfg.Meta.DependsOn != "" {
+				data-goatth-depends={ cfg.Meta.DependsOn }
+			}
+		}
 		if cfg.Validation != nil {
 			if cfg.Validation.Endpoint != "" {
 				hx-post={ cfg.Validation.Endpoint }
@@ -249,6 +266,8 @@ templ FieldGroup(cfg FieldGroupConfig) {
 				hx-target="this"
 			}
 			hx-swap="outerHTML"
+			hx-include="closest form"
+			hx-vals='{"X-GoATTH-Validation":"field"}'
 		}
 	>
 		if cfg.Label != "" {
@@ -280,6 +299,8 @@ templ FieldGroup(cfg FieldGroupConfig) {
 			@keyvalue.KeyValue(*cfg.KeyValue)
 		} else if cfg.Triplet != nil {
 			@triplet.Triplet(*cfg.Triplet)
+		} else if cfg.FileInput != nil {
+			@fileinput.FileInput(*cfg.FileInput)
 		} else {
 			{ children... }
 		}
@@ -315,7 +336,24 @@ templ formFooter(cfg FooterConfig) {
 	<div class={ cfg.footerClasses() }>
 		if cfg.CancelText != "" {
 			<a
-				if cfg.CancelHref != "" {
+				if cfg.CancelHTMX != nil {
+					if cfg.CancelHTMX.Get != "" {
+						hx-get={ cfg.CancelHTMX.Get }
+					}
+					if cfg.CancelHTMX.Target != "" {
+						hx-target={ cfg.CancelHTMX.Target }
+					}
+					if cfg.CancelHTMX.Swap != "" {
+						hx-swap={ cfg.CancelHTMX.Swap }
+					}
+					if cfg.CancelHTMX.PushURL {
+						hx-push-url="true"
+					}
+				}
+				if cfg.CancelHTMX == nil && cfg.CancelHref != "" {
+					href={ cfg.CancelHref }
+				}
+				if cfg.CancelHTMX != nil && cfg.CancelHref != "" {
 					href={ cfg.CancelHref }
 				}
 				class="inline-flex cursor-pointer items-center justify-center px-6 py-2.5 rounded-radius text-sm font-medium text-on-surface dark:text-on-surface-dark bg-surface dark:bg-surface-dark border border-outline dark:border-outline-dark hover:bg-surface-alt dark:hover:bg-surface-dark-alt transition"
