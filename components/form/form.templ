@@ -259,6 +259,9 @@ templ FieldGroup(cfg FieldGroupConfig) {
 			if cfg.Validation.Endpoint != "" {
 				hx-post={ cfg.Validation.Endpoint }
 				hx-trigger={ cfg.Validation.getTrigger() }
+				if cfg.Meta != nil && cfg.Meta.FieldName != "" {
+					name={ cfg.Meta.FieldName }
+				}
 			}
 			if cfg.Validation.Target != "" {
 				hx-target={ cfg.Validation.Target }
