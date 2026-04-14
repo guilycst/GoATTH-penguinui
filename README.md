@@ -3,11 +3,14 @@
 
 ⚠️ Work-In-Progress
 
+These is still lots of rough edeges to iron out.
+
 **GoATTH**: Go + Templ + Tailwind CSS + HTMX + Alpine.js
 
 ## About This Fork
 
-This is a hard fork of [Penguin UI](https://www.penguinui.com) by Salar Houshvand, transformed from static HTML/Alpine.js components into a complete Go web component library.
+This is a hard fork of [Penguin UI](https://www.penguinui.com) by Salar Houshvand ([source here](https://github.com/SalarHoushvand/penguinui-components)), transformed from static HTML/Alpine.js components into a complete Go web component library.
+
 
 ### What's Changed?
 
