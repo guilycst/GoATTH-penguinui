@@ -3,7 +3,7 @@
 
 ⚠️ Work-In-Progress
 
-These is still lots of rough edeges to iron out.
+There is still lots of rough edeges to iron out, most related to preserving Alpine.js state when a wired component is swapped in by HTMX.
 
 **GoATTH**: Go + Templ + Tailwind CSS + HTMX + Alpine.js
 
