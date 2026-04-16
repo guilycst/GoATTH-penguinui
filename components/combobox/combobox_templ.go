@@ -914,7 +914,14 @@ func singleSelectData(id, optionsJS, selectedJS, placeholder string, enableSearc
 			this.selectedValues = [option.value];
 			this.isOpen = false;
 			this.openedWithKeyboard = false;
-			this.$dispatch('combobox-change', { id: this.id, value: option.value, label: option.label });
+			// Alpine batches reactive effects via queueMicrotask. Dispatching
+			// synchronously would fire the event before x-bind:value on the
+			// hidden input updates, so HTMX would serialize the stale value.
+			// $nextTick waits for the flush, guaranteeing the form sees the
+			// new value.
+			this.$nextTick(() => {
+				this.$dispatch('combobox-change', { id: this.id, value: option.value, label: option.label });
+			});
 		},
 		highlightFirstMatchingOption(pressedKey) {
 			if (!this.isOpen && !this.openedWithKeyboard) return;
@@ -960,18 +967,24 @@ func multiSelectData(id, optionsJS, selectedJS, placeholder string, enableSearch
 			const orig = this.allOptions.find(o => o.value === item.value);
 			if (orig) {
 				orig.checked = !orig.checked;
-				this.$dispatch('combobox-change', {
-					id: this.id,
-					values: this.selectedValues,
-					added: orig.checked ? item.value : null,
-					removed: orig.checked ? null : item.value
+				// See note in singleSelectData.selectOption: defer dispatch so
+				// hidden-input x-for bindings flush before HTMX reads the form.
+				this.$nextTick(() => {
+					this.$dispatch('combobox-change', {
+						id: this.id,
+						values: this.selectedValues,
+						added: orig.checked ? item.value : null,
+						removed: orig.checked ? null : item.value
+					});
 				});
 			}
 		},
 		clearAll() {
 			this.allOptions.forEach(o => { o.checked = false; });
 			this.search = '';
-			this.$dispatch('combobox-change', { id: this.id, values: [] });
+			this.$nextTick(() => {
+				this.$dispatch('combobox-change', { id: this.id, values: [] });
+			});
 		}
 	}`, jsEscapeSingle(id), jsEscapeSingle(placeholder), optionsJS, selectedJS, enableSearch)
 }
