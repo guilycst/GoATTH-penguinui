@@ -21,7 +21,7 @@ import (
 	"net/http"
 )
 
-//go:embed styles.css js fonts images
+//go:embed styles.css js fonts
 var files embed.FS
 
 // Handler returns an http.Handler that serves the embedded GoATTH assets.
