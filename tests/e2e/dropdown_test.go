@@ -327,3 +327,114 @@ func TestDropdown_PageLoads(t *testing.T) {
 		t.Log("All dropdown variants are present on page")
 	})
 }
+
+// TestDropdown_ActionsMenu tests the button-item variant: OnClick, Disabled,
+// Danger styling, and the icon-only click trigger.
+func TestDropdown_ActionsMenu(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping E2E test in short mode")
+	}
+
+	cleanupServer := setupServer(t)
+	defer cleanupServer()
+
+	_, browser, cleanupPW := setupPlaywright(t)
+	defer cleanupPW()
+
+	page := newPage(t, browser)
+
+	_, err := page.Goto(baseURL+"/components/dropdown", playwright.PageGotoOptions{
+		WaitUntil: playwright.WaitUntilStateDomcontentloaded,
+	})
+	require.NoError(t, err)
+
+	// Wait for Alpine hydration before interacting
+	_, err = page.WaitForFunction("() => typeof Alpine !== 'undefined'", nil, playwright.PageWaitForFunctionOptions{
+		Timeout: playwright.Float(3000),
+	})
+	require.NoError(t, err)
+
+	// openMenu ensures the dropdown is open (idempotent). Clicking an item
+	// doesn't auto-close the menu, so a second direct click on the trigger
+	// would toggle it closed. Check aria-expanded first.
+	openMenu := func(t *testing.T) {
+		t.Helper()
+		trigger := page.Locator("#dropdown-actions button").First()
+		expanded, err := trigger.Evaluate("el => el.getAttribute('aria-expanded')", nil)
+		require.NoError(t, err)
+		if expanded == "true" {
+			return
+		}
+		require.NoError(t, trigger.Click())
+		page.WaitForTimeout(150)
+	}
+
+	t.Run("IconOnly_Trigger_Has_AriaLabel_And_No_Chevron", func(t *testing.T) {
+		trigger := page.Locator("#dropdown-actions button").First()
+
+		aria, err := trigger.Evaluate("el => el.getAttribute('aria-label')", nil)
+		require.NoError(t, err)
+		assert.Equal(t, "cluster actions", aria, "icon-only trigger should carry aria-label from cfg.Label")
+
+		// The trigger should contain exactly one SVG (the TriggerIcon); no chevron.
+		svgCount, err := trigger.Locator("svg").Count()
+		require.NoError(t, err)
+		assert.Equal(t, 1, svgCount, "icon-only trigger should render only the TriggerIcon (no chevron)")
+
+		text, err := trigger.TextContent()
+		require.NoError(t, err)
+		assert.Empty(t, text, "icon-only trigger should have no visible label text")
+	})
+
+	t.Run("OnClick_Button_Item_Fires_Alpine", func(t *testing.T) {
+		openMenu(t)
+
+		editItem := page.Locator("#dropdown-actions-edit")
+		tag, err := editItem.Evaluate("el => el.tagName.toLowerCase()", nil)
+		require.NoError(t, err)
+		assert.Equal(t, "button", tag, "OnClick item must render as <button>")
+
+		require.NoError(t, editItem.Click())
+		page.WaitForTimeout(150)
+
+		// Alpine state should reflect the click. Read the scoped x-data via the
+		// wrapper's __x.$data — the wrapping div is the closest ancestor with x-data.
+		state, err := page.Evaluate(`() => {
+			const el = document.querySelector('[x-data*="editOpen"]');
+			return { editOpen: el._x_dataStack[0].editOpen, editCount: el._x_dataStack[0].editCount };
+		}`, nil)
+		require.NoError(t, err)
+		stateMap := state.(map[string]any)
+		assert.Equal(t, true, stateMap["editOpen"], "OnClick should flip editOpen to true")
+		assert.EqualValues(t, 1, stateMap["editCount"], "OnClick should increment editCount")
+	})
+
+	t.Run("Disabled_Button_Item_Is_Inert", func(t *testing.T) {
+		openMenu(t)
+
+		archive := page.Locator("#dropdown-actions-archive")
+
+		disabled, err := archive.Evaluate("el => el.hasAttribute('disabled')", nil)
+		require.NoError(t, err)
+		assert.Equal(t, true, disabled, "disabled item must have native disabled attribute")
+
+		cls, err := archive.GetAttribute("class")
+		require.NoError(t, err)
+		assert.Contains(t, cls, "opacity-50", "disabled item should carry opacity-50")
+		assert.Contains(t, cls, "cursor-not-allowed", "disabled item should carry cursor-not-allowed")
+		assert.Contains(t, cls, "pointer-events-none", "disabled item should carry pointer-events-none")
+
+		title, err := archive.GetAttribute("title")
+		require.NoError(t, err)
+		assert.Equal(t, "Archive not available in this state", title, "Tooltip should render as native title attr")
+	})
+
+	t.Run("Danger_Item_Has_Danger_Classes", func(t *testing.T) {
+		openMenu(t)
+
+		del := page.Locator("#dropdown-actions-delete")
+		cls, err := del.GetAttribute("class")
+		require.NoError(t, err)
+		assert.Contains(t, cls, "text-danger", "danger item should carry text-danger class")
+	})
+}

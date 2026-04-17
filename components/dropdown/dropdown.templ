@@ -86,14 +86,21 @@ templ triggerButton(cfg Config) {
 		x-on:click="isOpen = ! isOpen"
 		class={ cfg.ButtonClasses() }
 		aria-haspopup="true"
+		if cfg.UseIconOnlyTrigger() {
+			aria-label={ triggerAriaLabel(cfg) }
+		}
 		x-on:keydown.space.prevent="openedWithKeyboard = true"
 		x-on:keydown.enter.prevent="openedWithKeyboard = true"
 		x-on:keydown.down.prevent="openedWithKeyboard = true"
 		x-bind:class="isOpen || openedWithKeyboard ? 'text-on-surface-strong dark:text-on-surface-dark-strong' : 'text-on-surface dark:text-on-surface-dark'"
 		x-bind:aria-expanded="isOpen || openedWithKeyboard"
 	>
-		{ cfg.Label }
-		@chevronIcon()
+		if cfg.UseIconOnlyTrigger() {
+			@cfg.TriggerIcon
+		} else {
+			{ cfg.Label }
+			@chevronIcon()
+		}
 	</button>
 }
 
@@ -106,12 +113,19 @@ templ hoverTriggerButton(cfg Config) {
 		x-on:keydown.enter.prevent="openedWithKeyboard = true"
 		x-on:keydown.down.prevent="openedWithKeyboard = true"
 		class={ cfg.ButtonClasses() }
+		if cfg.UseIconOnlyTrigger() {
+			aria-label={ triggerAriaLabel(cfg) }
+		}
 		x-bind:class="isOpen || openedWithKeyboard ? 'text-on-surface-strong dark:text-on-surface-dark-strong' : 'text-on-surface dark:text-on-surface-dark'"
 		x-bind:aria-expanded="isOpen || openedWithKeyboard"
 		aria-haspopup="true"
 	>
-		{ cfg.Label }
-		@chevronIcon()
+		if cfg.UseIconOnlyTrigger() {
+			@cfg.TriggerIcon
+		} else {
+			{ cfg.Label }
+			@chevronIcon()
+		}
 	</button>
 }
 
@@ -192,11 +206,27 @@ templ contextDropdownMenu(cfg Config) {
 	</div>
 }
 
-// menuItem renders a single menu item as an anchor
+// menuItem renders a single menu item — dispatches to button or link renderer
+// based on whether the item carries a click handler or disabled state.
 templ menuItem(cfg Config, item Item) {
+	if item.IsButton() {
+		@menuItemButton(cfg, item)
+	} else {
+		@menuItemLink(cfg, item)
+	}
+}
+
+// menuItemLink renders a single menu item as an anchor
+templ menuItemLink(cfg Config, item Item) {
 	<a
 		href={ templ.SafeURL(item.Href) }
-		class={ cfg.ItemClasses(item.Icon != nil || cfg.HasIcons()) }
+		if item.Tooltip != "" {
+			title={ item.Tooltip }
+		}
+		if item.ID != "" {
+			id={ item.ID }
+		}
+		class={ itemClassList(cfg, item) }
 		role="menuitem"
 	>
 		if item.Icon != nil {
@@ -206,10 +236,53 @@ templ menuItem(cfg Config, item Item) {
 	</a>
 }
 
-// contextMenuItem renders a single menu item as a list item (for context menus)
+// menuItemButton renders a menu item as a button (for click handlers or
+// disabled state). Alpine's x-on:click fires only when not disabled.
+templ menuItemButton(cfg Config, item Item) {
+	<button
+		type="button"
+		if item.OnClick != "" && !item.Disabled {
+			x-on:click={ item.OnClick }
+		}
+		if item.Disabled {
+			disabled
+		}
+		if item.Tooltip != "" {
+			title={ item.Tooltip }
+		}
+		if item.ID != "" {
+			id={ item.ID }
+		}
+		class={ itemClassList(cfg, item) }
+		role="menuitem"
+	>
+		if item.Icon != nil {
+			@item.Icon
+		}
+		{ item.Label }
+	</button>
+}
+
+// contextMenuItem renders a single menu item as a list item (for context menus).
+// When the item is a button variant, the <li> wraps a <button> to preserve
+// valid HTML while keeping list semantics.
 templ contextMenuItem(cfg Config, item Item) {
+	if item.IsButton() {
+		@contextMenuItemButton(cfg, item)
+	} else {
+		@contextMenuItemPlain(cfg, item)
+	}
+}
+
+templ contextMenuItemPlain(cfg Config, item Item) {
 	<li
-		class={ cfg.ItemClasses(true) }
+		if item.Tooltip != "" {
+			title={ item.Tooltip }
+		}
+		if item.ID != "" {
+			id={ item.ID }
+		}
+		class={ itemClassList(cfg, item) }
 		role="menuitem"
 		tabindex="0"
 	>
@@ -230,6 +303,44 @@ templ contextMenuItem(cfg Config, item Item) {
 	</li>
 }
 
+templ contextMenuItemButton(cfg Config, item Item) {
+	<li role="none" class="contents">
+		<button
+			type="button"
+			if item.OnClick != "" && !item.Disabled {
+				x-on:click={ item.OnClick }
+			}
+			if item.Disabled {
+				disabled
+			}
+			if item.Tooltip != "" {
+				title={ item.Tooltip }
+			}
+			if item.ID != "" {
+				id={ item.ID }
+			}
+			class={ itemClassList(cfg, item), "w-full text-left" }
+			role="menuitem"
+			tabindex="0"
+		>
+			if item.Icon != nil {
+				@item.Icon
+			}
+			{ item.Label }
+			if item.Shortcut != "" {
+				<div class="ml-auto flex items-center gap-1 font-semibold opacity-60" aria-hidden="true">
+					if item.ShortcutIcon != nil {
+						@item.ShortcutIcon
+					} else {
+						@cmdIcon()
+					}
+					{ item.Shortcut }
+				</div>
+			}
+		</button>
+	</li>
+}
+
 // menuClasses returns the appropriate menu classes based on config
 func menuClasses(cfg Config) string {
 	base := cfg.MenuClasses()
@@ -237,6 +348,29 @@ func menuClasses(cfg Config) string {
 		return base + " divide-y divide-outline dark:divide-outline-dark"
 	}
 	return base
+}
+
+// itemClassList composes the class string for a menu item, layering the
+// base item classes with danger and disabled variants when applicable.
+func itemClassList(cfg Config, item Item) string {
+	hasIcon := item.Icon != nil || cfg.HasIcons()
+	out := cfg.ItemClasses(hasIcon)
+	if item.Danger {
+		out += " " + cfg.DangerClasses()
+	}
+	if item.Disabled {
+		out += " " + cfg.DisabledClasses()
+	}
+	return out
+}
+
+// triggerAriaLabel returns the aria-label for an icon-only trigger button.
+// Falls back to a generic "open menu" label when Label is empty.
+func triggerAriaLabel(cfg Config) string {
+	if cfg.Label != "" {
+		return cfg.Label
+	}
+	return "open menu"
 }
 
 // chevronIcon renders the dropdown chevron SVG
