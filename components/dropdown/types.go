@@ -11,11 +11,16 @@ const (
 	TriggerContext TriggerMode = "context"
 )
 
-// Item represents a single menu item in the dropdown
+// Item represents a single menu item in the dropdown.
+//
+// An Item renders as either an anchor (default) or a button. It renders as a
+// button when OnClick or Disabled is set — links cannot carry click handlers
+// or a disabled state cleanly, so these fields force the button renderer.
 type Item struct {
 	// Label is the display text for the menu item
 	Label string
-	// Href is the link URL (use "#" for non-navigating items)
+	// Href is the link URL (use "#" for non-navigating items).
+	// Ignored when OnClick or Disabled is set.
 	Href string
 	// Icon is an optional icon component rendered before the label
 	Icon templ.Component
@@ -23,6 +28,27 @@ type Item struct {
 	Shortcut string
 	// ShortcutIcon is an optional icon for the shortcut modifier key
 	ShortcutIcon templ.Component
+
+	// OnClick is an Alpine.js expression invoked on click (e.g., "open = true").
+	// Setting this renders the item as a <button> instead of an anchor.
+	OnClick string
+	// Disabled renders the item as a disabled <button> with muted styling.
+	// Clicks are suppressed.
+	Disabled bool
+	// Danger applies destructive styling (red text, red hover) — for actions
+	// like "Delete" or "Remove".
+	Danger bool
+	// Tooltip sets a native title attribute on the item. Useful when Disabled
+	// to explain why the action isn't available.
+	Tooltip string
+	// ID sets the element id — optional, for htmx/Alpine targeting.
+	ID string
+}
+
+// IsButton reports whether the item should render as a <button> rather than
+// an anchor. Buttons are required for click handlers and disabled state.
+func (i Item) IsButton() bool {
+	return i.OnClick != "" || i.Disabled
 }
 
 // Section groups items with an optional heading.
@@ -41,8 +67,15 @@ type Config struct {
 	TriggerMode TriggerMode
 	// Sections groups items with dividers between sections
 	Sections []Section
-	// TriggerIcon is an optional custom trigger icon (used for context menus)
+	// TriggerIcon is an optional custom trigger icon.
+	// Context mode always shows an icon (defaults to horizontal dots).
+	// Click and hover modes ignore it unless TriggerIconOnly is true.
 	TriggerIcon templ.Component
+	// TriggerIconOnly, in click or hover mode, renders TriggerIcon alone
+	// inside a square button — no label, no chevron. Use this for icon-only
+	// overflow triggers (e.g., a vertical-dots "…" affordance) without
+	// inheriting TriggerContext's <li> item semantics.
+	TriggerIconOnly bool
 }
 
 // GetTriggerMode returns the trigger mode with a default of click
@@ -87,6 +120,12 @@ func (cfg Config) IsContextMenu() bool {
 	return cfg.GetTriggerMode() == TriggerContext
 }
 
+// UseIconOnlyTrigger reports whether the click/hover trigger should render
+// the icon alone (no label + chevron).
+func (cfg Config) UseIconOnlyTrigger() bool {
+	return cfg.TriggerIconOnly && cfg.TriggerIcon != nil && !cfg.IsContextMenu()
+}
+
 // MenuClasses returns the CSS classes for the dropdown menu container
 func (cfg Config) MenuClasses() string {
 	base := "absolute left-0 z-30 flex w-fit min-w-48 flex-col overflow-hidden rounded-radius border border-outline bg-surface-alt shadow-md dark:border-outline-dark dark:bg-surface-dark-alt"
@@ -105,10 +144,27 @@ func (cfg Config) ItemClasses(hasIcon bool) string {
 	return base
 }
 
+// DangerClasses returns the destructive-variant classes applied in addition
+// to ItemClasses when Item.Danger is true. Palette matches the navbar
+// UserMenuItem danger styling for parity.
+func (cfg Config) DangerClasses() string {
+	return "text-danger hover:bg-danger/5 hover:text-danger focus-visible:bg-danger/10 focus-visible:text-danger dark:text-danger dark:hover:bg-danger/10 dark:hover:text-danger dark:focus-visible:bg-danger/10 dark:focus-visible:text-danger"
+}
+
+// DisabledClasses returns the classes applied when Item.Disabled is true.
+// opacity-50 + cursor-not-allowed communicates the state; pointer-events-none
+// backs up the native disabled attribute against Alpine event listeners.
+func (cfg Config) DisabledClasses() string {
+	return "opacity-50 cursor-not-allowed pointer-events-none"
+}
+
 // ButtonClasses returns the CSS classes for the trigger button
 func (cfg Config) ButtonClasses() string {
 	if cfg.IsContextMenu() {
 		return "inline-flex items-center bg-transparent transition hover:opacity-75 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-outline-strong active:opacity-100 dark:focus-visible:outline-outline-dark-strong"
+	}
+	if cfg.UseIconOnlyTrigger() {
+		return "inline-flex items-center justify-center rounded-radius border border-outline bg-surface-alt p-2 transition hover:opacity-75 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-outline-strong dark:border-outline-dark dark:bg-surface-dark-alt dark:focus-visible:outline-outline-dark-strong"
 	}
 	return "inline-flex items-center gap-2 whitespace-nowrap rounded-radius border border-outline bg-surface-alt px-4 py-2 text-sm font-medium tracking-wide transition hover:opacity-75 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-outline-strong dark:border-outline-dark dark:bg-surface-dark-alt dark:focus-visible:outline-outline-dark-strong"
 }

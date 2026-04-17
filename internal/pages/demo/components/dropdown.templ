@@ -191,7 +191,60 @@ templ dropdownDemoPreview() {
 				})
 			</div>
 		</div>
+
+		// Actions Menu — button items with click handlers, disabled, danger
+		<div x-data="{ editOpen: false, deleteOpen: false, editCount: 0 }">
+			<h4 class="text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong">
+				Actions Menu (button items: onclick / disabled / danger / icon-only trigger)
+			</h4>
+			<div class="pb-2 flex items-center gap-4">
+				@dropdown.Dropdown(dropdown.Config{
+					ID:              "dropdown-actions",
+					Label:           "cluster actions",
+					TriggerIcon:     ddDotsVerticalIcon(),
+					TriggerIconOnly: true,
+					Sections: []dropdown.Section{
+						{Items: []dropdown.Item{
+							{
+								Label:   "Edit",
+								Icon:    ddSettingsIcon(),
+								OnClick: "editOpen = true; editCount++",
+								ID:      "dropdown-actions-edit",
+							},
+							{
+								Label:    "Archive",
+								Icon:     ddFavoritesIcon(),
+								Disabled: true,
+								Tooltip:  "Archive not available in this state",
+								ID:       "dropdown-actions-archive",
+							},
+						}},
+						{Items: []dropdown.Item{
+							{
+								Label:   "Delete",
+								Icon:    ddHelpIcon(),
+								OnClick: "deleteOpen = true",
+								Danger:  true,
+								ID:      "dropdown-actions-delete",
+							},
+						}},
+					},
+				})
+				<div class="text-xs text-on-surface/70 dark:text-on-surface-dark/70" id="dropdown-actions-state">
+					editOpen=<span x-text="editOpen"></span>
+					· deleteOpen=<span x-text="deleteOpen"></span>
+					· editCount=<span x-text="editCount"></span>
+				</div>
+			</div>
+		</div>
 	</div>
+}
+
+// ddDotsVerticalIcon renders a vertical three-dots icon for overflow triggers
+templ ddDotsVerticalIcon() {
+	<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" fill="currentColor" class="size-5">
+		<path fill-rule="evenodd" d="M12 6.75a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3Zm0 6.75a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3Zm0 6.75a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3Z" clip-rule="evenodd"></path>
+	</svg>
 }
 
 // Icon components for dropdown demo
