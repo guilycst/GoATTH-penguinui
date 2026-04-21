@@ -274,8 +274,12 @@ templ tableInner(cfg Config) {
 }
 
 // TableBody renders just the tbody element. Use this for HTMX fragment responses.
+//
+// When infinite-scroll is enabled, tbody receives `data-transition="append"`
+// so consumer CSS can fade in rows appended by the scroll sentinel. Consumers
+// opt into the animation by defining a rule on `[data-transition="append"] > .htmx-added`.
 templ TableBody(cfg Config) {
-	<tbody id={ cfg.TbodyID() } class={ cfg.TbodyClasses() }>
+	<tbody id={ cfg.TbodyID() } class={ cfg.TbodyClasses() } data-transition="append">
 		for _, row := range cfg.Rows {
 			@TableRow(cfg, row)
 		}
@@ -507,7 +511,7 @@ templ scrollSentinel(cfg Config) {
 		id={ cfg.GetID() + "-sentinel" }
 		hx-get={ cfg.NextPageURL() }
 		hx-trigger="revealed"
-		hx-swap="outerHTML"
+		hx-swap="outerHTML settle:200ms"
 		aria-hidden="true"
 	>
 		<td colspan={ fmt.Sprintf("%d", cfg.ColCount()) } class="p-4 text-center">
