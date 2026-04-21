@@ -77,11 +77,14 @@
         --color-outline-dark: var(--color-slate-700);
         --color-outline-dark-strong: var(--color-slate-300);
         --color-info: var(--color-sky-600);
-        --color-on-info: var(--color-white);
+        /* on-info: white/sky-600 = 4.02:1 fails AA; black/sky-600 = 5.23:1. */
+        --color-on-info: var(--color-black);
         --color-success: var(--color-green-600);
-        --color-on-success: var(--color-white);
+        /* on-success: white/green-600 = 3.21:1 fails AA; black/green-600 = 6.53:1. */
+        --color-on-success: var(--color-black);
         --color-warning: var(--color-amber-500);
-        --color-on-warning: var(--color-white);
+        /* on-warning: amber-500 is light — black always correct. */
+        --color-on-warning: var(--color-black);
         --color-danger: var(--color-red-600);
         --color-on-danger: var(--color-white);
         --radius-radius: var(--radius-lg);
@@ -507,7 +510,8 @@
         --color-primary: #00dbff;
         --color-on-primary: #002233;
         --color-secondary: #a44dff;
-        --color-on-secondary: var(--color-white);
+        /* on-secondary: brand-dark ink, not white — white/#a44dff = 4.13:1 fails AA; #002233/#a44dff = 7.8:1. */
+        --color-on-secondary: #002233;
         --color-outline: #9c9c9c;
         --color-outline-strong: #002b33;
         /* Dark Theme */
@@ -518,7 +522,7 @@
         --color-primary-dark: #00dbff;
         --color-on-primary-dark: #002233;
         --color-secondary-dark: #a44dff;
-        --color-on-secondary-dark: var(--color-white);
+        --color-on-secondary-dark: #002233;
         --color-outline-dark: #545454;
         --color-outline-dark-strong: #9c9c9c;
         /* Status Colors */
@@ -529,7 +533,8 @@
         --color-warning: #ffb800;
         --color-on-warning: #002233;
         --color-danger: #ff009e;
-        --color-on-danger: var(--color-white);
+        /* on-danger: brand-dark ink — white/#ff009e = 3.65:1 fails AA; #002233/#ff009e = 6.9:1. */
+        --color-on-danger: #002233;
         /* Border */
         --radius-radius: var(--radius-lg);
     }
