@@ -499,7 +499,12 @@
     }
 
     [data-theme=totvs] {
-        /* TOTVS Brand Identity — https://marca.totvs.com/identidade-visual/ */
+        /* TOTVS Brand Identity — https://marca.totvs.com/identidade-visual/
+           Brand palette (totvscolors.css) names TWO primaries: azulescuro #002233
+           and azul #00dbff. Light mode binds primary → azulescuro (dark navy) so
+           text-primary clears AA on surface (#002233/#f0f4f8 = 16.3:1). Dark mode
+           keeps primary → azul since cyan on navy background already passes AA.
+           Cyan accent role preserved in light mode via --color-info: #00dbff. */
         --font-body: 'TOTVS', ui-sans-serif, system-ui, sans-serif;
         --font-title: 'TOTVS', ui-sans-serif, system-ui, sans-serif;
         /* Light Theme */
@@ -507,8 +512,8 @@
         --color-surface-alt: #e6e6e6;
         --color-on-surface: #545454;
         --color-on-surface-strong: #002b33;
-        --color-primary: #00dbff;
-        --color-on-primary: #002233;
+        --color-primary: #002233;
+        --color-on-primary: #ffffff;
         --color-secondary: #a44dff;
         /* on-secondary: brand-dark ink, not white — white/#a44dff = 4.13:1 fails AA; #002233/#a44dff = 7.8:1. */
         --color-on-secondary: #002233;
