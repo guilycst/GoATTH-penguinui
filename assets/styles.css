@@ -192,6 +192,10 @@
     --color-surface-alt: var(--color-neutral-200);
     --color-on-surface: var(--color-neutral-800);
     --color-on-surface-strong: var(--color-black);
+    --color-on-surface-muted: color-mix(in srgb, oklch(26.9% 0 0) 70%, oklch(97% 0 0) 30%);
+    @supports (color: color-mix(in lab, red, red)) {
+      --color-on-surface-muted: color-mix(in srgb, var(--color-on-surface) 70%, var(--color-surface) 30%);
+    }
     --color-primary: var(--color-purple-500);
     --color-on-primary: var(--color-white);
     --color-secondary: var(--color-sky-500);
@@ -202,6 +206,10 @@
     --color-surface-dark-alt: var(--color-neutral-900);
     --color-on-surface-dark: var(--color-neutral-300);
     --color-on-surface-dark-strong: var(--color-neutral-100);
+    --color-on-surface-dark-muted: color-mix(in srgb, oklch(87% 0 0) 70%, oklch(26.9% 0 0) 30%);
+    @supports (color: color-mix(in lab, red, red)) {
+      --color-on-surface-dark-muted: color-mix(in srgb, var(--color-on-surface-dark) 70%, var(--color-surface-dark) 30%);
+    }
     --color-primary-dark: var(--color-purple-400);
     --color-on-primary-dark: var(--color-black);
     --color-secondary-dark: var(--color-blue-400);
@@ -2605,6 +2613,9 @@
       color: color-mix(in oklab, var(--color-on-surface-dark) 80%, transparent);
     }
   }
+  .text-on-surface-muted {
+    color: var(--color-on-surface-muted);
+  }
   .text-on-surface-strong {
     color: var(--color-on-surface-strong);
   }
@@ -3868,6 +3879,13 @@
       }
     }
   }
+  .hover\:text-danger {
+    &:hover {
+      @media (hover: hover) {
+        color: var(--color-danger);
+      }
+    }
+  }
   .hover\:text-on-surface {
     &:hover {
       @media (hover: hover) {
@@ -4093,6 +4111,11 @@
       @supports (color: color-mix(in lab, red, red)) {
         background-color: color-mix(in oklab, var(--color-surface-dark-alt) 10%, transparent);
       }
+    }
+  }
+  .focus-visible\:text-danger {
+    &:focus-visible {
+      color: var(--color-danger);
     }
   }
   .focus-visible\:text-on-surface {
@@ -5398,6 +5421,11 @@
       color: var(--color-on-surface-dark);
     }
   }
+  .dark\:text-on-surface-dark-muted {
+    &:where(.dark, .dark *) {
+      color: var(--color-on-surface-dark-muted);
+    }
+  }
   .dark\:text-on-surface-dark-strong {
     &:where(.dark, .dark *) {
       color: var(--color-on-surface-dark-strong);
@@ -6177,6 +6205,15 @@
       }
     }
   }
+  .dark\:hover\:text-danger {
+    &:where(.dark, .dark *) {
+      &:hover {
+        @media (hover: hover) {
+          color: var(--color-danger);
+        }
+      }
+    }
+  }
   .dark\:hover\:text-on-surface-dark {
     &:where(.dark, .dark *) {
       &:hover {
@@ -6316,6 +6353,16 @@
       }
     }
   }
+  .dark\:focus-visible\:bg-danger\/10 {
+    &:where(.dark, .dark *) {
+      &:focus-visible {
+        background-color: color-mix(in srgb, oklch(65.6% 0.241 354.308) 10%, transparent);
+        @supports (color: color-mix(in lab, red, red)) {
+          background-color: color-mix(in oklab, var(--color-danger) 10%, transparent);
+        }
+      }
+    }
+  }
   .dark\:focus-visible\:bg-surface-alt\/10 {
     &:where(.dark, .dark *) {
       &:focus-visible {
@@ -6340,6 +6387,13 @@
         @supports (color: color-mix(in lab, red, red)) {
           background-color: color-mix(in oklab, var(--color-surface-dark-alt) 75%, transparent);
         }
+      }
+    }
+  }
+  .dark\:focus-visible\:text-danger {
+    &:where(.dark, .dark *) {
+      &:focus-visible {
+        color: var(--color-danger);
       }
     }
   }

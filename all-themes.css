@@ -8,6 +8,11 @@
     --color-surface-alt: var(--color-neutral-200);
     --color-on-surface: var(--color-neutral-800);
     --color-on-surface-strong: var(--color-black);
+    /* on-surface-muted: secondary-text token. Auto-derived per theme via
+       color-mix so themes don't need to override it; themes MAY override for
+       precision. Replaces text-on-surface/40-70 opacity-as-hierarchy hack
+       that produced sub-AA contrast in every theme (see design-audit). */
+    --color-on-surface-muted: color-mix(in srgb, var(--color-on-surface) 70%, var(--color-surface) 30%);
     --color-primary: var(--color-purple-500);
     --color-on-primary: var(--color-white);
     --color-secondary: var(--color-sky-500);
@@ -20,6 +25,7 @@
     --color-surface-dark-alt: var(--color-neutral-900);
     --color-on-surface-dark: var(--color-neutral-300);
     --color-on-surface-dark-strong: var(--color-neutral-100);
+    --color-on-surface-dark-muted: color-mix(in srgb, var(--color-on-surface-dark) 70%, var(--color-surface-dark) 30%);
     --color-primary-dark: var(--color-purple-400);
     --color-on-primary-dark: var(--color-black);
     --color-secondary-dark: var(--color-blue-400);
