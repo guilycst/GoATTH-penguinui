@@ -82,7 +82,7 @@ func ComponentDemo(props ComponentDemoProps, demoContent templ.Component, codeEx
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "\" target=\"_blank\" class=\"inline-flex items-center gap-1 text-sm px-3 py-1 rounded-full bg-surface-alt dark:bg-surface-dark-alt text-on-surface/70 hover:text-primary dark:text-on-surface-dark/70 dark:hover:text-primary-dark transition-colors border border-outline dark:border-outline-dark\"><span>View Original</span> <svg xmlns=\"http://www.w3.org/2000/svg\" class=\"h-3 w-3\" fill=\"none\" viewBox=\"0 0 24 24\" stroke=\"currentColor\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14\"></path></svg></a></div><p class=\"text-lg text-on-surface/70 dark:text-on-surface-dark/70 max-w-3xl\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "\" target=\"_blank\" class=\"inline-flex items-center gap-1 text-sm px-3 py-1 rounded-full bg-surface-alt dark:bg-surface-dark-alt text-on-surface-muted hover:text-primary dark:text-on-surface-dark-muted dark:hover:text-primary-dark transition-colors border border-outline dark:border-outline-dark\"><span>View Original</span> <svg xmlns=\"http://www.w3.org/2000/svg\" class=\"h-3 w-3\" fill=\"none\" viewBox=\"0 0 24 24\" stroke=\"currentColor\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14\"></path></svg></a></div><p class=\"text-lg text-on-surface-muted dark:text-on-surface-dark-muted max-w-3xl\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -135,7 +135,7 @@ func ComponentDemo(props ComponentDemoProps, demoContent templ.Component, codeEx
 			return templ_7745c5c3_Err
 		}
 		if len(props.Props) > 0 {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "<div class=\"mt-8\"><h2 class=\"text-lg font-semibold font-title mb-4\">API Reference</h2><div class=\"overflow-x-auto rounded-radius border border-outline dark:border-outline-dark\"><table class=\"w-full text-sm text-left border-collapse\"><thead class=\"bg-surface-alt dark:bg-surface-dark-alt border-b border-outline dark:border-outline-dark\"><tr><th class=\"px-4 py-3 text-xs font-semibold uppercase tracking-wide text-on-surface/60 dark:text-on-surface-dark/60\">Prop</th><th class=\"px-4 py-3 text-xs font-semibold uppercase tracking-wide text-on-surface/60 dark:text-on-surface-dark/60\">Type</th><th class=\"px-4 py-3 text-xs font-semibold uppercase tracking-wide text-on-surface/60 dark:text-on-surface-dark/60\">Default</th><th class=\"px-4 py-3 text-xs font-semibold uppercase tracking-wide text-on-surface/60 dark:text-on-surface-dark/60\">Description</th></tr></thead> <tbody class=\"divide-y divide-outline dark:divide-outline-dark\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "<div class=\"mt-8\"><h2 class=\"text-lg font-semibold font-title mb-4\">API Reference</h2><div class=\"overflow-x-auto rounded-radius border border-outline dark:border-outline-dark\"><table class=\"w-full text-sm text-left border-collapse\"><thead class=\"bg-surface-alt dark:bg-surface-dark-alt border-b border-outline dark:border-outline-dark\"><tr><th class=\"px-4 py-3 text-xs font-semibold uppercase tracking-wide text-on-surface-muted dark:text-on-surface-dark-muted\">Prop</th><th class=\"px-4 py-3 text-xs font-semibold uppercase tracking-wide text-on-surface-muted dark:text-on-surface-dark-muted\">Type</th><th class=\"px-4 py-3 text-xs font-semibold uppercase tracking-wide text-on-surface-muted dark:text-on-surface-dark-muted\">Default</th><th class=\"px-4 py-3 text-xs font-semibold uppercase tracking-wide text-on-surface-muted dark:text-on-surface-dark-muted\">Description</th></tr></thead> <tbody class=\"divide-y divide-outline dark:divide-outline-dark\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -153,27 +153,27 @@ func ComponentDemo(props ComponentDemoProps, demoContent templ.Component, codeEx
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "</code></td><td class=\"px-4 py-2.5 text-on-surface/70 dark:text-on-surface-dark/70\"><code class=\"font-mono text-xs\">")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "</code></td><td class=\"px-4 py-2.5 text-on-surface-muted dark:text-on-surface-dark-muted\"><code class=\"font-mono text-xs\">")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var7 string
 				templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(p.Type)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/component_demo.templ`, Line: 102, Col: 122}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/component_demo.templ`, Line: 102, Col: 128}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "</code></td><td class=\"px-4 py-2.5 text-on-surface/50 dark:text-on-surface-dark/50\"><code class=\"font-mono text-xs\">")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "</code></td><td class=\"px-4 py-2.5 text-on-surface-muted dark:text-on-surface-dark-muted\"><code class=\"font-mono text-xs\">")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var8 string
 				templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(p.Default)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/component_demo.templ`, Line: 103, Col: 125}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/component_demo.templ`, Line: 103, Col: 131}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
 				if templ_7745c5c3_Err != nil {
@@ -251,14 +251,14 @@ func DemoSection(props DemoSectionProps, preview templ.Component, code string) t
 			return templ_7745c5c3_Err
 		}
 		if props.Description != "" {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "<p class=\"text-sm text-on-surface/70 dark:text-on-surface-dark/70 mb-4\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "<p class=\"text-sm text-on-surface-muted dark:text-on-surface-dark-muted mb-4\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var12 string
 			templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(props.Description)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/component_demo.templ`, Line: 122, Col: 94}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/component_demo.templ`, Line: 122, Col: 100}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
 			if templ_7745c5c3_Err != nil {

@@ -161,7 +161,7 @@ func formValidationDemoPreview() templ.Component {
 		}
 		ctx = templ.ClearChildren(ctx)
 		def := buildDemoValidationFormDef()
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"w-full max-w-2xl mx-auto space-y-6\"><div><h4 class=\"mb-2 text-sm font-medium text-on-surface-strong dark:text-on-surface-dark-strong\">Try it out</h4><p class=\"mb-4 text-sm text-on-surface/70 dark:text-on-surface-dark/70\">Type in the fields below and tab out to see validation in action. The slug field auto-generates from name. Try \"admin\", \"test\", or \"demo\" as slugs to see the uniqueness check.</p></div><div id=\"form-result\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"w-full max-w-2xl mx-auto space-y-6\"><div><h4 class=\"mb-2 text-sm font-medium text-on-surface-strong dark:text-on-surface-dark-strong\">Try it out</h4><p class=\"mb-4 text-sm text-on-surface-muted dark:text-on-surface-dark-muted\">Type in the fields below and tab out to see validation in action. The slug field auto-generates from name. Try \"admin\", \"test\", or \"demo\" as slugs to see the uniqueness check.</p></div><div id=\"form-result\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

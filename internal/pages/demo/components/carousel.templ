@@ -131,7 +131,7 @@ templ carouselDemoPreview() {
 		<!-- With Touch -->
 		<div>
 			<h4 class="mb-4 text-lg font-semibold text-on-surface-strong dark:text-on-surface-dark-strong">With Touch / Swipe</h4>
-			<p class="mb-2 text-sm text-on-surface/70 dark:text-on-surface-dark/70">Swipe left or right on touch devices</p>
+			<p class="mb-2 text-sm text-on-surface-muted dark:text-on-surface-dark-muted">Swipe left or right on touch devices</p>
 			@carousel.Carousel(carousel.Config{
 				Touch:  true,
 				Slides: defaultSlides(),
@@ -150,7 +150,7 @@ templ carouselDemoPreview() {
 		<!-- HTMX Dynamic -->
 		<div>
 			<h4 class="mb-4 text-lg font-semibold text-on-surface-strong dark:text-on-surface-dark-strong">HTMX Dynamic Loading</h4>
-			<p class="mb-2 text-sm text-on-surface/70 dark:text-on-surface-dark/70">Slides fetched from the server via HTMX on page load</p>
+			<p class="mb-2 text-sm text-on-surface-muted dark:text-on-surface-dark-muted">Slides fetched from the server via HTMX on page load</p>
 			@carousel.Carousel(carousel.Config{
 				HTMX: &carousel.HTMXConfig{Get: "/api/components/carousel/slides"},
 			})

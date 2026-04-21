@@ -395,7 +395,7 @@ func buttonDemoPreview() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "<span id=\"htmx-result-1\" class=\"text-sm text-on-surface dark:text-on-surface-dark\"><em class=\"text-on-surface/50 dark:text-on-surface-dark/50\">Click to load...</em></span></div><div class=\"flex items-center gap-3\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "<span id=\"htmx-result-1\" class=\"text-sm text-on-surface dark:text-on-surface-dark\"><em class=\"text-on-surface-muted dark:text-on-surface-dark-muted\">Click to load...</em></span></div><div class=\"flex items-center gap-3\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -429,7 +429,7 @@ func buttonDemoPreview() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "<span id=\"htmx-result-2\" class=\"text-sm text-on-surface dark:text-on-surface-dark\"><em class=\"text-on-surface/50 dark:text-on-surface-dark/50\">Click to load...</em></span></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "<span id=\"htmx-result-2\" class=\"text-sm text-on-surface dark:text-on-surface-dark\"><em class=\"text-on-surface-muted dark:text-on-surface-dark-muted\">Click to load...</em></span></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

@@ -152,7 +152,7 @@ func tabsDemoPreview() templ.Component {
 			templ_7745c5c3_Var3 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"space-y-12\"><!-- Default Tabs --><div><h3 class=\"text-sm font-medium text-on-surface/60 dark:text-on-surface-dark/60 mb-4\">Default Tabs</h3>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"space-y-12\"><!-- Default Tabs --><div><h3 class=\"text-sm font-medium text-on-surface-muted dark:text-on-surface-dark-muted mb-4\">Default Tabs</h3>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -168,7 +168,7 @@ func tabsDemoPreview() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</div><!-- Tabs with Icons --><div><h3 class=\"text-sm font-medium text-on-surface/60 dark:text-on-surface-dark/60 mb-4\">Tabs with Icon</h3>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</div><!-- Tabs with Icons --><div><h3 class=\"text-sm font-medium text-on-surface-muted dark:text-on-surface-dark-muted mb-4\">Tabs with Icon</h3>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -184,7 +184,7 @@ func tabsDemoPreview() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "</div><!-- Tabs with Icons and Badges --><div><h3 class=\"text-sm font-medium text-on-surface/60 dark:text-on-surface-dark/60 mb-4\">Tabs with Icon and Badge</h3>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "</div><!-- Tabs with Icons and Badges --><div><h3 class=\"text-sm font-medium text-on-surface-muted dark:text-on-surface-dark-muted mb-4\">Tabs with Icon and Badge</h3>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -200,7 +200,7 @@ func tabsDemoPreview() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "</div><!-- Tabs with HTMX Lazy Loading --><div><h3 class=\"text-sm font-medium text-on-surface/60 dark:text-on-surface-dark/60 mb-4\">Tabs with HTMX Lazy Loading</h3>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "</div><!-- Tabs with HTMX Lazy Loading --><div><h3 class=\"text-sm font-medium text-on-surface-muted dark:text-on-surface-dark-muted mb-4\">Tabs with HTMX Lazy Loading</h3>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -215,7 +215,7 @@ func tabsDemoPreview() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "</div><!-- Tabs with Hash Sync --><div><h3 class=\"text-sm font-medium text-on-surface/60 dark:text-on-surface-dark/60 mb-4\">Tabs with URL Hash Sync</h3><p class=\"text-xs text-on-surface/40 dark:text-on-surface-dark/40 mb-2\">Selected tab syncs with the URL fragment. Try switching tabs — the hash updates. Refresh with <code class=\"bg-surface-alt dark:bg-surface-dark-alt px-1 rounded\">#comments</code> in the URL.</p>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "</div><!-- Tabs with Hash Sync --><div><h3 class=\"text-sm font-medium text-on-surface-muted dark:text-on-surface-dark-muted mb-4\">Tabs with URL Hash Sync</h3><p class=\"text-xs text-on-surface-muted dark:text-on-surface-dark-muted mb-2\">Selected tab syncs with the URL fragment. Try switching tabs — the hash updates. Refresh with <code class=\"bg-surface-alt dark:bg-surface-dark-alt px-1 rounded\">#comments</code> in the URL.</p>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

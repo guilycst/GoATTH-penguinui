@@ -218,7 +218,7 @@ func tableDemoPreview() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "</div><div><h4 class=\"text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong\">Sortable Table (click headers)</h4><p class=\"text-xs text-on-surface/60 dark:text-on-surface-dark/60 mb-2\">Click column headers to sort. Uses HTMX to fetch sorted data from the server.</p>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "</div><div><h4 class=\"text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong\">Sortable Table (click headers)</h4><p class=\"text-xs text-on-surface-muted dark:text-on-surface-dark-muted mb-2\">Click column headers to sort. Uses HTMX to fetch sorted data from the server.</p>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -233,7 +233,7 @@ func tableDemoPreview() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "</div><div><h4 class=\"text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong\">Lazy-Loaded Table</h4><p class=\"text-xs text-on-surface/60 dark:text-on-surface-dark/60 mb-2\">Table body loads from the server via HTMX on page load.</p>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "</div><div><h4 class=\"text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong\">Lazy-Loaded Table</h4><p class=\"text-xs text-on-surface-muted dark:text-on-surface-dark-muted mb-2\">Table body loads from the server via HTMX on page load.</p>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -246,7 +246,7 @@ func tableDemoPreview() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "</div><div><h4 class=\"text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong\">Paginated Table</h4><p class=\"text-xs text-on-surface/60 dark:text-on-surface-dark/60 mb-2\">Navigate between pages with HTMX-powered pagination controls.</p>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "</div><div><h4 class=\"text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong\">Paginated Table</h4><p class=\"text-xs text-on-surface-muted dark:text-on-surface-dark-muted mb-2\">Navigate between pages with HTMX-powered pagination controls.</p>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -260,7 +260,7 @@ func tableDemoPreview() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "</div><div><h4 class=\"text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong\">Filtered Table</h4><p class=\"text-xs text-on-surface/60 dark:text-on-surface-dark/60 mb-2\">Search and filter table data with HTMX-powered filter controls.</p>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "</div><div><h4 class=\"text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong\">Filtered Table</h4><p class=\"text-xs text-on-surface-muted dark:text-on-surface-dark-muted mb-2\">Search and filter table data with HTMX-powered filter controls.</p>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -301,7 +301,7 @@ func tableDemoPreview() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "</div><div><h4 class=\"text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong\">Infinite Scroll Table</h4><p class=\"text-xs text-on-surface/60 dark:text-on-surface-dark/60 mb-2\">Scroll down in the container to automatically load more rows via HTMX.</p>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "</div><div><h4 class=\"text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong\">Infinite Scroll Table</h4><p class=\"text-xs text-on-surface-muted dark:text-on-surface-dark-muted mb-2\">Scroll down in the container to automatically load more rows via HTMX.</p>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

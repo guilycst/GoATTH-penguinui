@@ -77,7 +77,7 @@ templ tabsDemoPreview() {
 	<div class="space-y-12">
 		<!-- Default Tabs -->
 		<div>
-			<h3 class="text-sm font-medium text-on-surface/60 dark:text-on-surface-dark/60 mb-4">Default Tabs</h3>
+			<h3 class="text-sm font-medium text-on-surface-muted dark:text-on-surface-dark-muted mb-4">Default Tabs</h3>
 			@tabs.Tabs(tabs.Config{
 				ID: "default",
 				Tabs: []tabs.Tab{
@@ -91,7 +91,7 @@ templ tabsDemoPreview() {
 
 		<!-- Tabs with Icons -->
 		<div>
-			<h3 class="text-sm font-medium text-on-surface/60 dark:text-on-surface-dark/60 mb-4">Tabs with Icon</h3>
+			<h3 class="text-sm font-medium text-on-surface-muted dark:text-on-surface-dark-muted mb-4">Tabs with Icon</h3>
 			@tabs.Tabs(tabs.Config{
 				ID: "icon",
 				Tabs: []tabs.Tab{
@@ -105,7 +105,7 @@ templ tabsDemoPreview() {
 
 		<!-- Tabs with Icons and Badges -->
 		<div>
-			<h3 class="text-sm font-medium text-on-surface/60 dark:text-on-surface-dark/60 mb-4">Tabs with Icon and Badge</h3>
+			<h3 class="text-sm font-medium text-on-surface-muted dark:text-on-surface-dark-muted mb-4">Tabs with Icon and Badge</h3>
 			@tabs.Tabs(tabs.Config{
 				ID: "badge",
 				Tabs: []tabs.Tab{
@@ -118,7 +118,7 @@ templ tabsDemoPreview() {
 		</div>
 		<!-- Tabs with HTMX Lazy Loading -->
 		<div>
-			<h3 class="text-sm font-medium text-on-surface/60 dark:text-on-surface-dark/60 mb-4">Tabs with HTMX Lazy Loading</h3>
+			<h3 class="text-sm font-medium text-on-surface-muted dark:text-on-surface-dark-muted mb-4">Tabs with HTMX Lazy Loading</h3>
 			@tabs.Tabs(tabs.Config{
 				ID: "htmx",
 				Tabs: []tabs.Tab{
@@ -130,8 +130,8 @@ templ tabsDemoPreview() {
 		</div>
 		<!-- Tabs with Hash Sync -->
 		<div>
-			<h3 class="text-sm font-medium text-on-surface/60 dark:text-on-surface-dark/60 mb-4">Tabs with URL Hash Sync</h3>
-			<p class="text-xs text-on-surface/40 dark:text-on-surface-dark/40 mb-2">Selected tab syncs with the URL fragment. Try switching tabs — the hash updates. Refresh with <code class="bg-surface-alt dark:bg-surface-dark-alt px-1 rounded">#comments</code> in the URL.</p>
+			<h3 class="text-sm font-medium text-on-surface-muted dark:text-on-surface-dark-muted mb-4">Tabs with URL Hash Sync</h3>
+			<p class="text-xs text-on-surface-muted dark:text-on-surface-dark-muted mb-2">Selected tab syncs with the URL fragment. Try switching tabs — the hash updates. Refresh with <code class="bg-surface-alt dark:bg-surface-dark-alt px-1 rounded">#comments</code> in the URL.</p>
 			@tabs.Tabs(tabs.Config{
 				ID:       "hash-sync",
 				SyncHash: true,

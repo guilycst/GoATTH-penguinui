@@ -215,7 +215,7 @@ func carouselDemoPreview() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "</div><!-- With Touch --><div><h4 class=\"mb-4 text-lg font-semibold text-on-surface-strong dark:text-on-surface-dark-strong\">With Touch / Swipe</h4><p class=\"mb-2 text-sm text-on-surface/70 dark:text-on-surface-dark/70\">Swipe left or right on touch devices</p>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "</div><!-- With Touch --><div><h4 class=\"mb-4 text-lg font-semibold text-on-surface-strong dark:text-on-surface-dark-strong\">With Touch / Swipe</h4><p class=\"mb-2 text-sm text-on-surface-muted dark:text-on-surface-dark-muted\">Swipe left or right on touch devices</p>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -237,7 +237,7 @@ func carouselDemoPreview() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "</div><!-- HTMX Dynamic --><div><h4 class=\"mb-4 text-lg font-semibold text-on-surface-strong dark:text-on-surface-dark-strong\">HTMX Dynamic Loading</h4><p class=\"mb-2 text-sm text-on-surface/70 dark:text-on-surface-dark/70\">Slides fetched from the server via HTMX on page load</p>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "</div><!-- HTMX Dynamic --><div><h4 class=\"mb-4 text-lg font-semibold text-on-surface-strong dark:text-on-surface-dark-strong\">HTMX Dynamic Loading</h4><p class=\"mb-2 text-sm text-on-surface-muted dark:text-on-surface-dark-muted\">Slides fetched from the server via HTMX on page load</p>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

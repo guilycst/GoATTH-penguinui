@@ -134,7 +134,7 @@ templ tableDemoPreview() {
 		// Sortable Table (HTMX)
 		<div>
 			<h4 class="text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong">Sortable Table (click headers)</h4>
-			<p class="text-xs text-on-surface/60 dark:text-on-surface-dark/60 mb-2">Click column headers to sort. Uses HTMX to fetch sorted data from the server.</p>
+			<p class="text-xs text-on-surface-muted dark:text-on-surface-dark-muted mb-2">Click column headers to sort. Uses HTMX to fetch sorted data from the server.</p>
 			@table.Table(table.Config{
 				ID:           "sortable-table",
 				HTMXEndpoint: "/api/components/table/rows",
@@ -148,7 +148,7 @@ templ tableDemoPreview() {
 		// Lazy-Loaded Table
 		<div>
 			<h4 class="text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong">Lazy-Loaded Table</h4>
-			<p class="text-xs text-on-surface/60 dark:text-on-surface-dark/60 mb-2">Table body loads from the server via HTMX on page load.</p>
+			<p class="text-xs text-on-surface-muted dark:text-on-surface-dark-muted mb-2">Table body loads from the server via HTMX on page load.</p>
 			@table.Table(table.Config{
 				ID:           "lazy-table",
 				HTMXEndpoint: "/api/components/table/rows?variant=lazy",
@@ -160,7 +160,7 @@ templ tableDemoPreview() {
 		// Paginated Table
 		<div>
 			<h4 class="text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong">Paginated Table</h4>
-			<p class="text-xs text-on-surface/60 dark:text-on-surface-dark/60 mb-2">Navigate between pages with HTMX-powered pagination controls.</p>
+			<p class="text-xs text-on-surface-muted dark:text-on-surface-dark-muted mb-2">Navigate between pages with HTMX-powered pagination controls.</p>
 			@table.Table(table.Config{
 				ID:           "paginated-table",
 				HTMXEndpoint: "/api/components/table/rows",
@@ -173,7 +173,7 @@ templ tableDemoPreview() {
 		// Filtered Table
 		<div>
 			<h4 class="text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong">Filtered Table</h4>
-			<p class="text-xs text-on-surface/60 dark:text-on-surface-dark/60 mb-2">Search and filter table data with HTMX-powered filter controls.</p>
+			<p class="text-xs text-on-surface-muted dark:text-on-surface-dark-muted mb-2">Search and filter table data with HTMX-powered filter controls.</p>
 			@table.Table(table.Config{
 				ID:           "filtered-table",
 				HTMXEndpoint: "/api/components/table/rows",
@@ -213,7 +213,7 @@ templ tableDemoPreview() {
 		// Infinite Scroll Table
 		<div>
 			<h4 class="text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong">Infinite Scroll Table</h4>
-			<p class="text-xs text-on-surface/60 dark:text-on-surface-dark/60 mb-2">Scroll down in the container to automatically load more rows via HTMX.</p>
+			<p class="text-xs text-on-surface-muted dark:text-on-surface-dark-muted mb-2">Scroll down in the container to automatically load more rows via HTMX.</p>
 			@table.Table(table.Config{
 				ID:           "infinite-table",
 				HTMXEndpoint: "/api/components/table/rows?variant=infinite",

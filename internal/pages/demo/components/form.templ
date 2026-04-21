@@ -281,7 +281,7 @@ templ formDemoPreview() {
 		<!-- External Submit (Modal Pattern) -->
 		<div>
 			<h4 class="mb-4 text-lg font-semibold text-on-surface-strong dark:text-on-surface-dark-strong">External Submit (Modal Pattern)</h4>
-			<p class="mb-4 text-sm text-on-surface/70 dark:text-on-surface-dark/70">
+			<p class="mb-4 text-sm text-on-surface-muted dark:text-on-surface-dark-muted">
 				The form has no footer. The submit button uses <code class="text-xs bg-surface-alt dark:bg-surface-dark-alt px-1 py-0.5 rounded">form="external-form"</code> to trigger submission from outside.
 			</p>
 			<div class="flex flex-col gap-4">
@@ -344,7 +344,7 @@ templ customTagsInput() {
 				x-model="newTag"
 				placeholder="Add a tag..."
 				x-on:keydown.enter.prevent="if (newTag.trim()) { tags.push(newTag.trim()); newTag = '' }"
-				class="flex-1 px-3 py-2 text-sm rounded-radius border border-outline dark:border-outline-dark bg-surface dark:bg-surface-dark text-on-surface-strong dark:text-on-surface-dark-strong placeholder:text-on-surface/50 dark:placeholder:text-on-surface-dark/50 focus:outline-none focus:ring-2 focus:ring-primary dark:focus:ring-primary-dark"
+				class="flex-1 px-3 py-2 text-sm rounded-radius border border-outline dark:border-outline-dark bg-surface dark:bg-surface-dark text-on-surface-strong dark:text-on-surface-dark-strong placeholder:text-on-surface-muted dark:placeholder:text-on-surface-dark-muted focus:outline-none focus:ring-2 focus:ring-primary dark:focus:ring-primary-dark"
 			/>
 			<button
 				type="button"
@@ -361,11 +361,11 @@ templ customTagsInput() {
 templ networkReadView() {
 	<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
 		<div class="flex flex-col gap-1">
-			<span class="text-xs font-medium text-on-surface/60 dark:text-on-surface-dark/60 uppercase tracking-wider">Pod Subnet CIDR</span>
+			<span class="text-xs font-medium text-on-surface-muted dark:text-on-surface-dark-muted uppercase tracking-wider">Pod Subnet CIDR</span>
 			<span class="text-sm font-medium text-on-surface-strong dark:text-on-surface-dark-strong">10.244.0.0/16</span>
 		</div>
 		<div class="flex flex-col gap-1">
-			<span class="text-xs font-medium text-on-surface/60 dark:text-on-surface-dark/60 uppercase tracking-wider">Service Subnet CIDR</span>
+			<span class="text-xs font-medium text-on-surface-muted dark:text-on-surface-dark-muted uppercase tracking-wider">Service Subnet CIDR</span>
 			<span class="text-sm font-medium text-on-surface-strong dark:text-on-surface-dark-strong">10.96.0.0/12</span>
 		</div>
 	</div>

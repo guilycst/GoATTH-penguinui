@@ -129,7 +129,7 @@ func paginationDemoPreview() templ.Component {
 			templ_7745c5c3_Var3 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"w-full max-w-3xl mx-auto space-y-12\"><div><h4 class=\"text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong\">Simple Pagination (Prev/Next)</h4><p class=\"text-xs text-on-surface/60 dark:text-on-surface-dark/60 mb-4\">A minimal pagination with only previous and next buttons.</p>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"w-full max-w-3xl mx-auto space-y-12\"><div><h4 class=\"text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong\">Simple Pagination (Prev/Next)</h4><p class=\"text-xs text-on-surface-muted dark:text-on-surface-dark-muted mb-4\">A minimal pagination with only previous and next buttons.</p>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -142,7 +142,7 @@ func paginationDemoPreview() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</div><div><h4 class=\"text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong\">Simple Pagination (First Page)</h4><p class=\"text-xs text-on-surface/60 dark:text-on-surface-dark/60 mb-4\">Previous button is disabled on the first page.</p>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</div><div><h4 class=\"text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong\">Simple Pagination (First Page)</h4><p class=\"text-xs text-on-surface-muted dark:text-on-surface-dark-muted mb-4\">Previous button is disabled on the first page.</p>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -155,7 +155,7 @@ func paginationDemoPreview() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "</div><div><h4 class=\"text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong\">Pagination with Ellipsis (Page 2 of 30)</h4><p class=\"text-xs text-on-surface/60 dark:text-on-surface-dark/60 mb-4\">Shows page numbers with ellipsis for large page ranges.</p>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "</div><div><h4 class=\"text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong\">Pagination with Ellipsis (Page 2 of 30)</h4><p class=\"text-xs text-on-surface-muted dark:text-on-surface-dark-muted mb-4\">Shows page numbers with ellipsis for large page ranges.</p>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -168,7 +168,7 @@ func paginationDemoPreview() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "</div><div><h4 class=\"text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong\">Pagination with Ellipsis (Page 15 of 30)</h4><p class=\"text-xs text-on-surface/60 dark:text-on-surface-dark/60 mb-4\">Current page in the middle shows ellipsis on both sides.</p>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "</div><div><h4 class=\"text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong\">Pagination with Ellipsis (Page 15 of 30)</h4><p class=\"text-xs text-on-surface-muted dark:text-on-surface-dark-muted mb-4\">Current page in the middle shows ellipsis on both sides.</p>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -181,7 +181,7 @@ func paginationDemoPreview() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "</div><div><h4 class=\"text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong\">Pagination with Ellipsis (Page 29 of 30)</h4><p class=\"text-xs text-on-surface/60 dark:text-on-surface-dark/60 mb-4\">Near the end, ellipsis only appears before the range.</p>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "</div><div><h4 class=\"text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong\">Pagination with Ellipsis (Page 29 of 30)</h4><p class=\"text-xs text-on-surface-muted dark:text-on-surface-dark-muted mb-4\">Near the end, ellipsis only appears before the range.</p>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -194,7 +194,7 @@ func paginationDemoPreview() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "</div><div><h4 class=\"text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong\">Small Page Count (No Ellipsis)</h4><p class=\"text-xs text-on-surface/60 dark:text-on-surface-dark/60 mb-4\">When total pages are 7 or fewer, all pages are shown.</p>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "</div><div><h4 class=\"text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong\">Small Page Count (No Ellipsis)</h4><p class=\"text-xs text-on-surface-muted dark:text-on-surface-dark-muted mb-4\">When total pages are 7 or fewer, all pages are shown.</p>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

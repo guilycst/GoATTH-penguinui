@@ -31,13 +31,13 @@ templ Page(cfg table.Config) {
 		<body class="min-h-screen bg-surface text-on-surface dark:bg-surface-dark dark:text-on-surface-dark">
 			<div class="max-w-5xl mx-auto px-6 py-12">
 				<h1 class="text-3xl font-bold font-title mb-2 text-on-surface-strong dark:text-on-surface-dark-strong">Dog Breeds</h1>
-				<p class="text-on-surface/60 dark:text-on-surface-dark/60 mb-8">
+				<p class="text-on-surface-muted dark:text-on-surface-dark-muted mb-8">
 					A filterable, sortable, paginated table built with
 					<a href="https://github.com/guilycst/GoATTH-penguinui" class="underline text-primary dark:text-primary-dark">GoATTH</a> —
 					Go + Alpine.js + Tailwind CSS + Templ + HTMX.
 				</p>
 				@table.Table(cfg)
-				<p class="mt-6 text-xs text-on-surface/40 dark:text-on-surface-dark/40 text-center">
+				<p class="mt-6 text-xs text-on-surface-muted dark:text-on-surface-dark-muted text-center">
 					Built with <a href="https://github.com/guilycst/GoATTH-penguinui" class="underline">GoATTH</a>
 				</p>
 			</div>
