@@ -1,6 +1,10 @@
 package tabs
 
-import "github.com/a-h/templ"
+import (
+	"fmt"
+
+	"github.com/a-h/templ"
+)
 
 // Tab represents a single tab with its label and panel content
 type Tab struct {
@@ -40,6 +44,46 @@ type Config struct {
 	DefaultTab string
 	// Class allows additional CSS classes on the container
 	Class string
+	// SyncHash syncs the active tab with the URL fragment (hash).
+	// When true: reads hash on init to select tab, updates hash on tab change.
+	// Invalid hash values fall back to DefaultTab.
+	SyncHash bool
+}
+
+// tabsData generates the Alpine.js x-data object literal for the tab component.
+// Uses inline x-data matching the combobox v1 pattern — Go generates the JS
+// object literal, templ's HTML escaping (&#39; etc.) is transparent to Alpine.
+func tabsData(cfg Config) string {
+	defaultTab := cfg.DefaultTab
+	if defaultTab == "" && len(cfg.Tabs) > 0 {
+		defaultTab = cfg.Tabs[0].ID
+	}
+
+	if !cfg.SyncHash {
+		return fmt.Sprintf(`{selectedTab:'%s'}`, jsEscapeSingle(defaultTab))
+	}
+
+	// Build JS array of valid tab IDs for hash validation
+	jsIDs := make([]string, len(cfg.Tabs))
+	for i, t := range cfg.Tabs {
+		jsIDs[i] = "'" + jsEscapeSingle(t.ID) + "'"
+	}
+	validArr := ""
+	for i, id := range jsIDs {
+		if i > 0 {
+			validArr += ","
+		}
+		validArr += id
+	}
+
+	return fmt.Sprintf(
+		`{selectedTab:'%s',init(){`+
+			`var h=window.location.hash.slice(1);`+
+			`var v=[%s];`+
+			`if(h&&v.includes(h))this.selectedTab=h;`+
+			`this.$watch('selectedTab',function(t){history.replaceState(null,'','#'+t)});`+
+			`}}`,
+		jsEscapeSingle(defaultTab), validArr)
 }
 
 // ActiveClasses returns the CSS classes for the active tab button

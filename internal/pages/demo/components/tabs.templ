@@ -58,6 +58,16 @@ templ tabsDemoContent() {
         {ID: "details", Label: "Details", HTMX: &tabs.TabHTMX{Get: "/api/components/tab-content/details"}},
         {ID: "activity", Label: "Activity", HTMX: &tabs.TabHTMX{Get: "/api/components/tab-content/activity"}},
     },
+})
+
+// Tabs with URL Hash Sync
+@tabs.Tabs(tabs.Config{
+    ID:       "my-tabs",
+    SyncHash: true,
+    Tabs: []tabs.Tab{
+        {ID: "members", Label: "Members", Content: membersContent()},
+        {ID: "clusters", Label: "Clusters", Content: clustersContent()},
+    },
 })`,
 	)
 }
@@ -115,6 +125,21 @@ templ tabsDemoPreview() {
 					{ID: "overview", Label: "Overview", Content: tabContent("Overview")},
 					{ID: "details", Label: "Details", HTMX: &tabs.TabHTMX{Get: "/api/components/tab-content/details"}},
 					{ID: "activity", Label: "Activity", HTMX: &tabs.TabHTMX{Get: "/api/components/tab-content/activity"}},
+				},
+			})
+		</div>
+		<!-- Tabs with Hash Sync -->
+		<div>
+			<h3 class="text-sm font-medium text-on-surface/60 dark:text-on-surface-dark/60 mb-4">Tabs with URL Hash Sync</h3>
+			<p class="text-xs text-on-surface/40 dark:text-on-surface-dark/40 mb-2">Selected tab syncs with the URL fragment. Try switching tabs — the hash updates. Refresh with <code class="bg-surface-alt dark:bg-surface-dark-alt px-1 rounded">#comments</code> in the URL.</p>
+			@tabs.Tabs(tabs.Config{
+				ID:       "hash-sync",
+				SyncHash: true,
+				Tabs: []tabs.Tab{
+					{ID: "groups", Label: "Groups", Icon: groupsIcon(), Content: tabContent("Groups")},
+					{ID: "likes", Label: "Likes", Icon: likesIcon(), Content: tabContent("Likes")},
+					{ID: "comments", Label: "Comments", Icon: commentsIcon(), Content: tabContent("Comments")},
+					{ID: "saved", Label: "Saved", Icon: savedIcon(), Content: tabContent("Saved")},
 				},
 			})
 		</div>
