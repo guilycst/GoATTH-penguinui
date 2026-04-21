@@ -15,12 +15,10 @@ import "fmt"
 //	    },
 //	})
 templ Tabs(cfg Config) {
-	{{ defaultTab := cfg.DefaultTab }}
-	{{ if defaultTab == "" && len(cfg.Tabs) > 0 { defaultTab = cfg.Tabs[0].ID } }}
 	{{ containerID := cfg.ID }}
 	{{ if containerID == "" { containerID = "tabs" } }}
 	<div
-		x-data={ fmt.Sprintf("{ selectedTab: '%s' }", jsEscapeSingle(defaultTab)) }
+		x-data={ tabsData(cfg) }
 		class={ "w-full " + cfg.Class }
 	>
 		<!-- Tab List -->
