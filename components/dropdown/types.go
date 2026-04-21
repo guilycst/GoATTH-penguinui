@@ -11,6 +11,18 @@ const (
 	TriggerContext TriggerMode = "context"
 )
 
+// MenuAlign controls which edge of the trigger the menu panel anchors to.
+// AlignStart (default) pins the panel's left edge to the trigger's left edge,
+// so the panel opens rightward. AlignEnd pins the panel's right edge to the
+// trigger's right edge, so it opens leftward — use this for triggers near the
+// right edge of the viewport to avoid horizontal overflow.
+type MenuAlign string
+
+const (
+	AlignStart MenuAlign = "start"
+	AlignEnd   MenuAlign = "end"
+)
+
 // Item represents a single menu item in the dropdown.
 //
 // An Item renders as either an anchor (default) or a button. It renders as a
@@ -76,6 +88,10 @@ type Config struct {
 	// overflow triggers (e.g., a vertical-dots "…" affordance) without
 	// inheriting TriggerContext's <li> item semantics.
 	TriggerIconOnly bool
+	// MenuAlign controls which edge of the trigger the menu anchors to.
+	// Defaults to AlignStart (panel opens rightward). Use AlignEnd for
+	// triggers at the right edge of the viewport.
+	MenuAlign MenuAlign
 }
 
 // GetTriggerMode returns the trigger mode with a default of click
@@ -128,7 +144,11 @@ func (cfg Config) UseIconOnlyTrigger() bool {
 
 // MenuClasses returns the CSS classes for the dropdown menu container
 func (cfg Config) MenuClasses() string {
-	base := "absolute left-0 z-30 flex w-fit min-w-48 flex-col overflow-hidden rounded-radius border border-outline bg-surface-alt shadow-md dark:border-outline-dark dark:bg-surface-dark-alt"
+	align := "left-0"
+	if cfg.MenuAlign == AlignEnd {
+		align = "right-0"
+	}
+	base := "absolute " + align + " z-30 flex w-fit min-w-48 flex-col overflow-hidden rounded-radius border border-outline bg-surface-alt shadow-md dark:border-outline-dark dark:bg-surface-dark-alt"
 	if cfg.IsContextMenu() {
 		return "top-8 " + base
 	}
