@@ -1,0 +1,134 @@
+package v2
+
+import (
+	"encoding/json"
+	"strconv"
+)
+
+// triggerLabelText returns the text for the trigger button.
+func triggerLabelText(cfg Config, state State) string {
+	switch {
+	case len(state.Selected) == 0:
+		if cfg.Placeholder != "" {
+			return cfg.Placeholder
+		}
+		return "Select…"
+	case cfg.Mode == ModeSingle:
+		for _, opt := range state.Options {
+			if opt.Value == state.Selected[0] {
+				return opt.Label
+			}
+		}
+		return state.Selected[0]
+	case len(state.Selected) == 1:
+		for _, opt := range state.Options {
+			if opt.Value == state.Selected[0] {
+				return opt.Label
+			}
+		}
+		return state.Selected[0]
+	default:
+		return strconv.Itoa(len(state.Selected)) + " selected"
+	}
+}
+
+// Body renders the swappable region: hidden inputs + trigger label + options ul.
+// Do NOT use this directly as the top-level combobox; use Combobox which wraps it in the Alpine shell.
+templ Body(cfg Config, state State) {
+	<div data-combobox-body id={ cfg.ID + "-body" }>
+		for _, v := range state.Selected {
+			<input type="hidden" name={ cfg.Name } value={ v }/>
+		}
+		<span data-combobox-trigger-label>{ triggerLabelText(cfg, state) }</span>
+		if cfg.EnableClearAll && len(state.Selected) > 0 {
+			<button
+				type="button"
+				data-combobox-clear-all
+				hx-post={ cfg.ClearEndpoint }
+				hx-target="closest [data-combobox-body]"
+				hx-swap="outerHTML"
+				hx-include={ cfg.HXIncludeSelector() }
+			>Clear all</button>
+		}
+		if cfg.EnableSearch {
+			<input
+				type="text"
+				data-combobox-search
+				value={ state.Search }
+				placeholder="Search…"
+				hx-get={ cfg.OptionsEndpoint }
+				hx-trigger="input changed delay:200ms"
+				hx-target={ "#" + cfg.ID + "-options" }
+				hx-swap="outerHTML"
+				hx-include={ cfg.HXIncludeSelector() }
+				name="q"
+			/>
+		}
+		@OptionsList(cfg, state)
+	</div>
+}
+
+// hxValsJSON returns the JSON payload for hx-vals carrying the toggled value.
+func hxValsJSON(value string) string {
+	b, _ := json.Marshal(map[string]string{"value": value})
+	return string(b)
+}
+
+// OptionsList renders just the <ul>. Swap target for search and lazy first-load.
+templ OptionsList(cfg Config, state State) {
+	<ul id={ cfg.ID + "-options" } role="listbox">
+		for _, opt := range state.Options {
+			<li
+				role="option"
+				data-value={ opt.Value }
+				aria-selected={ strconv.FormatBool(state.IsSelected(opt.Value)) }
+				hx-post={ cfg.ToggleEndpoint }
+				hx-target="closest [data-combobox-body]"
+				hx-swap="outerHTML"
+				hx-vals={ hxValsJSON(opt.Value) }
+				hx-include={ cfg.HXIncludeSelector() }
+			>
+				{ opt.Label }
+			</li>
+		}
+	</ul>
+}
+
+// Combobox is the top-level component. Alpine lives here with ephemeral UI state
+// only (isOpen, openedWithKeyboard, focusIndex). Data state (options, selection,
+// search) lives server-side and in DOM. See docs/superpowers/specs/2026-04-21-combobox-htmx-ssr-design.md.
+templ Combobox(cfg Config, state State) {
+	<div
+		data-combobox
+		id={ cfg.ID }
+		class={ "relative " + cfg.Class }
+		x-data="{isOpen:false, openedWithKeyboard:false, focusIndex:-1}"
+		x-on:keydown.esc.window="isOpen=false; openedWithKeyboard=false; focusIndex=-1"
+		x-on:htmx:after-swap="focusIndex=-1"
+	>
+		if cfg.Label != "" {
+			<label for={ cfg.ID + "-trigger" }>{ cfg.Label }</label>
+		}
+		<button
+			type="button"
+			id={ cfg.ID + "-trigger" }
+			role="combobox"
+			disabled?={ cfg.Disabled }
+			x-on:click="isOpen = !isOpen"
+			x-on:keydown.down.prevent="openedWithKeyboard = true; isOpen = true"
+			x-on:keydown.enter.prevent="openedWithKeyboard = true; isOpen = true"
+			x-on:keydown.space.prevent="openedWithKeyboard = true; isOpen = true"
+			x-bind:aria-expanded="isOpen || openedWithKeyboard"
+		>
+			<span data-combobox-trigger-label-outer>{ triggerLabelText(cfg, state) }</span>
+		</button>
+		<div
+			x-cloak
+			x-show="isOpen || openedWithKeyboard"
+			x-transition
+			x-on:click.outside="isOpen = false; openedWithKeyboard = false"
+		>
+			@Body(cfg, state)
+		</div>
+	</div>
+}
