@@ -502,26 +502,29 @@ func ColumnHeaderClasses(col Column) string {
 }
 
 // BadgeCellClasses returns CSS classes for a badge based on color name.
-// Uses soft style with border for better contrast (matches gobadge.Badge StyleSoft).
+// Solid fill with on-X foreground guarantees WCAG AA contrast across every
+// theme. The previous "border-X bg-X/10 text-X" recipe collapsed to ratios
+// as low as 1.12:1 because the /10 background mixes with the surface to
+// produce a near-X color, killing text-X contrast.
 func BadgeCellClasses(color string) string {
-	base := "inline-flex overflow-hidden rounded-radius px-2 py-0.5 text-xs font-medium border"
+	base := "inline-flex overflow-hidden rounded-radius px-2 py-0.5 text-xs font-medium"
 	switch color {
 	case "success":
-		return base + " border-success bg-success/10 text-success"
+		return base + " bg-success text-on-success"
 	case "danger":
-		return base + " border-danger bg-danger/10 text-danger"
+		return base + " bg-danger text-on-danger"
 	case "warning":
-		return base + " border-warning bg-warning/10 text-warning"
+		return base + " bg-warning text-on-warning"
 	case "info":
-		return base + " border-info bg-info/10 text-info"
+		return base + " bg-info text-on-info"
 	case "primary":
-		return base + " border-primary bg-primary/10 text-primary dark:border-primary-dark dark:text-primary-dark"
+		return base + " bg-primary text-on-primary dark:bg-primary-dark dark:text-on-primary-dark"
 	case "secondary":
-		return base + " border-secondary bg-secondary/10 text-secondary dark:border-secondary-dark"
+		return base + " bg-secondary text-on-secondary dark:bg-secondary-dark dark:text-on-secondary-dark"
 	case "neutral":
-		return base + " border-outline bg-on-surface/10 text-on-surface dark:border-outline-dark dark:text-on-surface-dark"
+		return base + " bg-surface-alt text-on-surface dark:bg-surface-dark-alt dark:text-on-surface-dark"
 	default:
-		return base + " border-outline dark:border-outline-dark"
+		return base + " border border-outline dark:border-outline-dark"
 	}
 }
 
@@ -556,14 +559,15 @@ func ActionButtonClasses() string {
 	return "cursor-pointer whitespace-nowrap rounded-radius bg-transparent p-0.5 font-semibold text-primary outline-primary hover:opacity-75 focus-visible:outline-2 focus-visible:outline-offset-2 active:opacity-100 active:outline-offset-0 dark:text-primary-dark dark:outline-primary-dark"
 }
 
-// StatusBadgeClasses returns CSS classes for status badges
+// StatusBadgeClasses returns CSS classes for status badges. Solid bg-X / text-on-X
+// for guaranteed AA contrast across themes (see BadgeCellClasses for rationale).
 func StatusBadgeClasses(status string) string {
 	base := "inline-flex overflow-hidden rounded-radius px-1 py-0.5 text-xs font-medium"
 	switch status {
 	case "active", "success":
-		return base + " border-success text-success bg-success/10"
+		return base + " bg-success text-on-success"
 	case "canceled", "danger":
-		return base + " border-danger text-danger bg-danger/10"
+		return base + " bg-danger text-on-danger"
 	default:
 		return base
 	}
