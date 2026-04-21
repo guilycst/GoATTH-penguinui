@@ -35,15 +35,16 @@ func triggerLabelText(cfg Config, state State) string {
 // Body renders the swappable region: hidden inputs + trigger label + options ul.
 // Do NOT use this directly as the top-level combobox; use Combobox which wraps it in the Alpine shell.
 templ Body(cfg Config, state State) {
-	<div data-combobox-body id={ cfg.ID + "-body" }>
+	<div data-combobox-body id={ cfg.ID + "-body" } class="flex flex-col">
 		for _, v := range state.Selected {
 			<input type="hidden" name={ cfg.Name } value={ v }/>
 		}
-		<span data-combobox-trigger-label>{ triggerLabelText(cfg, state) }</span>
+		<span data-combobox-trigger-label class={ "truncate text-sm " + triggerLabelClass(state) }>{ triggerLabelText(cfg, state) }</span>
 		if cfg.EnableClearAll && len(state.Selected) > 0 {
 			<button
 				type="button"
 				data-combobox-clear-all
+				class="w-full px-4 py-2 text-left text-xs font-medium text-primary hover:bg-primary/5 dark:text-primary-dark dark:hover:bg-primary-dark/10"
 				hx-post={ cfg.ClearEndpoint }
 				hx-target="closest [data-combobox-body]"
 				hx-swap="outerHTML"
@@ -51,18 +52,24 @@ templ Body(cfg Config, state State) {
 			>Clear all</button>
 		}
 		if cfg.EnableSearch {
-			<input
-				type="text"
-				data-combobox-search
-				value={ state.Search }
-				placeholder="Search…"
-				hx-get={ cfg.OptionsEndpoint }
-				hx-trigger="input changed delay:200ms"
-				hx-target={ "#" + cfg.ID + "-options" }
-				hx-swap="outerHTML"
-				hx-include={ cfg.HXIncludeSelector() }
-				name="q"
-			/>
+			<div class="relative border-b border-outline dark:border-outline-dark">
+				<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="1.5" class="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-on-surface/50 dark:text-on-surface-dark/50" aria-hidden="true">
+					<path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"></path>
+				</svg>
+				<input
+					type="text"
+					data-combobox-search
+					value={ state.Search }
+					placeholder="Search…"
+					class="w-full bg-transparent py-2.5 pl-9 pr-3 text-sm text-on-surface placeholder:text-on-surface/40 focus:outline-none dark:text-on-surface-dark dark:placeholder:text-on-surface-dark/40"
+					hx-get={ cfg.OptionsEndpoint }
+					hx-trigger="input changed delay:200ms"
+					hx-target={ "#" + cfg.ID + "-options" }
+					hx-swap="outerHTML"
+					hx-include={ cfg.HXIncludeSelector() }
+					name="q"
+				/>
+			</div>
 		}
 		@OptionsList(cfg, state)
 	</div>
@@ -76,19 +83,36 @@ func hxValsJSON(value string) string {
 
 // OptionsList renders just the <ul>. Swap target for search and lazy first-load.
 templ OptionsList(cfg Config, state State) {
-	<ul id={ cfg.ID + "-options" } role="listbox">
+	<ul id={ cfg.ID + "-options" } class="flex max-h-52 flex-col overflow-y-auto py-1" role="listbox">
+		if len(state.Options) == 0 {
+			<li class="px-4 py-3 text-sm text-on-surface/60 dark:text-on-surface-dark/60">No matches found</li>
+		}
 		for _, opt := range state.Options {
 			<li
 				role="option"
 				data-value={ opt.Value }
 				aria-selected={ strconv.FormatBool(state.IsSelected(opt.Value)) }
+				class={ "flex cursor-pointer items-center gap-2.5 px-4 py-2.5 text-sm transition-colors hover:bg-surface-dark-alt/5 dark:text-on-surface-dark dark:hover:bg-surface-alt/5 " + optSelectedClass(state.IsSelected(opt.Value)) }
 				hx-post={ cfg.ToggleEndpoint }
 				hx-target="closest [data-combobox-body]"
 				hx-swap="outerHTML"
 				hx-vals={ hxValsJSON(opt.Value) }
 				hx-include={ cfg.HXIncludeSelector() }
 			>
-				{ opt.Label }
+				if cfg.Mode == ModeMultiple {
+					<div class="relative flex shrink-0 items-center">
+						<input
+							type="checkbox"
+							class="peer relative size-4 appearance-none overflow-hidden rounded-sm border border-outline bg-surface-alt before:absolute before:inset-0 before:content-[''] checked:border-primary checked:before:bg-primary focus:outline-2 focus:outline-offset-2 focus:outline-outline-strong checked:focus:outline-primary active:outline-offset-0 dark:border-outline-dark dark:bg-surface-dark-alt dark:checked:border-primary-dark dark:checked:before:bg-primary-dark"
+							checked?={ state.IsSelected(opt.Value) }
+							tabindex="-1"
+						/>
+						<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="4" class="pointer-events-none invisible absolute left-1/2 top-1/2 size-3 -translate-x-1/2 -translate-y-1/2 text-on-primary peer-checked:visible dark:text-on-primary-dark" aria-hidden="true">
+							<path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"></path>
+						</svg>
+					</div>
+				}
+				<span class={ "truncate " + optLabelClass(state.IsSelected(opt.Value)) }>{ opt.Label }</span>
 			</li>
 		}
 	</ul>
@@ -96,7 +120,7 @@ templ OptionsList(cfg Config, state State) {
 
 // Combobox is the top-level component. Alpine lives here with ephemeral UI state
 // only (isOpen, openedWithKeyboard, focusIndex). Data state (options, selection,
-// search) lives server-side and in DOM. See docs/superpowers/specs/2026-04-21-combobox-htmx-ssr-design.md.
+// search) lives server-side and in DOM.
 templ Combobox(cfg Config, state State) {
 	<div
 		data-combobox
@@ -107,28 +131,71 @@ templ Combobox(cfg Config, state State) {
 		x-on:htmx:after-swap="focusIndex=-1"
 	>
 		if cfg.Label != "" {
-			<label for={ cfg.ID + "-trigger" }>{ cfg.Label }</label>
+			<label for={ cfg.ID + "-trigger" } class="block pb-1 text-sm text-on-surface dark:text-on-surface-dark">{ cfg.Label }</label>
 		}
 		<button
 			type="button"
 			id={ cfg.ID + "-trigger" }
 			role="combobox"
 			disabled?={ cfg.Disabled }
+			class="inline-flex min-w-40 items-center justify-between gap-2 rounded-radius border px-3 py-2 text-sm font-medium transition hover:opacity-75 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary dark:focus-visible:outline-primary-dark"
 			x-on:click="isOpen = !isOpen"
 			x-on:keydown.down.prevent="openedWithKeyboard = true; isOpen = true"
 			x-on:keydown.enter.prevent="openedWithKeyboard = true; isOpen = true"
 			x-on:keydown.space.prevent="openedWithKeyboard = true; isOpen = true"
 			x-bind:aria-expanded="isOpen || openedWithKeyboard"
+			x-bind:class={ triggerBtnClass(state) }
 		>
-			<span data-combobox-trigger-label-outer>{ triggerLabelText(cfg, state) }</span>
+			<span data-combobox-trigger-label-outer class={ "truncate text-sm " + triggerLabelClass(state) }>{ triggerLabelText(cfg, state) }</span>
+			<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class={ "size-4 shrink-0 transition-transform duration-150 " + chevronClass(state) } x-bind:class="isOpen ? 'rotate-180' : ''">
+				<path fill-rule="evenodd" d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd"></path>
+			</svg>
 		</button>
 		<div
 			x-cloak
 			x-show="isOpen || openedWithKeyboard"
 			x-transition
 			x-on:click.outside="isOpen = false; openedWithKeyboard = false"
+			class="absolute left-0 top-full z-30 mt-1 min-w-full overflow-hidden rounded-radius border border-outline bg-surface-alt shadow-lg dark:border-outline-dark dark:bg-surface-dark-alt"
 		>
 			@Body(cfg, state)
 		</div>
 	</div>
+}
+
+// CSS class helpers for state-driven styling.
+
+func triggerBtnClass(state State) string {
+	if len(state.Selected) > 0 {
+		return "border-secondary bg-secondary/10 text-on-surface-strong dark:border-secondary-dark dark:bg-secondary-dark/15 dark:text-on-surface-dark-strong"
+	}
+	return "border-outline bg-surface-alt text-on-surface dark:border-outline-dark dark:bg-surface-dark-alt/50 dark:text-on-surface-dark"
+}
+
+func triggerLabelClass(state State) string {
+	if len(state.Selected) > 0 {
+		return "font-medium text-secondary dark:text-secondary-dark"
+	}
+	return "font-normal text-on-surface dark:text-on-surface-dark"
+}
+
+func chevronClass(state State) string {
+	if len(state.Selected) > 0 {
+		return "text-secondary dark:text-secondary-dark"
+	}
+	return ""
+}
+
+func optSelectedClass(selected bool) string {
+	if selected {
+		return "font-semibold text-on-surface-strong dark:text-on-surface-dark-strong"
+	}
+	return "text-on-surface dark:text-on-surface-dark"
+}
+
+func optLabelClass(selected bool) string {
+	if selected {
+		return "font-semibold text-on-surface-strong dark:text-on-surface-dark-strong"
+	}
+	return "text-on-surface dark:text-on-surface-dark"
 }
