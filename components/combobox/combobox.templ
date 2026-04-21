@@ -150,7 +150,7 @@ templ singleSelectCombobox(cfg Config) {
 						stroke="currentColor" 
 						fill="none" 
 						stroke-width="1.5" 
-						class="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-on-surface/50 dark:text-on-surface-dark/50"
+						class="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-on-surface-muted dark:text-on-surface-dark-muted"
 						aria-hidden="true"
 					>
 						<path 
@@ -174,7 +174,7 @@ templ singleSelectCombobox(cfg Config) {
 				<!-- No results message -->
 				<li
 					x-show="filteredOptions.length === 0"
-					class="px-4 py-3 text-sm text-on-surface/60 dark:text-on-surface-dark/60"
+					class="px-4 py-3 text-sm text-on-surface-muted dark:text-on-surface-dark-muted"
 				>
 					{ cfg.GetNoResultsText() }
 				</li>
@@ -187,7 +187,7 @@ templ singleSelectCombobox(cfg Config) {
 						hx-target={ "#" + cfg.ID + "-options" }
 						hx-swap="innerHTML"
 						x-show="!optionsLoaded"
-						class="px-4 py-3 text-sm text-on-surface/60 dark:text-on-surface-dark/60"
+						class="px-4 py-3 text-sm text-on-surface-muted dark:text-on-surface-dark-muted"
 					>
 						Loading...
 					</div>
@@ -236,7 +236,7 @@ templ singleSelectCombobox(cfg Config) {
 								<!-- Optional meta text -->
 								<template x-if="item.meta">
 									<span
-										class="text-xs text-on-surface/60 dark:text-on-surface-dark/60"
+										class="text-xs text-on-surface-muted dark:text-on-surface-dark-muted"
 										x-text="item.meta"
 									></span>
 								</template>
@@ -347,7 +347,7 @@ templ multiSelectCombobox(cfg Config) {
 						stroke="currentColor" 
 						fill="none" 
 						stroke-width="1.5" 
-						class="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-on-surface/50 dark:text-on-surface-dark/50"
+						class="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-on-surface-muted dark:text-on-surface-dark-muted"
 						aria-hidden="true"
 					>
 						<path 
@@ -387,7 +387,7 @@ templ multiSelectCombobox(cfg Config) {
 				<!-- No results message -->
 				<li
 					x-show="filteredOptions.length === 0"
-					class="px-4 py-3 text-sm text-on-surface/60 dark:text-on-surface-dark/60"
+					class="px-4 py-3 text-sm text-on-surface-muted dark:text-on-surface-dark-muted"
 				>
 					{ cfg.GetNoResultsText() }
 				</li>
@@ -425,7 +425,7 @@ templ multiSelectCombobox(cfg Config) {
 								></span>
 								<template x-if="item.meta">
 									<span 
-										class="text-xs text-on-surface/60 dark:text-on-surface-dark/60"
+										class="text-xs text-on-surface-muted dark:text-on-surface-dark-muted"
 										x-text="item.meta"
 									></span>
 								</template>

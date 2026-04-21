@@ -106,7 +106,7 @@ func comboboxNewDemoContent() templ.Component {
 			templ_7745c5c3_Var2 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"w-full max-w-4xl mx-auto space-y-8\"><h1 class=\"text-2xl font-semibold\">Combobox (HTMX SSR rewrite)</h1><p class=\"text-sm text-on-surface/70 dark:text-on-surface-dark/70\">Alpine holds only ephemeral UI state (isOpen, focusIndex). Options, selection, and search live server-side and in DOM. This variant fixes the Alpine-state-vs-bfcache regression in the legacy combobox.</p><div class=\"max-w-xs\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"w-full max-w-4xl mx-auto space-y-8\"><h1 class=\"text-2xl font-semibold\">Combobox (HTMX SSR rewrite)</h1><p class=\"text-sm text-on-surface-muted dark:text-on-surface-dark-muted\">Alpine holds only ephemeral UI state (isOpen, focusIndex). Options, selection, and search live server-side and in DOM. This variant fixes the Alpine-state-vs-bfcache regression in the legacy combobox.</p><div class=\"max-w-xs\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

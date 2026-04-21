@@ -14,7 +14,7 @@ templ breadcrumbsDemoContent() {
 	<div class="space-y-12">
 		<div>
 			<h1 class="text-3xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong">Breadcrumbs</h1>
-			<p class="text-sm text-on-surface/60 dark:text-on-surface-dark/60">Tailwind CSS Breadcrumb Navigation</p>
+			<p class="text-sm text-on-surface-muted dark:text-on-surface-dark-muted">Tailwind CSS Breadcrumb Navigation</p>
 			<p class="mt-2 text-on-surface dark:text-on-surface-dark">Breadcrumbs show the user's current location in a site hierarchy. They support chevron and slash separators, optional icons, and custom attributes on links.</p>
 		</div>
 
@@ -29,13 +29,13 @@ templ breadcrumbsDemoContent() {
 templ chevronBreadcrumbDemo() {
 	<div class="not-prose">
 		<h3 class="text-lg font-semibold text-on-surface-strong dark:text-on-surface-dark-strong mb-2">Chevron Separator</h3>
-		<p class="text-sm text-on-surface/60 dark:text-on-surface-dark/60 mb-4">Default breadcrumb with chevron separators between items.</p>
+		<p class="text-sm text-on-surface-muted dark:text-on-surface-dark-muted mb-4">Default breadcrumb with chevron separators between items.</p>
 		<div class="border border-outline dark:border-outline-dark rounded-radius overflow-hidden">
 			<div class="flex items-center gap-1.5 bg-surface-alt dark:bg-surface-dark-alt px-3 py-2 border-b border-outline dark:border-outline-dark">
 				<span class="size-3 rounded-full bg-red-400"></span>
 				<span class="size-3 rounded-full bg-yellow-400"></span>
 				<span class="size-3 rounded-full bg-green-400"></span>
-				<span class="ml-2 text-xs text-on-surface/50 dark:text-on-surface-dark/50">Preview</span>
+				<span class="ml-2 text-xs text-on-surface-muted dark:text-on-surface-dark-muted">Preview</span>
 			</div>
 			<div class="p-6 bg-surface dark:bg-surface-dark">
 				@breadcrumbs.Breadcrumbs(breadcrumbs.Config{
@@ -55,13 +55,13 @@ templ chevronBreadcrumbDemo() {
 templ slashBreadcrumbDemo() {
 	<div class="not-prose">
 		<h3 class="text-lg font-semibold text-on-surface-strong dark:text-on-surface-dark-strong mb-2">Slash Separator</h3>
-		<p class="text-sm text-on-surface/60 dark:text-on-surface-dark/60 mb-4">Breadcrumb with slash separators for a minimal look.</p>
+		<p class="text-sm text-on-surface-muted dark:text-on-surface-dark-muted mb-4">Breadcrumb with slash separators for a minimal look.</p>
 		<div class="border border-outline dark:border-outline-dark rounded-radius overflow-hidden">
 			<div class="flex items-center gap-1.5 bg-surface-alt dark:bg-surface-dark-alt px-3 py-2 border-b border-outline dark:border-outline-dark">
 				<span class="size-3 rounded-full bg-red-400"></span>
 				<span class="size-3 rounded-full bg-yellow-400"></span>
 				<span class="size-3 rounded-full bg-green-400"></span>
-				<span class="ml-2 text-xs text-on-surface/50 dark:text-on-surface-dark/50">Preview</span>
+				<span class="ml-2 text-xs text-on-surface-muted dark:text-on-surface-dark-muted">Preview</span>
 			</div>
 			<div class="p-6 bg-surface dark:bg-surface-dark">
 				@breadcrumbs.Breadcrumbs(breadcrumbs.Config{
@@ -88,13 +88,13 @@ templ breadcrumbHomeIcon() {
 templ iconBreadcrumbDemo() {
 	<div class="not-prose">
 		<h3 class="text-lg font-semibold text-on-surface-strong dark:text-on-surface-dark-strong mb-2">With Icon</h3>
-		<p class="text-sm text-on-surface/60 dark:text-on-surface-dark/60 mb-4">Breadcrumb items can include icons for better visual context.</p>
+		<p class="text-sm text-on-surface-muted dark:text-on-surface-dark-muted mb-4">Breadcrumb items can include icons for better visual context.</p>
 		<div class="border border-outline dark:border-outline-dark rounded-radius overflow-hidden">
 			<div class="flex items-center gap-1.5 bg-surface-alt dark:bg-surface-dark-alt px-3 py-2 border-b border-outline dark:border-outline-dark">
 				<span class="size-3 rounded-full bg-red-400"></span>
 				<span class="size-3 rounded-full bg-yellow-400"></span>
 				<span class="size-3 rounded-full bg-green-400"></span>
-				<span class="ml-2 text-xs text-on-surface/50 dark:text-on-surface-dark/50">Preview</span>
+				<span class="ml-2 text-xs text-on-surface-muted dark:text-on-surface-dark-muted">Preview</span>
 			</div>
 			<div class="p-6 bg-surface dark:bg-surface-dark">
 				@breadcrumbs.Breadcrumbs(breadcrumbs.Config{

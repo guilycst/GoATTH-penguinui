@@ -14,13 +14,12 @@ templ Sidebar(cfg Config) {
 	{{ logoHref := cfg.LogoHref }}
 	{{ if logoHref == "" { logoHref = "/" } }}
 	
-	<!-- Skip to main content link for accessibility -->
-	<a href="#main-content" class="sr-only">skip to the main content</a>
-	
 	<nav
 		class={ cfg.ContainerClasses() + " " + cfg.Class }
 		aria-label="sidebar navigation"
 	>
+		<!-- Skip to main content link for accessibility -->
+		<a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:px-4 focus:py-2 focus:bg-primary focus:text-on-primary">skip to the main content</a>
 		<!-- Logo Section (only rendered when Logo or LogoText is provided) -->
 		if cfg.Logo != nil || cfg.LogoText != "" {
 			<div class="shrink-0 border-b border-outline dark:border-outline-dark p-4">
@@ -40,7 +39,7 @@ templ Sidebar(cfg Config) {
 		} else if cfg.ShowSearch {
 			<div class="shrink-0 px-4 py-3">
 				<div class="relative">
-					<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="2" class="absolute left-2.5 top-1/2 size-4 -translate-y-1/2 text-on-surface/50 dark:text-on-surface-dark/50" aria-hidden="true">
+					<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="2" class="absolute left-2.5 top-1/2 size-4 -translate-y-1/2 text-on-surface-muted dark:text-on-surface-dark-muted" aria-hidden="true">
 						<path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"/>
 					</svg>
 					<input
@@ -94,7 +93,7 @@ templ Sidebar(cfg Config) {
 // sidebarItem renders a single sidebar navigation item (top-level icon links)
 templ sidebarItem(item Item) {
 	if item.Disabled {
-		<span class="flex items-center gap-2 py-2 text-base text-on-surface/40 cursor-not-allowed dark:text-on-surface-dark/40">
+		<span class="flex items-center gap-2 py-2 text-base text-on-surface-muted cursor-not-allowed dark:text-on-surface-dark-muted">
 			if item.Icon != nil {
 				<span class="shrink-0 size-8 rounded-sm p-1.5 bg-surface-alt text-on-surface dark:bg-surface-dark-alt dark:text-on-surface-dark">
 					@item.Icon
@@ -155,7 +154,7 @@ templ sidebarSection(section Section, index int) {
 // sidebarSectionItem renders an item with left border line (PenguinUI sidebar style)
 templ sidebarSectionItem(item Item) {
 	if item.Disabled {
-		<span class="flex items-center border-l border-outline py-2.5 pl-4 text-sm font-medium text-on-surface/40 cursor-not-allowed dark:border-outline-dark dark:text-on-surface-dark/40">
+		<span class="flex items-center border-l border-outline py-2.5 pl-4 text-sm font-medium text-on-surface-muted cursor-not-allowed dark:border-outline-dark dark:text-on-surface-dark-muted">
 			<span>{ item.Label }</span>
 		</span>
 	} else if item.Active {

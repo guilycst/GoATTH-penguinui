@@ -289,7 +289,7 @@ func layerLoading(cfg Config) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var12 = []any{"animate-spin text-on-surface/40 dark:text-on-surface-dark/40 " + cfg.SpinnerSizeClasses()}
+		var templ_7745c5c3_Var12 = []any{"animate-spin text-on-surface-muted dark:text-on-surface-dark-muted " + cfg.SpinnerSizeClasses()}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var12...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err

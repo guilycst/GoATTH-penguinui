@@ -60,7 +60,7 @@ templ toastDemoPreview() {
 		<!-- Client-side Alpine.js Triggers -->
 		<div>
 			<h4 class="text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong">Client-side Triggers (Alpine.js)</h4>
-			<p class="text-sm text-on-surface/70 dark:text-on-surface-dark/70 mb-4">Click to dispatch toast notifications via Alpine.js events.</p>
+			<p class="text-sm text-on-surface-muted dark:text-on-surface-dark-muted mb-4">Click to dispatch toast notifications via Alpine.js events.</p>
 			<div class="flex flex-wrap gap-3">
 				<!-- Message Trigger -->
 				<button
@@ -108,7 +108,7 @@ templ toastDemoPreview() {
 		<!-- Server-side HTMX OOB Triggers -->
 		<div>
 			<h4 class="text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong">Server-side Triggers (HTMX OOB)</h4>
-			<p class="text-sm text-on-surface/70 dark:text-on-surface-dark/70 mb-4">Click to fetch a toast from the server via HTMX out-of-band swap.</p>
+			<p class="text-sm text-on-surface-muted dark:text-on-surface-dark-muted mb-4">Click to fetch a toast from the server via HTMX out-of-band swap.</p>
 			<div class="flex flex-wrap gap-3">
 				<button
 					type="button"
@@ -143,7 +143,7 @@ templ toastDemoPreview() {
 		<!-- Static Server-Rendered Toast Examples -->
 		<div>
 			<h4 class="text-sm font-medium mb-3 text-on-surface-strong dark:text-on-surface-dark-strong">Static Examples (Server-Rendered)</h4>
-			<p class="text-sm text-on-surface/70 dark:text-on-surface-dark/70 mb-4">These toasts are rendered server-side, showing each variant statically.</p>
+			<p class="text-sm text-on-surface-muted dark:text-on-surface-dark-muted mb-4">These toasts are rendered server-side, showing each variant statically.</p>
 			<div class="space-y-3">
 				@toast.Toast(toast.Config{
 					Variant: toast.Info,

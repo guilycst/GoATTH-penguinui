@@ -325,7 +325,7 @@ func singleSelectCombobox(cfg Config) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		if cfg.EnableSearch {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, "<!-- Search field --> <div class=\"relative border-b border-outline dark:border-outline-dark\"><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" stroke=\"currentColor\" fill=\"none\" stroke-width=\"1.5\" class=\"absolute left-3 top-1/2 size-4 -translate-y-1/2 text-on-surface/50 dark:text-on-surface-dark/50\" aria-hidden=\"true\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z\"></path></svg> ")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, "<!-- Search field --> <div class=\"relative border-b border-outline dark:border-outline-dark\"><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" stroke=\"currentColor\" fill=\"none\" stroke-width=\"1.5\" class=\"absolute left-3 top-1/2 size-4 -translate-y-1/2 text-on-surface-muted dark:text-on-surface-dark-muted\" aria-hidden=\"true\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z\"></path></svg> ")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -365,7 +365,7 @@ func singleSelectCombobox(cfg Config) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 24, "<!-- Options list --><ul class=\"flex max-h-52 flex-col overflow-y-auto py-1\" role=\"listbox\"><!-- No results message --><li x-show=\"filteredOptions.length === 0\" class=\"px-4 py-3 text-sm text-on-surface/60 dark:text-on-surface-dark/60\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 24, "<!-- Options list --><ul class=\"flex max-h-52 flex-col overflow-y-auto py-1\" role=\"listbox\"><!-- No results message --><li x-show=\"filteredOptions.length === 0\" class=\"px-4 py-3 text-sm text-on-surface-muted dark:text-on-surface-dark-muted\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -422,7 +422,7 @@ func singleSelectCombobox(cfg Config) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 29, "\" hx-swap=\"innerHTML\" x-show=\"!optionsLoaded\" class=\"px-4 py-3 text-sm text-on-surface/60 dark:text-on-surface-dark/60\">Loading...</div><div id=\"")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 29, "\" hx-swap=\"innerHTML\" x-show=\"!optionsLoaded\" class=\"px-4 py-3 text-sm text-on-surface-muted dark:text-on-surface-dark-muted\">Loading...</div><div id=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -475,7 +475,7 @@ func singleSelectCombobox(cfg Config) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 34, "\" tabindex=\"0\" x-on:keydown.down.prevent=\"$focus.wrap().next()\" x-on:keydown.up.prevent=\"$focus.wrap().previous()\"><div class=\"flex items-center gap-2\"><!-- Avatar: image or initials --><template x-if=\"item.img\"><img x-bind:src=\"item.img\" class=\"size-8 shrink-0 rounded-full object-cover\" alt=\"\" aria-hidden=\"true\"></template><template x-if=\"!item.img && item.initials\"><span class=\"flex size-8 shrink-0 items-center justify-center rounded-full border border-outline bg-surface-alt text-xs font-bold dark:border-outline-dark dark:bg-surface-dark-alt\" x-text=\"item.initials\"></span></template><div class=\"flex flex-col\"><!-- Label + optional badge --><span class=\"flex items-center gap-1.5\"><span x-bind:class=\"selectedOption && selectedOption.value === item.value ? 'font-bold' : ''\" x-text=\"item.label\"></span><template x-if=\"item.badge\"><span class=\"inline-flex overflow-hidden rounded-radius px-2 py-0.5 text-xs font-medium border\" x-bind:class=\"(() => { switch(item.badgeColor) { case 'info': return 'border-info bg-info/10 text-info'; case 'success': return 'border-success bg-success/10 text-success'; case 'warning': return 'border-warning bg-warning/10 text-warning'; case 'danger': return 'border-danger bg-danger/10 text-danger'; case 'primary': return 'border-primary bg-primary/10 text-primary dark:border-primary-dark dark:text-primary-dark'; case 'secondary': return 'border-secondary bg-secondary/10 text-secondary dark:border-secondary-dark'; case 'neutral': return 'border-outline bg-on-surface/10 text-on-surface dark:border-outline-dark dark:text-on-surface-dark'; default: return 'border-outline dark:border-outline-dark'; } })()\" x-text=\"item.badge\"></span></template></span><!-- Optional meta text --><template x-if=\"item.meta\"><span class=\"text-xs text-on-surface/60 dark:text-on-surface-dark/60\" x-text=\"item.meta\"></span></template></div></div><!-- Screen reader selected indicator --><span class=\"sr-only\" x-text=\"selectedOption && selectedOption.value === item.value ? 'selected' : ''\"></span><!-- Checkmark for selected item --><svg x-cloak x-show=\"selectedOption && selectedOption.value === item.value\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" stroke=\"currentColor\" fill=\"none\" stroke-width=\"2\" class=\"size-4\" aria-hidden=\"true\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"m4.5 12.75 6 6 9-13.5\"></path></svg></li></template></ul></div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 34, "\" tabindex=\"0\" x-on:keydown.down.prevent=\"$focus.wrap().next()\" x-on:keydown.up.prevent=\"$focus.wrap().previous()\"><div class=\"flex items-center gap-2\"><!-- Avatar: image or initials --><template x-if=\"item.img\"><img x-bind:src=\"item.img\" class=\"size-8 shrink-0 rounded-full object-cover\" alt=\"\" aria-hidden=\"true\"></template><template x-if=\"!item.img && item.initials\"><span class=\"flex size-8 shrink-0 items-center justify-center rounded-full border border-outline bg-surface-alt text-xs font-bold dark:border-outline-dark dark:bg-surface-dark-alt\" x-text=\"item.initials\"></span></template><div class=\"flex flex-col\"><!-- Label + optional badge --><span class=\"flex items-center gap-1.5\"><span x-bind:class=\"selectedOption && selectedOption.value === item.value ? 'font-bold' : ''\" x-text=\"item.label\"></span><template x-if=\"item.badge\"><span class=\"inline-flex overflow-hidden rounded-radius px-2 py-0.5 text-xs font-medium border\" x-bind:class=\"(() => { switch(item.badgeColor) { case 'info': return 'border-info bg-info/10 text-info'; case 'success': return 'border-success bg-success/10 text-success'; case 'warning': return 'border-warning bg-warning/10 text-warning'; case 'danger': return 'border-danger bg-danger/10 text-danger'; case 'primary': return 'border-primary bg-primary/10 text-primary dark:border-primary-dark dark:text-primary-dark'; case 'secondary': return 'border-secondary bg-secondary/10 text-secondary dark:border-secondary-dark'; case 'neutral': return 'border-outline bg-on-surface/10 text-on-surface dark:border-outline-dark dark:text-on-surface-dark'; default: return 'border-outline dark:border-outline-dark'; } })()\" x-text=\"item.badge\"></span></template></span><!-- Optional meta text --><template x-if=\"item.meta\"><span class=\"text-xs text-on-surface-muted dark:text-on-surface-dark-muted\" x-text=\"item.meta\"></span></template></div></div><!-- Screen reader selected indicator --><span class=\"sr-only\" x-text=\"selectedOption && selectedOption.value === item.value ? 'selected' : ''\"></span><!-- Checkmark for selected item --><svg x-cloak x-show=\"selectedOption && selectedOption.value === item.value\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" stroke=\"currentColor\" fill=\"none\" stroke-width=\"2\" class=\"size-4\" aria-hidden=\"true\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"m4.5 12.75 6 6 9-13.5\"></path></svg></li></template></ul></div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -691,7 +691,7 @@ func multiSelectCombobox(cfg Config) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		if cfg.EnableSearch {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 52, "<!-- Search field --> <div class=\"relative border-b border-outline dark:border-outline-dark\"><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" stroke=\"currentColor\" fill=\"none\" stroke-width=\"1.5\" class=\"absolute left-3 top-1/2 size-4 -translate-y-1/2 text-on-surface/50 dark:text-on-surface-dark/50\" aria-hidden=\"true\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z\"></path></svg> ")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 52, "<!-- Search field --> <div class=\"relative border-b border-outline dark:border-outline-dark\"><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" stroke=\"currentColor\" fill=\"none\" stroke-width=\"1.5\" class=\"absolute left-3 top-1/2 size-4 -translate-y-1/2 text-on-surface-muted dark:text-on-surface-dark-muted\" aria-hidden=\"true\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z\"></path></svg> ")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -754,7 +754,7 @@ func multiSelectCombobox(cfg Config) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 59, "<!-- No results message --><li x-show=\"filteredOptions.length === 0\" class=\"px-4 py-3 text-sm text-on-surface/60 dark:text-on-surface-dark/60\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 59, "<!-- No results message --><li x-show=\"filteredOptions.length === 0\" class=\"px-4 py-3 text-sm text-on-surface-muted dark:text-on-surface-dark-muted\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -815,7 +815,7 @@ func multiSelectCombobox(cfg Config) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 64, "\" x-bind:checked=\"item.checked\" x-on:change=\"toggle(item)\"> <svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" stroke=\"currentColor\" fill=\"none\" stroke-width=\"4\" class=\"pointer-events-none invisible absolute left-1/2 top-1/2 size-3 -translate-x-1/2 -translate-y-1/2 text-on-primary peer-checked:visible dark:text-on-primary-dark\" aria-hidden=\"true\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"M4.5 12.75l6 6 9-13.5\"></path></svg></div><div class=\"flex flex-col\"><span x-text=\"item.label\" x-bind:class=\"item.checked ? 'font-semibold text-on-surface-strong dark:text-on-surface-dark-strong' : ''\"></span><template x-if=\"item.meta\"><span class=\"text-xs text-on-surface/60 dark:text-on-surface-dark/60\" x-text=\"item.meta\"></span></template></div></label></li></template></ul></div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 64, "\" x-bind:checked=\"item.checked\" x-on:change=\"toggle(item)\"> <svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" stroke=\"currentColor\" fill=\"none\" stroke-width=\"4\" class=\"pointer-events-none invisible absolute left-1/2 top-1/2 size-3 -translate-x-1/2 -translate-y-1/2 text-on-primary peer-checked:visible dark:text-on-primary-dark\" aria-hidden=\"true\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"M4.5 12.75l6 6 9-13.5\"></path></svg></div><div class=\"flex flex-col\"><span x-text=\"item.label\" x-bind:class=\"item.checked ? 'font-semibold text-on-surface-strong dark:text-on-surface-dark-strong' : ''\"></span><template x-if=\"item.meta\"><span class=\"text-xs text-on-surface-muted dark:text-on-surface-dark-muted\" x-text=\"item.meta\"></span></template></div></label></li></template></ul></div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

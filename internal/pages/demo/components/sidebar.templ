@@ -15,7 +15,7 @@ templ sidebarDemoContent() {
 	<div class="space-y-12">
 		<div>
 			<h1 class="text-3xl font-bold text-on-surface-strong dark:text-on-surface-dark-strong">Sidebar</h1>
-			<p class="text-sm text-on-surface/60 dark:text-on-surface-dark/60">Tailwind CSS and Alpine JS Sidebar</p>
+			<p class="text-sm text-on-surface-muted dark:text-on-surface-dark-muted">Tailwind CSS and Alpine JS Sidebar</p>
 			<p class="mt-2 text-on-surface dark:text-on-surface-dark">Sidebars help users find what they need by organizing navigation into clearly labelled sections. They support flat lists, grouped sections, nested sub-items, collapsible menus, and overlay modes.</p>
 		</div>
 
@@ -32,7 +32,7 @@ templ sidebarDemoContent() {
 templ simpleSidebarDemo() {
 	<div class="not-prose">
 		<h3 class="text-lg font-semibold text-on-surface-strong dark:text-on-surface-dark-strong mb-2">Simple Sidebar</h3>
-		<p class="text-sm text-on-surface/60 dark:text-on-surface-dark/60 mb-4">A sidebar with a logo, search input, and icon navigation links. Profile is marked as active.</p>
+		<p class="text-sm text-on-surface-muted dark:text-on-surface-dark-muted mb-4">A sidebar with a logo, search input, and icon navigation links. Profile is marked as active.</p>
 		<div class="border border-outline dark:border-outline-dark rounded-radius overflow-hidden">
 			<div class="flex items-center gap-1.5 bg-surface-alt dark:bg-surface-dark-alt px-3 py-2 border-b border-outline dark:border-outline-dark">
 				<span class="size-3 rounded-full bg-red-400"></span>
@@ -65,7 +65,7 @@ templ simpleSidebarDemo() {
 templ sectionsSidebarDemo() {
 	<div class="not-prose">
 		<h3 class="text-lg font-semibold text-on-surface-strong dark:text-on-surface-dark-strong mb-2">Sidebar with Sections</h3>
-		<p class="text-sm text-on-surface/60 dark:text-on-surface-dark/60 mb-4">Grouped navigation with section titles for logical organization of links.</p>
+		<p class="text-sm text-on-surface-muted dark:text-on-surface-dark-muted mb-4">Grouped navigation with section titles for logical organization of links.</p>
 		<div class="border border-outline dark:border-outline-dark rounded-radius overflow-hidden">
 			<div class="flex items-center gap-1.5 bg-surface-alt dark:bg-surface-dark-alt px-3 py-2 border-b border-outline dark:border-outline-dark">
 				<span class="size-3 rounded-full bg-red-400"></span>
@@ -114,7 +114,7 @@ templ sectionsSidebarDemo() {
 templ subItemsSidebarDemo() {
 	<div class="not-prose">
 		<h3 class="text-lg font-semibold text-on-surface-strong dark:text-on-surface-dark-strong mb-2">Sidebar with Sub-Items</h3>
-		<p class="text-sm text-on-surface/60 dark:text-on-surface-dark/60 mb-4">Documentation-style sidebar with parent items and nested child links, similar to API reference navigation.</p>
+		<p class="text-sm text-on-surface-muted dark:text-on-surface-dark-muted mb-4">Documentation-style sidebar with parent items and nested child links, similar to API reference navigation.</p>
 		<div class="border border-outline dark:border-outline-dark rounded-radius overflow-hidden">
 			<div class="flex items-center gap-1.5 bg-surface-alt dark:bg-surface-dark-alt px-3 py-2 border-b border-outline dark:border-outline-dark">
 				<span class="size-3 rounded-full bg-red-400"></span>
@@ -163,7 +163,7 @@ templ subItemsSidebarDemo() {
 templ collapsibleSidebarDemo() {
 	<div class="not-prose">
 		<h3 class="text-lg font-semibold text-on-surface-strong dark:text-on-surface-dark-strong mb-2">Collapsible Sections</h3>
-		<p class="text-sm text-on-surface/60 dark:text-on-surface-dark/60 mb-4">Each section can be collapsed or expanded using Alpine.js. Click the section headers to toggle visibility.</p>
+		<p class="text-sm text-on-surface-muted dark:text-on-surface-dark-muted mb-4">Each section can be collapsed or expanded using Alpine.js. Click the section headers to toggle visibility.</p>
 		<div class="border border-outline dark:border-outline-dark rounded-radius overflow-hidden">
 			<div class="flex items-center gap-1.5 bg-surface-alt dark:bg-surface-dark-alt px-3 py-2 border-b border-outline dark:border-outline-dark">
 				<span class="size-3 rounded-full bg-red-400"></span>
@@ -184,7 +184,7 @@ templ collapsibleSidebarDemo() {
 								<div>
 									<button
 										x-on:click="sections.general = !sections.general"
-										class="flex w-full items-center justify-between rounded-radius px-2 py-1.5 text-xs font-semibold uppercase tracking-wider text-on-surface/50 hover:text-on-surface/70 dark:text-on-surface-dark/50 dark:hover:text-on-surface-dark/70"
+										class="flex w-full items-center justify-between rounded-radius px-2 py-1.5 text-xs font-semibold uppercase tracking-wider text-on-surface-muted hover:text-on-surface-muted dark:text-on-surface-dark-muted dark:hover:text-on-surface-dark-muted"
 									>
 										<span>General</span>
 										<svg
@@ -209,7 +209,7 @@ templ collapsibleSidebarDemo() {
 								<div>
 									<button
 										x-on:click="sections.content = !sections.content"
-										class="flex w-full items-center justify-between rounded-radius px-2 py-1.5 text-xs font-semibold uppercase tracking-wider text-on-surface/50 hover:text-on-surface/70 dark:text-on-surface-dark/50 dark:hover:text-on-surface-dark/70"
+										class="flex w-full items-center justify-between rounded-radius px-2 py-1.5 text-xs font-semibold uppercase tracking-wider text-on-surface-muted hover:text-on-surface-muted dark:text-on-surface-dark-muted dark:hover:text-on-surface-dark-muted"
 									>
 										<span>Content</span>
 										<svg
@@ -234,7 +234,7 @@ templ collapsibleSidebarDemo() {
 								<div>
 									<button
 										x-on:click="sections.system = !sections.system"
-										class="flex w-full items-center justify-between rounded-radius px-2 py-1.5 text-xs font-semibold uppercase tracking-wider text-on-surface/50 hover:text-on-surface/70 dark:text-on-surface-dark/50 dark:hover:text-on-surface-dark/70"
+										class="flex w-full items-center justify-between rounded-radius px-2 py-1.5 text-xs font-semibold uppercase tracking-wider text-on-surface-muted hover:text-on-surface-muted dark:text-on-surface-dark-muted dark:hover:text-on-surface-dark-muted"
 									>
 										<span>System</span>
 										<svg
@@ -282,7 +282,7 @@ templ collapsibleItem(label string, active bool) {
 templ overlaySidebarDemo() {
 	<div class="not-prose">
 		<h3 class="text-lg font-semibold text-on-surface-strong dark:text-on-surface-dark-strong mb-2">Overlay Sidebar</h3>
-		<p class="text-sm text-on-surface/60 dark:text-on-surface-dark/60 mb-4">A sidebar that opens as an overlay with a dark backdrop, triggered by a hamburger button. Uses Alpine.js for toggle state.</p>
+		<p class="text-sm text-on-surface-muted dark:text-on-surface-dark-muted mb-4">A sidebar that opens as an overlay with a dark backdrop, triggered by a hamburger button. Uses Alpine.js for toggle state.</p>
 		<div class="border border-outline dark:border-outline-dark rounded-radius overflow-hidden">
 			<div class="flex items-center gap-1.5 bg-surface-alt dark:bg-surface-dark-alt px-3 py-2 border-b border-outline dark:border-outline-dark">
 				<span class="size-3 rounded-full bg-red-400"></span>
@@ -350,7 +350,7 @@ templ overlaySidebarDemo() {
 						<!-- Close button inside sidebar -->
 						<button
 							x-on:click="showSidebar = false"
-							class="absolute top-4 right-2 rounded-radius p-1 text-on-surface/50 hover:text-on-surface dark:text-on-surface-dark/50 dark:hover:text-on-surface-dark"
+							class="absolute top-4 right-2 rounded-radius p-1 text-on-surface-muted hover:text-on-surface dark:text-on-surface-dark-muted dark:hover:text-on-surface-dark"
 							aria-label="Close sidebar"
 						>
 							<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-4">

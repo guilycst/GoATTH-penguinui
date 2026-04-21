@@ -30,7 +30,7 @@ templ SplitView(props SplitViewProps, goTTHAContent templ.Component, templCode s
 		<!-- Header Section -->
 		<div class="mb-6">
 			<h1 class="text-3xl font-bold font-title mb-2">{ props.Title }</h1>
-			<p class="text-lg text-on-surface/70 dark:text-on-surface-dark/70 max-w-3xl">
+			<p class="text-lg text-on-surface-muted dark:text-on-surface-dark-muted max-w-3xl">
 				{ props.Description }
 			</p>
 		</div>
@@ -98,7 +98,7 @@ templ SplitView(props SplitViewProps, goTTHAContent templ.Component, templCode s
 			<div class="space-y-4">
 				<div class="flex items-center justify-between">
 					<h2 class="text-lg font-semibold font-title">{ props.OriginalLabel }</h2>
-					<span class="text-xs px-2 py-1 rounded-full bg-surface-alt dark:bg-surface-dark-alt text-on-surface/60 dark:text-on-surface-dark/60">Static HTML</span>
+					<span class="text-xs px-2 py-1 rounded-full bg-surface-alt dark:bg-surface-dark-alt text-on-surface-muted dark:text-on-surface-dark-muted">Static HTML</span>
 				</div>
 
 				<!-- Original Preview - Uses the provided OriginalHTML -->
@@ -123,7 +123,7 @@ templ SplitView(props SplitViewProps, goTTHAContent templ.Component, templCode s
 						<span class="text-sm font-medium">HTML</span>
 						<button 
 							@click="copyToClipboard(document.getElementById('original-code').textContent, 'original')"
-							class="flex items-center gap-1 text-xs text-on-surface/70 hover:text-primary transition-colors dark:text-on-surface-dark/70 dark:hover:text-primary-dark"
+							class="flex items-center gap-1 text-xs text-on-surface-muted hover:text-primary transition-colors dark:text-on-surface-dark-muted dark:hover:text-primary-dark"
 						>
 							<svg x-show="!copiedOriginal" xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
 								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/>
@@ -169,7 +169,7 @@ templ SplitView(props SplitViewProps, goTTHAContent templ.Component, templCode s
 						<span class="text-sm font-medium">Templ</span>
 						<button 
 							@click="copyToClipboard(document.getElementById('gottha-code').textContent, 'gottha')"
-							class="flex items-center gap-1 text-xs text-on-surface/70 hover:text-primary transition-colors dark:text-on-surface-dark/70 dark:hover:text-primary-dark"
+							class="flex items-center gap-1 text-xs text-on-surface-muted hover:text-primary transition-colors dark:text-on-surface-dark-muted dark:hover:text-primary-dark"
 						>
 							<svg x-show="!copiedGoATTH" xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
 								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/>
