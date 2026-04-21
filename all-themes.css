@@ -11,8 +11,12 @@
     /* on-surface-muted: secondary-text token. Auto-derived per theme via
        color-mix so themes don't need to override it; themes MAY override for
        precision. Replaces text-on-surface/40-70 opacity-as-hierarchy hack
-       that produced sub-AA contrast in every theme (see design-audit). */
-    --color-on-surface-muted: color-mix(in srgb, var(--color-on-surface) 70%, var(--color-surface) 30%);
+       that produced sub-AA contrast in every theme (see design-audit).
+       Mix ratio 85/15 — the earlier 70/30 failed AA on themes with
+       low-lightness on-surface (totvs/dark: 3.58:1, needs 4.5:1). 85/15
+       keeps perceptible hierarchy vs on-surface while clearing AA on all
+       shipped themes. */
+    --color-on-surface-muted: color-mix(in srgb, var(--color-on-surface) 85%, var(--color-surface) 15%);
     --color-primary: var(--color-purple-500);
     --color-on-primary: var(--color-white);
     --color-secondary: var(--color-sky-500);
@@ -25,7 +29,7 @@
     --color-surface-dark-alt: var(--color-neutral-900);
     --color-on-surface-dark: var(--color-neutral-300);
     --color-on-surface-dark-strong: var(--color-neutral-100);
-    --color-on-surface-dark-muted: color-mix(in srgb, var(--color-on-surface-dark) 70%, var(--color-surface-dark) 30%);
+    --color-on-surface-dark-muted: color-mix(in srgb, var(--color-on-surface-dark) 85%, var(--color-surface-dark) 15%);
     --color-primary-dark: var(--color-purple-400);
     --color-on-primary-dark: var(--color-black);
     --color-secondary-dark: var(--color-blue-400);
@@ -73,11 +77,14 @@
         --color-outline-dark: var(--color-slate-700);
         --color-outline-dark-strong: var(--color-slate-300);
         --color-info: var(--color-sky-600);
-        --color-on-info: var(--color-white);
+        /* on-info: white/sky-600 = 4.02:1 fails AA; black/sky-600 = 5.23:1. */
+        --color-on-info: var(--color-black);
         --color-success: var(--color-green-600);
-        --color-on-success: var(--color-white);
+        /* on-success: white/green-600 = 3.21:1 fails AA; black/green-600 = 6.53:1. */
+        --color-on-success: var(--color-black);
         --color-warning: var(--color-amber-500);
-        --color-on-warning: var(--color-white);
+        /* on-warning: amber-500 is light — black always correct. */
+        --color-on-warning: var(--color-black);
         --color-danger: var(--color-red-600);
         --color-on-danger: var(--color-white);
         --radius-radius: var(--radius-lg);
@@ -503,7 +510,8 @@
         --color-primary: #00dbff;
         --color-on-primary: #002233;
         --color-secondary: #a44dff;
-        --color-on-secondary: var(--color-white);
+        /* on-secondary: brand-dark ink, not white — white/#a44dff = 4.13:1 fails AA; #002233/#a44dff = 7.8:1. */
+        --color-on-secondary: #002233;
         --color-outline: #9c9c9c;
         --color-outline-strong: #002b33;
         /* Dark Theme */
@@ -514,7 +522,7 @@
         --color-primary-dark: #00dbff;
         --color-on-primary-dark: #002233;
         --color-secondary-dark: #a44dff;
-        --color-on-secondary-dark: var(--color-white);
+        --color-on-secondary-dark: #002233;
         --color-outline-dark: #545454;
         --color-outline-dark-strong: #9c9c9c;
         /* Status Colors */
@@ -525,7 +533,8 @@
         --color-warning: #ffb800;
         --color-on-warning: #002233;
         --color-danger: #ff009e;
-        --color-on-danger: var(--color-white);
+        /* on-danger: brand-dark ink — white/#ff009e = 3.65:1 fails AA; #002233/#ff009e = 6.9:1. */
+        --color-on-danger: #002233;
         /* Border */
         --radius-radius: var(--radius-lg);
     }
