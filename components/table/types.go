@@ -263,6 +263,8 @@ type FilterConfig struct {
 type Config struct {
 	// ID is the table element ID
 	ID string
+	// Caption is a screen-reader-only description of the table (rendered as <caption class="sr-only">).
+	Caption string
 	// Columns defines the table headers
 	Columns []Column
 	// Rows holds the table data

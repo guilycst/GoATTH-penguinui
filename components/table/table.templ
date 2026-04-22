@@ -251,6 +251,9 @@ templ TableHeadContent(cfg Config) {
 
 templ tableInner(cfg Config) {
 	<table class={ cfg.TableClasses() } id={ cfg.GetID() }>
+		if cfg.Caption != "" {
+			<caption class="sr-only">{ cfg.Caption }</caption>
+		}
 		@TableHead(cfg)
 
 		if cfg.LazyLoad && cfg.HTMXEndpoint != "" {
