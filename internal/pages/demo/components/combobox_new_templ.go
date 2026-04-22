@@ -13,18 +13,13 @@ import (
 	"github.com/guilycst/GoATTH-penguinui/internal/pages/demo"
 )
 
-// IndustryCfg is the Config for the combobox-new demo. Exported for use by the
-// server's route registration.
+// IndustryCfg: client-mode single-select.
 var IndustryCfg = combobox.Config{
-	ID:              "industry",
-	Name:            "industry",
-	Label:           "Industry",
-	Placeholder:     "Select an industry",
-	Mode:            combobox.ModeSingle,
-	EnableSearch:    true,
-	ToggleEndpoint:  "/api/components/combobox-new/industry/toggle",
-	OptionsEndpoint: "/api/components/combobox-new/industry/options",
-	ClearEndpoint:   "/api/components/combobox-new/industry/clear",
+	ID:          "industry",
+	Name:        "industry",
+	Label:       "Industry (client mode)",
+	Placeholder: "Select an industry",
+	Mode:        combobox.ModeSingle,
 	Source: combobox.Source{Static: []combobox.Option{
 		{Value: "tech", Label: "Technology"},
 		{Value: "health", Label: "Healthcare"},
@@ -34,18 +29,14 @@ var IndustryCfg = combobox.Config{
 	}},
 }
 
-// SkillsCfg is a multi-select combobox for the isOpen-preservation E2E test.
+// SkillsCfg: client-mode multi-select with clear-all.
 var SkillsCfg = combobox.Config{
-	ID:              "skills",
-	Name:            "skills",
-	Label:           "Skills",
-	Placeholder:     "Pick some skills",
-	Mode:            combobox.ModeMultiple,
-	EnableSearch:    true,
-	EnableClearAll:  true,
-	ToggleEndpoint:  "/api/components/combobox-new/skills/toggle",
-	OptionsEndpoint: "/api/components/combobox-new/skills/options",
-	ClearEndpoint:   "/api/components/combobox-new/skills/clear",
+	ID:             "skills",
+	Name:           "skills",
+	Label:          "Skills (client mode)",
+	Placeholder:    "Pick some skills",
+	Mode:           combobox.ModeMultiple,
+	EnableClearAll: true,
 	Source: combobox.Source{Static: []combobox.Option{
 		{Value: "go", Label: "Go"},
 		{Value: "rust", Label: "Rust"},
@@ -53,6 +44,21 @@ var SkillsCfg = combobox.Config{
 		{Value: "py", Label: "Python"},
 		{Value: "kt", Label: "Kotlin"},
 	}},
+}
+
+// UsersCfg: server-mode multi-select with lazy search.
+var UsersCfg = combobox.Config{
+	ID:              "users",
+	Name:            "users",
+	Label:           "Users (server mode, lazy)",
+	Placeholder:     "Search users",
+	Mode:            combobox.ModeMultiple,
+	EnableSearch:    true,
+	EnableClearAll:  true,
+	ToggleEndpoint:  "/api/components/combobox-new/users/toggle",
+	OptionsEndpoint: "/api/components/combobox-new/users/options",
+	ClearEndpoint:   "/api/components/combobox-new/users/clear",
+	Source:          combobox.Source{LazyEndpoint: "/api/components/combobox-new/users/options"},
 }
 
 // ComboboxNewPage renders the HTMX SSR combobox demo.
@@ -106,7 +112,7 @@ func comboboxNewDemoContent() templ.Component {
 			templ_7745c5c3_Var2 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"w-full max-w-4xl mx-auto space-y-8\"><h1 class=\"text-2xl font-semibold\">Combobox (HTMX SSR rewrite)</h1><p class=\"text-sm text-on-surface-muted dark:text-on-surface-dark-muted\">Alpine holds only ephemeral UI state (isOpen, focusIndex). Options, selection, and search live server-side and in DOM. This variant fixes the Alpine-state-vs-bfcache regression in the legacy combobox.</p><div class=\"max-w-xs\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"w-full max-w-4xl mx-auto space-y-8\"><h1 class=\"text-2xl font-semibold\">Combobox v2 (client + server modes)</h1><p class=\"text-sm text-on-surface-muted dark:text-on-surface-dark-muted\">Client-mode comboboxes (industry, skills) toggle entirely in the browser — no HTTP on open/select. Server-mode (users) keeps the HTMX lazy/search path for cases where options can't be pre-rendered.</p><div class=\"max-w-xs\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -122,7 +128,15 @@ func comboboxNewDemoContent() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "</div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "</div><div class=\"max-w-xs\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = combobox.Combobox(UsersCfg, combobox.State{}).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "</div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
