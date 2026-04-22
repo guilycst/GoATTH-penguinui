@@ -138,13 +138,12 @@ templ Combobox(cfg Config, state State) {
 			id={ cfg.ID + "-trigger" }
 			role="combobox"
 			disabled?={ cfg.Disabled }
-			class="inline-flex min-w-40 items-center justify-between gap-2 rounded-radius border px-3 py-2 text-sm font-medium transition hover:opacity-75 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary dark:focus-visible:outline-primary-dark"
+			class={ "inline-flex w-full min-w-40 items-center justify-between gap-2 rounded-radius border px-3 py-2 text-sm font-medium transition hover:opacity-75 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary dark:focus-visible:outline-primary-dark " + triggerBtnClass(state) }
 			x-on:click="isOpen = !isOpen"
 			x-on:keydown.down.prevent="openedWithKeyboard = true; isOpen = true"
 			x-on:keydown.enter.prevent="openedWithKeyboard = true; isOpen = true"
 			x-on:keydown.space.prevent="openedWithKeyboard = true; isOpen = true"
 			x-bind:aria-expanded="isOpen || openedWithKeyboard"
-			x-bind:class={ triggerBtnClass(state) }
 		>
 			<span data-combobox-trigger-label-outer class={ "truncate text-sm " + triggerLabelClass(state) }>{ triggerLabelText(cfg, state) }</span>
 			<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class={ "size-4 shrink-0 transition-transform duration-150 " + chevronClass(state) } x-bind:class="isOpen ? 'rotate-180' : ''">

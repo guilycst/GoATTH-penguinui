@@ -1901,27 +1901,27 @@ func scrollSentinel(cfg Config) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 120, "\" hx-get=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 120, "\" data-hx-get=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var89 string
 		templ_7745c5c3_Var89, templ_7745c5c3_Err = templ.JoinStringErrs(cfg.NextPageURL())
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/table/table.templ`, Line: 515, Col: 28}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/table/table.templ`, Line: 515, Col: 33}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var89))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 121, "\" hx-trigger=\"revealed\" hx-swap=\"outerHTML settle:200ms\" aria-hidden=\"true\"><td colspan=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 121, "\" aria-hidden=\"true\"><td colspan=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var90 string
 		templ_7745c5c3_Var90, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%d", cfg.ColCount()))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/table/table.templ`, Line: 520, Col: 49}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/table/table.templ`, Line: 518, Col: 49}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var90))
 		if templ_7745c5c3_Err != nil {
@@ -1935,7 +1935,7 @@ func scrollSentinel(cfg Config) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templ.Raw(fmt.Sprintf(`<script>(function(){var el=document.getElementById('%s-sentinel');if(!el)return;var c=el.closest('.overflow-y-auto')||el.closest('[style*="overflow-y"]');if(!c){htmx.trigger(el,'revealed');return}var f=false;function ck(){if(f||!document.contains(el)){c.removeEventListener('scroll',ck);return}var r=el.getBoundingClientRect();var cr=c.getBoundingClientRect();if(r.top<cr.bottom+200){f=true;c.removeEventListener('scroll',ck);htmx.trigger(el,'revealed')}}c.addEventListener('scroll',ck,{passive:true});requestAnimationFrame(ck)})()</script>`, cfg.GetID())).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = templ.Raw(fmt.Sprintf(`<script>(function(){var el=document.getElementById('%s-sentinel');if(!el)return;var url=el.getAttribute('data-hx-get');if(!url)return;var fire=function(){htmx.ajax('GET',url,{source:el,target:el,swap:'outerHTML settle:200ms'})};if(typeof IntersectionObserver==='undefined'){fire();return}var root=el.closest('.overflow-y-auto')||el.closest('[style*="overflow-y"]')||null;var fired=false;var io=new IntersectionObserver(function(entries){if(fired)return;for(var i=0;i<entries.length;i++){if(entries[i].isIntersecting){fired=true;io.disconnect();fire();return}}},{root:root,rootMargin:'400px 0px'});io.observe(el)})()</script>`, cfg.GetID())).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -1977,7 +1977,7 @@ func TablePagination(cfg Config) templ.Component {
 			var templ_7745c5c3_Var92 string
 			templ_7745c5c3_Var92, templ_7745c5c3_Err = templ.JoinStringErrs(cfg.PaginationID())
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/table/table.templ`, Line: 530, Col: 30}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/table/table.templ`, Line: 528, Col: 30}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var92))
 			if templ_7745c5c3_Err != nil {
@@ -1990,7 +1990,7 @@ func TablePagination(cfg Config) templ.Component {
 			var templ_7745c5c3_Var93 string
 			templ_7745c5c3_Var93, templ_7745c5c3_Err = templ.JoinStringErrs(itoa(cfg.Pagination.CurrentPage))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/table/table.templ`, Line: 532, Col: 43}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/table/table.templ`, Line: 530, Col: 43}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var93))
 			if templ_7745c5c3_Err != nil {
@@ -2003,7 +2003,7 @@ func TablePagination(cfg Config) templ.Component {
 			var templ_7745c5c3_Var94 string
 			templ_7745c5c3_Var94, templ_7745c5c3_Err = templ.JoinStringErrs(itoa(cfg.Pagination.TotalPages))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/table/table.templ`, Line: 532, Col: 82}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/table/table.templ`, Line: 530, Col: 82}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var94))
 			if templ_7745c5c3_Err != nil {
@@ -2129,7 +2129,7 @@ func checkboxLabel(cfg Config, id string, isHeader bool) templ.Component {
 		var templ_7745c5c3_Var98 string
 		templ_7745c5c3_Var98, templ_7745c5c3_Err = templ.JoinStringErrs(id)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/table/table.templ`, Line: 571, Col: 16}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/table/table.templ`, Line: 569, Col: 16}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var98))
 		if templ_7745c5c3_Err != nil {
@@ -2152,7 +2152,7 @@ func checkboxLabel(cfg Config, id string, isHeader bool) templ.Component {
 			var templ_7745c5c3_Var100 string
 			templ_7745c5c3_Var100, templ_7745c5c3_Err = templ.JoinStringErrs(id)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/table/table.templ`, Line: 574, Col: 53}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/table/table.templ`, Line: 572, Col: 53}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var100))
 			if templ_7745c5c3_Err != nil {
@@ -2188,7 +2188,7 @@ func checkboxLabel(cfg Config, id string, isHeader bool) templ.Component {
 			var templ_7745c5c3_Var103 string
 			templ_7745c5c3_Var103, templ_7745c5c3_Err = templ.JoinStringErrs(id)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/table/table.templ`, Line: 576, Col: 34}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/table/table.templ`, Line: 574, Col: 34}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var103))
 			if templ_7745c5c3_Err != nil {
@@ -2267,7 +2267,7 @@ func ActionButton(label string) templ.Component {
 		var templ_7745c5c3_Var108 string
 		templ_7745c5c3_Var108, templ_7745c5c3_Err = templ.JoinStringErrs(label)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/table/table.templ`, Line: 587, Col: 62}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/table/table.templ`, Line: 585, Col: 62}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var108))
 		if templ_7745c5c3_Err != nil {
@@ -2328,7 +2328,7 @@ func StatusBadge(label string, status string) templ.Component {
 		var templ_7745c5c3_Var112 string
 		templ_7745c5c3_Var112, templ_7745c5c3_Err = templ.JoinStringErrs(label)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/table/table.templ`, Line: 592, Col: 51}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/table/table.templ`, Line: 590, Col: 51}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var112))
 		if templ_7745c5c3_Err != nil {
@@ -2402,7 +2402,7 @@ func UserCell(avatarURL string, name string, email string) templ.Component {
 			var templ_7745c5c3_Var114 string
 			templ_7745c5c3_Var114, templ_7745c5c3_Err = templ.JoinStringErrs(name)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/table/table.templ`, Line: 616, Col: 80}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/table/table.templ`, Line: 614, Col: 80}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var114))
 			if templ_7745c5c3_Err != nil {
@@ -2420,7 +2420,7 @@ func UserCell(avatarURL string, name string, email string) templ.Component {
 		var templ_7745c5c3_Var115 string
 		templ_7745c5c3_Var115, templ_7745c5c3_Err = templ.JoinStringErrs(email)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/table/table.templ`, Line: 618, Col: 74}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `components/table/table.templ`, Line: 616, Col: 74}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var115))
 		if templ_7745c5c3_Err != nil {

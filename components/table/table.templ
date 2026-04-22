@@ -512,14 +512,12 @@ templ sortIcon(cfg Config, key string) {
 templ scrollSentinel(cfg Config) {
 	<tr
 		id={ cfg.GetID() + "-sentinel" }
-		hx-get={ cfg.NextPageURL() }
-		hx-trigger="revealed"
-		hx-swap="outerHTML settle:200ms"
+		data-hx-get={ cfg.NextPageURL() }
 		aria-hidden="true"
 	>
 		<td colspan={ fmt.Sprintf("%d", cfg.ColCount()) } class="p-4 text-center">
 			@loadingIndicator()
-			@templ.Raw(fmt.Sprintf(`<script>(function(){var el=document.getElementById('%s-sentinel');if(!el)return;var c=el.closest('.overflow-y-auto')||el.closest('[style*="overflow-y"]');if(!c){htmx.trigger(el,'revealed');return}var f=false;function ck(){if(f||!document.contains(el)){c.removeEventListener('scroll',ck);return}var r=el.getBoundingClientRect();var cr=c.getBoundingClientRect();if(r.top<cr.bottom+200){f=true;c.removeEventListener('scroll',ck);htmx.trigger(el,'revealed')}}c.addEventListener('scroll',ck,{passive:true});requestAnimationFrame(ck)})()</script>`, cfg.GetID()))
+			@templ.Raw(fmt.Sprintf(`<script>(function(){var el=document.getElementById('%s-sentinel');if(!el)return;var url=el.getAttribute('data-hx-get');if(!url)return;var fire=function(){htmx.ajax('GET',url,{source:el,target:el,swap:'outerHTML settle:200ms'})};if(typeof IntersectionObserver==='undefined'){fire();return}var root=el.closest('.overflow-y-auto')||el.closest('[style*="overflow-y"]')||null;var fired=false;var io=new IntersectionObserver(function(entries){if(fired)return;for(var i=0;i<entries.length;i++){if(entries[i].isIntersecting){fired=true;io.disconnect();fire();return}}},{root:root,rootMargin:'400px 0px'});io.observe(el)})()</script>`, cfg.GetID()))
 		</td>
 	</tr>
 }
