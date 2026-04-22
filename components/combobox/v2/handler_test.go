@@ -2,6 +2,7 @@ package v2
 
 import (
 	"context"
+	"fmt"
 	"io"
 	"net/http"
 	"net/http/httptest"
@@ -194,6 +195,29 @@ func TestHandler_ProviderError_Returns502WithRetarget(t *testing.T) {
 	assert.Equal(t, http.StatusBadGateway, rec.Code)
 	assert.Equal(t, "#users-options", rec.Header().Get("HX-Retarget"))
 	assert.Contains(t, rec.Body.String(), `Failed to load`)
+}
+
+func TestHandler_ProviderError_Escapes(t *testing.T) {
+	resetRegistry()
+	cfg := Config{
+		ID: "x<script>", Name: "x",
+		ToggleEndpoint: "/t/toggle", OptionsEndpoint: "/t/options", ClearEndpoint: "/t/clear",
+		Source: Source{LazyEndpoint: "/t/options"},
+	}
+	provider := func(_ context.Context, _ string, _ map[string]string) ([]Option, error) {
+		return nil, fmt.Errorf("boom")
+	}
+	h := Handler(cfg, provider)
+
+	req := httptest.NewRequest(http.MethodGet, "/t/options", nil)
+	rec := httptest.NewRecorder()
+	h.ServeHTTP(rec, req)
+
+	body := rec.Body.String()
+	assert.Equal(t, http.StatusBadGateway, rec.Code)
+	assert.NotContains(t, body, `<script>`, "cfg.ID must be escaped")
+	assert.Contains(t, body, `&lt;script&gt;`)
+	assert.Equal(t, "#x<script>-options", rec.Header().Get("HX-Retarget"), "HX-Retarget is a header, not HTML — not escaped")
 }
 
 func TestHandler_CascadeInvalidation_DropsStaleSelection(t *testing.T) {

@@ -58,7 +58,7 @@ func (h *comboHandler) serveOptions(w http.ResponseWriter, r *http.Request) {
 	search, selected, deps := h.parseRequest(r)
 	opts, err := h.provider(r.Context(), search, deps)
 	if err != nil {
-		writeProviderError(w, h.cfg)
+		writeProviderError(w, r, h.cfg)
 		return
 	}
 	state := State{Options: opts, Selected: selected, Search: search, Deps: deps}
@@ -79,7 +79,7 @@ func (h *comboHandler) serveToggle(w http.ResponseWriter, r *http.Request) {
 
 	opts, err := h.provider(r.Context(), search, deps)
 	if err != nil {
-		writeProviderError(w, h.cfg)
+		writeProviderError(w, r, h.cfg)
 		return
 	}
 
@@ -90,19 +90,21 @@ func (h *comboHandler) serveToggle(w http.ResponseWriter, r *http.Request) {
 	writeHXTrigger(w, h.cfg.ID, selected)
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	_ = Body(h.cfg, state).Render(r.Context(), w)
+	_ = TriggerLabelOOB(h.cfg, state).Render(r.Context(), w)
 }
 
 func (h *comboHandler) serveClear(w http.ResponseWriter, r *http.Request) {
 	search, _, deps := h.parseRequest(r)
 	opts, err := h.provider(r.Context(), search, deps)
 	if err != nil {
-		writeProviderError(w, h.cfg)
+		writeProviderError(w, r, h.cfg)
 		return
 	}
 	state := State{Options: opts, Selected: nil, Search: search, Deps: deps}
 	writeHXTrigger(w, h.cfg.ID, nil)
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	_ = Body(h.cfg, state).Render(r.Context(), w)
+	_ = TriggerLabelOOB(h.cfg, state).Render(r.Context(), w)
 }
 
 func toggleMembership(selected []string, value string) []string {
@@ -138,9 +140,9 @@ func writeHXTrigger(w http.ResponseWriter, id string, values []string) {
 	w.Header().Set("HX-Trigger", string(payload))
 }
 
-func writeProviderError(w http.ResponseWriter, cfg Config) {
+func writeProviderError(w http.ResponseWriter, r *http.Request, cfg Config) {
 	w.Header().Set("HX-Retarget", "#"+cfg.ID+"-options")
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	w.WriteHeader(http.StatusBadGateway)
-	_, _ = w.Write([]byte(`<ul id="` + cfg.ID + `-options" role="listbox"><li class="text-danger">Failed to load. <button hx-get="` + cfg.OptionsEndpoint + `">Retry</button></li></ul>`))
+	_ = ProviderError(cfg).Render(r.Context(), w)
 }

@@ -53,16 +53,11 @@ func (s *Server) setupRoutes() {
 	s.mux.HandleFunc("/api/components/carousel/slides", s.handleCarouselSlides)
 	s.mux.HandleFunc("/api/components/form-validation", s.handleFormValidation)
 
-	// HTMX SSR combobox (v2)
-	industryHandler := combobox.Handler(components.IndustryCfg, industryProvider)
-	s.mux.Handle("/api/components/combobox-new/industry/options", industryHandler)
-	s.mux.Handle("/api/components/combobox-new/industry/toggle", industryHandler)
-	s.mux.Handle("/api/components/combobox-new/industry/clear", industryHandler)
-
-	skillsHandler := combobox.Handler(components.SkillsCfg, skillsProvider)
-	s.mux.Handle("/api/components/combobox-new/skills/options", skillsHandler)
-	s.mux.Handle("/api/components/combobox-new/skills/toggle", skillsHandler)
-	s.mux.Handle("/api/components/combobox-new/skills/clear", skillsHandler)
+	// HTMX SSR combobox (v2) — users demo runs server-mode lazy search.
+	usersHandler := combobox.Handler(components.UsersCfg, usersProvider)
+	s.mux.Handle("/api/components/combobox-new/users/options", usersHandler)
+	s.mux.Handle("/api/components/combobox-new/users/toggle", usersHandler)
+	s.mux.Handle("/api/components/combobox-new/users/clear", usersHandler)
 
 	// Docs pages
 	s.mux.HandleFunc("/docs/theme", s.handleThemePage)
@@ -291,32 +286,25 @@ func (s *Server) handleCarouselSlides(w http.ResponseWriter, r *http.Request) {
 	carousel.Carousel(cfg).Render(r.Context(), w)
 }
 
-// industryProvider is an OptionsProvider for the combobox-new demo.
-// It filters the static industry list by substring match on Label.
-func industryProvider(_ context.Context, search string, _ map[string]string) ([]combobox.Option, error) {
-	opts := components.IndustryCfg.Source.Static
+// usersProvider is an OptionsProvider for the combobox-new users demo.
+// Filters a static seed list by substring match on the search query — good
+// enough to exercise the lazy/search path without touching a real backend.
+func usersProvider(_ context.Context, search string, _ map[string]string) ([]combobox.Option, error) {
+	seed := []combobox.Option{
+		{Value: "alice", Label: "Alice"},
+		{Value: "bob", Label: "Bob"},
+		{Value: "albert", Label: "Albert"},
+		{Value: "carol", Label: "Carol"},
+		{Value: "dave", Label: "Dave"},
+		{Value: "eve", Label: "Eve"},
+	}
 	if search == "" {
-		return opts, nil
+		return seed, nil
 	}
-	out := []combobox.Option{}
-	for _, o := range opts {
-		if strings.Contains(strings.ToLower(o.Label), strings.ToLower(search)) {
-			out = append(out, o)
-		}
-	}
-	return out, nil
-}
-
-// skillsProvider is an OptionsProvider for the combobox-new skills demo.
-// It filters the static skills list by substring match on Label.
-func skillsProvider(_ context.Context, search string, _ map[string]string) ([]combobox.Option, error) {
-	opts := components.SkillsCfg.Source.Static
-	if search == "" {
-		return opts, nil
-	}
-	out := []combobox.Option{}
-	for _, o := range opts {
-		if strings.Contains(strings.ToLower(o.Label), strings.ToLower(search)) {
+	q := strings.ToLower(search)
+	out := make([]combobox.Option, 0, len(seed))
+	for _, o := range seed {
+		if strings.Contains(strings.ToLower(o.Label), q) {
 			out = append(out, o)
 		}
 	}

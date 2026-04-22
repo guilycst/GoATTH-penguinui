@@ -64,6 +64,16 @@ type State struct {
 // the values of cfg.DependsOn observed on this request.
 type OptionsProvider func(ctx context.Context, search string, deps map[string]string) ([]Option, error)
 
+// IsClientMode reports whether this combobox toggles locally without a server
+// round-trip. Client mode covers any source that isn't a LazyEndpoint: the
+// caller is expected to render all options into the initial DOM (either via
+// Source.Static or by populating State.Options). Configs with neither
+// Source.Static nor Source.LazyEndpoint are rejected by Validate, so in
+// practice "not lazy" implies "options are in DOM at paint".
+func (c Config) IsClientMode() bool {
+	return c.Source.LazyEndpoint == ""
+}
+
 // Validate returns an error if the Config is not usable.
 func (c Config) Validate() error {
 	if c.ID == "" {
@@ -72,20 +82,23 @@ func (c Config) Validate() error {
 	if c.Name == "" {
 		return fmt.Errorf("combobox: Config.Name is required")
 	}
-	if c.ToggleEndpoint == "" {
-		return fmt.Errorf("combobox: Config.ToggleEndpoint is required")
-	}
-	if c.OptionsEndpoint == "" {
-		return fmt.Errorf("combobox: Config.OptionsEndpoint is required")
-	}
-	if c.ClearEndpoint == "" {
-		return fmt.Errorf("combobox: Config.ClearEndpoint is required")
+	if c.Source.LazyEndpoint != "" && len(c.Source.Static) != 0 {
+		return fmt.Errorf("combobox: Config.Source cannot have both Static and LazyEndpoint")
 	}
 	if c.Source.LazyEndpoint == "" && len(c.Source.Static) == 0 {
 		return fmt.Errorf("combobox: Config.Source must have Static or LazyEndpoint set")
 	}
-	if c.Source.LazyEndpoint != "" && len(c.Source.Static) != 0 {
-		return fmt.Errorf("combobox: Config.Source cannot have both Static and LazyEndpoint")
+	// Server-mode (lazy or cascading) requires endpoints.
+	if !c.IsClientMode() {
+		if c.ToggleEndpoint == "" {
+			return fmt.Errorf("combobox: Config.ToggleEndpoint is required for server mode")
+		}
+		if c.OptionsEndpoint == "" {
+			return fmt.Errorf("combobox: Config.OptionsEndpoint is required for server mode")
+		}
+		if c.ClearEndpoint == "" {
+			return fmt.Errorf("combobox: Config.ClearEndpoint is required for server mode")
+		}
 	}
 	return nil
 }
