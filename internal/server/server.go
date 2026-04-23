@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"path/filepath"
+	"strconv"
 	"strings"
 	"time"
 
@@ -52,6 +53,7 @@ func (s *Server) setupRoutes() {
 	s.mux.HandleFunc("/api/components/toast", s.handleToastOOB)
 	s.mux.HandleFunc("/api/components/carousel/slides", s.handleCarouselSlides)
 	s.mux.HandleFunc("/api/components/form-validation", s.handleFormValidation)
+	s.mux.HandleFunc("/api/components/steps/demo", s.handleStepsDemo)
 
 	// HTMX SSR combobox (v2) — users demo runs server-mode lazy search.
 	usersHandler := combobox.Handler(components.UsersCfg, usersProvider)
@@ -124,6 +126,8 @@ func (s *Server) handleComponent(w http.ResponseWriter, r *http.Request) {
 		components.SelectDemoPage().Render(r.Context(), w)
 	case "spinner":
 		components.SpinnerDemoPage().Render(r.Context(), w)
+	case "steps":
+		components.StepsDemoPage().Render(r.Context(), w)
 	case "text-input":
 		components.TextInputDemoPage().Render(r.Context(), w)
 	case "textarea":
@@ -156,6 +160,26 @@ func (s *Server) handleComponent(w http.ResponseWriter, r *http.Request) {
 func (s *Server) handleAPIHello(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/html")
 	fmt.Fprintf(w, `<p class="text-green-600">Hello from HTMX! Request received at %s %s</p>`, r.Method, r.URL.Path)
+}
+
+func (s *Server) handleStepsDemo(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "text/html")
+
+	current := 2
+	if raw := r.URL.Query().Get("step"); raw != "" {
+		if parsed, err := strconv.Atoi(raw); err == nil {
+			current = parsed
+		}
+	}
+
+	if current < 1 {
+		current = 1
+	}
+	if current > 4 {
+		current = 4
+	}
+
+	components.StepsHTMXFlow(current).Render(r.Context(), w)
 }
 
 func (s *Server) handleButtonFragment(w http.ResponseWriter, r *http.Request) {

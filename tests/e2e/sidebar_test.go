@@ -26,6 +26,12 @@ func TestSidebar_AllComponentsPresent(t *testing.T) {
 	})
 	require.NoError(t, err)
 
+	sidebar := page.Locator("nav[aria-label='sidebar navigation']")
+	require.NoError(t, sidebar.WaitFor(playwright.LocatorWaitForOptions{
+		State:   playwright.WaitForSelectorStateVisible,
+		Timeout: playwright.Float(3000),
+	}))
+
 	// Every component directory should have a sidebar link
 	expectedComponents := []struct {
 		href  string
@@ -50,6 +56,7 @@ func TestSidebar_AllComponentsPresent(t *testing.T) {
 		{"/components/select", "Select"},
 		{"/components/sidebar", "Sidebar"},
 		{"/components/spinner", "Spinner"},
+		{"/components/steps", "Steps"},
 		{"/components/table", "Table"},
 		{"/components/tabs", "Tabs"},
 		{"/components/tags-list", "Tags List"},
@@ -63,7 +70,7 @@ func TestSidebar_AllComponentsPresent(t *testing.T) {
 
 	for _, comp := range expectedComponents {
 		t.Run(comp.label, func(t *testing.T) {
-			link := page.Locator("a[href='" + comp.href + "']")
+			link := sidebar.Locator("a[href='" + comp.href + "']")
 			count, err := link.Count()
 			require.NoError(t, err)
 			assert.Equal(t, 1, count, "%s should have a sidebar link to %s", comp.label, comp.href)
