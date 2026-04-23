@@ -1,0 +1,117 @@
+package steps
+
+import "fmt"
+
+// Steps renders progress indicator in horizontal or vertical layout.
+//
+// Usage:
+//
+//	@steps.Steps(steps.Config{
+//	    ShowLabels: true,
+//	    Steps: []steps.Step{
+//	        {Label: "Create account", Status: steps.StatusCompleted},
+//	        {Label: "Select plan", Status: steps.StatusCurrent},
+//	        {Label: "Checkout", Status: steps.StatusUpcoming},
+//	    },
+//	})
+templ Steps(cfg Config) {
+	{{ orientation := cfg.normalizedOrientation() }}
+	<ol
+		if cfg.ID != "" {
+			id={ cfg.ID }
+		}
+		class={ cfg.listClasses() }
+		aria-label={ cfg.resolvedAriaLabel() }
+		if cfg.LiveRegion {
+			aria-live="polite"
+			aria-atomic="true"
+		}
+		{ cfg.Attrs... }
+	>
+		for i, raw := range cfg.Steps {
+			{{ step := resolvedStep(raw, i) }}
+			if orientation == OrientationVertical {
+				@verticalStep(step, i, cfg.ShowLabels)
+			} else {
+				@horizontalStep(step, i, cfg.ShowLabels)
+			}
+		}
+	</ol>
+}
+
+templ horizontalStep(step Step, index int, showLabels bool) {
+	<li
+		id={ step.ID }
+		class={ fmt.Sprintf("%s text-sm", horizontalItemClasses(index)) }
+		if step.Status == StatusCurrent {
+			aria-current="step"
+		}
+		if resolvedItemLabel(step) != "" {
+			aria-label={ resolvedItemLabel(step) }
+		}
+		{ step.Attrs... }
+	>
+		if index > 0 {
+			<span class={ connectorClasses(step.Status, OrientationHorizontal) } aria-hidden="true"></span>
+		}
+		<div class="flex items-center gap-2 pl-2">
+			@stepIndicator(step)
+			if showLabels && step.Label != "" {
+				<span class={ labelClasses(step.Status) }>{ step.Label }</span>
+			}
+		</div>
+	</li>
+}
+
+templ verticalStep(step Step, index int, showLabels bool) {
+	<li
+		id={ step.ID }
+		class="flex w-full items-center text-sm"
+		if step.Status == StatusCurrent {
+			aria-current="step"
+		}
+		if resolvedItemLabel(step) != "" {
+			aria-label={ resolvedItemLabel(step) }
+		}
+		{ step.Attrs... }
+	>
+		<div class="flex items-center gap-2">
+			<div class="relative">
+				if index > 0 {
+					<div class={ connectorClasses(step.Status, OrientationVertical) }></div>
+				}
+				@stepIndicator(step)
+			</div>
+			if showLabels && step.Label != "" {
+				<span class={ labelClasses(step.Status) }>{ step.Label }</span>
+			}
+		</div>
+	</li>
+}
+
+templ stepIndicator(step Step) {
+	<span class={ indicatorClasses(step.Status) }>
+		if step.Status == StatusCompleted {
+			<svg class="size-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor" aria-hidden="true">
+				<path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5"></path>
+			</svg>
+			<span class="sr-only">completed</span>
+		} else {
+			{ fmt.Sprintf("%d", step.Number) }
+		}
+	</span>
+}
+
+func horizontalItemClasses(index int) string {
+	if index == 0 {
+		return ""
+	}
+	return "flex w-full items-center"
+}
+
+func resolvedItemLabel(step Step) string {
+	if step.AriaLabel != "" {
+		return step.AriaLabel
+	}
+	return step.Label
+}

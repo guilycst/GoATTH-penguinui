@@ -305,6 +305,7 @@ func getSidebarSections(activeComponent string) []sidebar.Section {
 			Items: []sidebar.Item{
 				sItem("alert", "Alert", "/components/alert", activeComponent),
 				sItem("modal", "Modal", "/components/modal", activeComponent),
+				sItem("steps", "Steps", "/components/steps", activeComponent),
 				sItem("toast", "Toast", "/components/toast", activeComponent),
 				sItem("tooltip", "Tooltip", "/components/tooltip", activeComponent),
 			},
@@ -355,6 +356,7 @@ var orderedComponents = []componentNavLink{
 	{"Triplet", "/components/triplet"},
 	{"Alert", "/components/alert"},
 	{"Modal", "/components/modal"},
+	{"Steps", "/components/steps"},
 	{"Toast", "/components/toast"},
 	{"Tooltip", "/components/tooltip"},
 	{"Breadcrumbs", "/components/breadcrumbs"},

@@ -21,7 +21,7 @@ func getStackItems() []stackInfo {
 		{Title: "Tailwind CSS v4", Desc: "Utility-first styling with a CSS-first config. 14 built-in themes with design tokens that switch instantly.", URL: "https://tailwindcss.com/"},
 		{Title: "Alpine.js", Desc: "Lightweight reactivity where you need it — dropdowns, toggles, modals. No virtual DOM, no build step. Just HTML attributes.", URL: "https://alpinejs.dev/"},
 		{Title: "HTMX", Desc: "Server-rendered partials over HTTP. Sort a table, paginate, filter — all without writing fetch calls or managing client state.", URL: "https://htmx.org/"},
-		{Title: "PenguinUI", Desc: "The design system. 22 components faithfully ported from PenguinUI's Tailwind originals, with 99.99% visual parity.", URL: "https://penguinui.com/"},
+		{Title: "PenguinUI", Desc: "The design system. 23 components faithfully ported from PenguinUI's Tailwind originals, with 99.99% visual parity.", URL: "https://penguinui.com/"},
 	}
 }
 
@@ -99,7 +99,7 @@ func landingContent() templ.Component {
 			var templ_7745c5c3_Var3 templ.SafeURL
 			templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinURLErrs(templ.SafeURL(s.URL))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `GoATTH-penguinui/internal/pages/demo/components/landing.templ`, Line: 87, Col: 35}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/components/landing.templ`, Line: 87, Col: 35}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 			if templ_7745c5c3_Err != nil {
@@ -112,7 +112,7 @@ func landingContent() templ.Component {
 			var templ_7745c5c3_Var4 string
 			templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(s.Title)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `GoATTH-penguinui/internal/pages/demo/components/landing.templ`, Line: 89, Col: 16}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/components/landing.templ`, Line: 89, Col: 16}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 			if templ_7745c5c3_Err != nil {
@@ -125,7 +125,7 @@ func landingContent() templ.Component {
 			var templ_7745c5c3_Var5 string
 			templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(s.Desc)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `GoATTH-penguinui/internal/pages/demo/components/landing.templ`, Line: 92, Col: 15}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/pages/demo/components/landing.templ`, Line: 92, Col: 15}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 			if templ_7745c5c3_Err != nil {
@@ -136,7 +136,7 @@ func landingContent() templ.Component {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "</div></div><!-- Why --><div class=\"max-w-3xl mx-auto\"><h2 class=\"text-2xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong mb-4 text-center\">Why?</h2><div class=\"space-y-4 text-on-surface dark:text-on-surface-dark\"><p>Modern frontend is complex. React, Next.js, Vite, npm, TypeScript, state management, hydration — a mountain of tooling between you and shipping a page.</p><p>GoATTH takes a different path: <strong class=\"text-on-surface-strong dark:text-on-surface-dark-strong\">the server renders HTML, the browser shows it.</strong> When you need interactivity, HTMX swaps fragments and Alpine.js handles local state. No JavaScript bundle, no virtual DOM, no client-side routing.</p><p>The result is a <strong class=\"text-on-surface-strong dark:text-on-surface-dark-strong\">single binary</strong> that serves a complete UI with theme switching, dark mode, sortable tables, filterable data, collapsible sidebars, and 22 production-ready components — all in a <strong class=\"text-on-surface-strong dark:text-on-surface-dark-strong\">37MB Docker image</strong>.</p></div></div><!-- Footer --><div class=\"text-center pb-8\"><p class=\"text-sm text-on-surface-muted dark:text-on-surface-dark-muted\">22 components · 14 themes · 386 E2E tests · <a href=\"/getting-started\" class=\"text-primary dark:text-primary-dark underline underline-offset-2\">Get started</a></p></div></div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "</div></div><!-- Why --><div class=\"max-w-3xl mx-auto\"><h2 class=\"text-2xl font-bold font-title text-on-surface-strong dark:text-on-surface-dark-strong mb-4 text-center\">Why?</h2><div class=\"space-y-4 text-on-surface dark:text-on-surface-dark\"><p>Modern frontend is complex. React, Next.js, Vite, npm, TypeScript, state management, hydration — a mountain of tooling between you and shipping a page.</p><p>GoATTH takes a different path: <strong class=\"text-on-surface-strong dark:text-on-surface-dark-strong\">the server renders HTML, the browser shows it.</strong> When you need interactivity, HTMX swaps fragments and Alpine.js handles local state. No JavaScript bundle, no virtual DOM, no client-side routing.</p><p>The result is a <strong class=\"text-on-surface-strong dark:text-on-surface-dark-strong\">single binary</strong> that serves a complete UI with theme switching, dark mode, sortable tables, filterable data, collapsible sidebars, and 22 production-ready components — all in a <strong class=\"text-on-surface-strong dark:text-on-surface-dark-strong\">37MB Docker image</strong>.</p></div></div><!-- Footer --><div class=\"text-center pb-8\"><p class=\"text-sm text-on-surface-muted dark:text-on-surface-dark-muted\">23 components · 14 themes · 386 E2E tests · <a href=\"/getting-started\" class=\"text-primary dark:text-primary-dark underline underline-offset-2\">Get started</a></p></div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
