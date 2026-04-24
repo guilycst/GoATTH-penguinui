@@ -1,0 +1,225 @@
+package schemafield
+
+import "fmt"
+
+// Fields renders a list of schema-derived fields produced by Walk / FallbackFromDefaults.
+//
+// Usage:
+//
+//	schemaFields := schemafield.Walk(valuesSchema, defaultValues, currentValues, allowList)
+//	if schemaFields == nil {
+//	    schemaFields = schemafield.FallbackFromDefaults(defaultValues, currentValues, allowList)
+//	}
+//	@schemafield.Fields(schemafield.FieldsConfig{
+//	    Fields:    schemaFields,
+//	    NamePrefix: "values",
+//	})
+templ Fields(cfg FieldsConfig) {
+	<div class="flex flex-col gap-5">
+		for _, f := range cfg.Fields {
+			@field(f, cfg.NamePrefix)
+		}
+	</div>
+}
+
+// FieldsConfig configures a group of schema-derived fields.
+type FieldsConfig struct {
+	// Fields is the list produced by Walk / FallbackFromDefaults.
+	Fields []Field
+	// NamePrefix prefixes every input name (so the server sees `values.<path>`).
+	// Default: "values".
+	NamePrefix string
+}
+
+// NamePrefix resolves the prefix with a default.
+func (c FieldsConfig) getNamePrefix() string {
+	if c.NamePrefix == "" {
+		return "values"
+	}
+	return c.NamePrefix
+}
+
+// field renders a single field based on its Kind.
+templ field(f Field, prefix string) {
+	{{ inputName := fmt.Sprintf("%s.%s", orDefault(prefix, "values"), f.Path) }}
+	<div class="flex flex-col gap-1" data-field-path={ f.Path }>
+		<label for={ inputName } class="flex items-center gap-2 text-sm font-medium text-on-surface dark:text-on-surface-dark">
+			<span>{ f.Label }</span>
+			if f.Required {
+				<span class="text-danger" aria-label="required">*</span>
+			}
+			if f.Managed {
+				@managedBadge()
+			}
+		</label>
+		if f.Description != "" {
+			<p class="text-xs text-on-surface-muted dark:text-on-surface-dark-muted">{ f.Description }</p>
+		}
+		switch f.Kind {
+			case KindString:
+				@stringInput(f, inputName)
+			case KindNumber, KindInteger:
+				@numberInput(f, inputName)
+			case KindBoolean:
+				@booleanInput(f, inputName)
+			case KindEnum:
+				@enumSelect(f, inputName)
+			case KindArray:
+				@arrayInput(f, inputName)
+			case KindObject:
+				@objectGroup(f, prefix)
+			default:
+				@unknownFallback(f, inputName)
+		}
+		for _, e := range f.Errors {
+			<span class="text-xs text-danger">{ e }</span>
+		}
+	</div>
+}
+
+templ stringInput(f Field, name string) {
+	<input
+		type="text"
+		id={ name }
+		name={ name }
+		value={ f.Value }
+		placeholder={ f.Default }
+		if f.Managed {
+			disabled
+			readonly
+		}
+		class={ inputClasses(f.Managed) }
+	/>
+}
+
+templ numberInput(f Field, name string) {
+	<input
+		if f.Kind == KindInteger {
+			type="number"
+			step="1"
+		} else {
+			type="number"
+			step="any"
+		}
+		id={ name }
+		name={ name }
+		value={ f.Value }
+		placeholder={ f.Default }
+		if f.Managed {
+			disabled
+			readonly
+		}
+		class={ inputClasses(f.Managed) }
+	/>
+}
+
+templ booleanInput(f Field, name string) {
+	<label class="inline-flex items-center gap-2">
+		<input
+			type="checkbox"
+			id={ name }
+			name={ name }
+			value="true"
+			if f.Value == "true" {
+				checked
+			}
+			if f.Managed {
+				disabled
+			}
+			class="size-4 rounded border-outline bg-surface text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary dark:border-outline-dark dark:bg-surface-dark"
+		/>
+		<span class="text-sm text-on-surface-muted dark:text-on-surface-dark-muted">
+			if f.Default != "" {
+				default: { f.Default }
+			}
+		</span>
+	</label>
+}
+
+templ enumSelect(f Field, name string) {
+	<select
+		id={ name }
+		name={ name }
+		if f.Managed {
+			disabled
+		}
+		class={ inputClasses(f.Managed) }
+	>
+		if !f.Required {
+			<option value="">—</option>
+		}
+		for _, opt := range f.Enum {
+			if opt == f.Value {
+				<option value={ opt } selected>{ opt }</option>
+			} else {
+				<option value={ opt }>{ opt }</option>
+			}
+		}
+	</select>
+}
+
+templ arrayInput(f Field, name string) {
+	<input
+		type="text"
+		id={ name }
+		name={ name }
+		value={ f.Value }
+		placeholder="comma-separated"
+		if f.Managed {
+			disabled
+			readonly
+		}
+		class={ inputClasses(f.Managed) }
+	/>
+}
+
+templ objectGroup(f Field, prefix string) {
+	<fieldset class="rounded-radius border border-outline p-3 dark:border-outline-dark">
+		<legend class="px-1 text-xs font-medium text-on-surface-muted dark:text-on-surface-dark-muted">{ f.Label }</legend>
+		<div class="flex flex-col gap-4">
+			for _, c := range f.Children {
+				@field(c, prefix)
+			}
+		</div>
+	</fieldset>
+}
+
+templ unknownFallback(f Field, name string) {
+	<textarea
+		id={ name }
+		name={ name }
+		rows="3"
+		placeholder={ f.Default }
+		if f.Managed {
+			disabled
+			readonly
+		}
+		class={ inputClasses(f.Managed) + " font-mono" }
+	>{ f.Value }</textarea>
+}
+
+templ managedBadge() {
+	<span class="inline-flex items-center gap-1 rounded-full bg-surface-alt px-1.5 py-0.5 text-[10px] font-medium text-on-surface-muted dark:bg-surface-dark-alt dark:text-on-surface-dark-muted" title="Managed by platform — cannot override">
+		<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="size-3" aria-hidden="true">
+			<path fill-rule="evenodd" d="M8 1a3 3 0 0 0-3 3v2H4a2 2 0 0 0-2 2v5a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-1V4a3 3 0 0 0-3-3Zm1.5 5V4a1.5 1.5 0 0 0-3 0v2h3Z" clip-rule="evenodd"></path>
+		</svg>
+		managed
+	</span>
+}
+
+func inputClasses(managed bool) string {
+	base := "w-full rounded-radius border bg-surface px-3 py-2 text-sm text-on-surface placeholder:text-on-surface-muted focus:outline-none focus:ring-2 focus:ring-primary dark:bg-surface-dark dark:text-on-surface-dark dark:placeholder:text-on-surface-dark-muted dark:focus:ring-primary-dark"
+	if managed {
+		base += " border-outline cursor-not-allowed opacity-70 dark:border-outline-dark"
+	} else {
+		base += " border-outline dark:border-outline-dark"
+	}
+	return base
+}
+
+func orDefault(s, def string) string {
+	if s == "" {
+		return def
+	}
+	return s
+}
