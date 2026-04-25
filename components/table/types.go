@@ -289,14 +289,60 @@ type Filter struct {
 	DefaultValue string
 }
 
+// FilterVariant switches the filter bar layout. FilterVariantBar (the
+// default, empty string) is the full-width bordered block with an optional
+// collapsible header — suitable for primary page tables. FilterVariantInline
+// drops the border, collapsible toggle, and padding wrapper so the filter
+// controls render as a plain flex row; suitable for modals and tight chrome
+// where the bar's own chrome would compete with the host's.
+type FilterVariant string
+
+const (
+	FilterVariantBar    FilterVariant = ""
+	FilterVariantInline FilterVariant = "inline"
+)
+
 // FilterConfig holds the filter bar configuration
 type FilterConfig struct {
 	// Filters is the list of filter controls
 	Filters []Filter
-	// Collapsible enables a toggle to show/hide the filter bar
+	// Collapsible enables a toggle to show/hide the filter bar.
+	// Ignored when Variant is FilterVariantInline.
 	Collapsible bool
-	// InitiallyExpanded controls whether filters start visible (default: true)
+	// InitiallyExpanded controls whether filters start visible (default: true).
+	// Ignored when Variant is FilterVariantInline.
 	InitiallyExpanded bool
+	// Variant selects the layout (bar vs inline). See FilterVariant.
+	Variant FilterVariant
+	// HxTarget overrides the CSS selector that filter changes swap into.
+	// Default (empty) resolves to "#{tbody-id}". Use when the table sits
+	// inside a larger fragment that should be re-rendered as a unit — for
+	// example, a modal body that includes both the table and surrounding
+	// header text, or a cluster-picker card that needs pager state reset.
+	HxTarget string
+	// HxSwap overrides the htmx swap strategy used when filters apply.
+	// Default (empty) resolves to "innerHTML". Use "outerHTML" when the
+	// HxTarget is itself the wrapper that the server re-renders (e.g. a
+	// catalog grid whose empty-state lives on the wrapper element).
+	HxSwap string
+}
+
+// ResolvedHxTarget returns the CSS selector that filter changes should swap
+// into. Caller-provided HxTarget wins; falls back to "#{tbody-id}".
+func (c *FilterConfig) ResolvedHxTarget(cfg Config) string {
+	if c != nil && c.HxTarget != "" {
+		return c.HxTarget
+	}
+	return "#" + cfg.TbodyID()
+}
+
+// ResolvedHxSwap returns the htmx swap strategy filter requests should use.
+// Caller-provided HxSwap wins; falls back to "innerHTML".
+func (c *FilterConfig) ResolvedHxSwap() string {
+	if c != nil && c.HxSwap != "" {
+		return c.HxSwap
+	}
+	return "innerHTML"
 }
 
 // Config holds configuration for the table component
@@ -625,6 +671,13 @@ func (cfg Config) FilterBarID() string {
 	return cfg.GetID() + "-filters"
 }
 
+// filterControlID returns a stable id for a single filter input. Stability
+// matters: hx-preserve relies on a matching id between the existing DOM and
+// the swap response to know which element to keep across renders.
+func filterControlID(cfg Config, filter Filter) string {
+	return cfg.FilterBarID() + "-" + filter.Key
+}
+
 // filterAlpineInit generates a name for the Alpine.data registration.
 // Converts hyphens to camelCase since Alpine evaluates x-data as JS expressions.
 func filterAlpineInit(cfg Config) string {
@@ -676,27 +729,52 @@ func filterScriptData(cfg Config) string {
 	if cfg.Pagination != nil && cfg.Pagination.PerPage > 0 {
 		perPage = "&per_page=" + itoa(cfg.Pagination.PerPage)
 	}
-	tbodyID := cfg.TbodyID()
+	// ExtraQueryParams already starts with '&' (or is empty) — appended raw
+	// after the auto `?_filter=1` marker so static query state (modal context
+	// like ?addon_name=X) survives every filter request.
+	extra := cfg.ExtraQueryParams
+	hxTarget := cfg.Filters.ResolvedHxTarget(cfg)
+	hxSwap := cfg.Filters.ResolvedHxSwap()
 	name := filterAlpineInit(cfg)
 
-	return fmt.Sprintf(`document.addEventListener('alpine:init', () => {
-		Alpine.data('%s', () => ({
-			filtersExpanded: %s,
-			filters: %s,
-			buildFilterURL() {
-				let url = '%s?_filter=1%s';
-				for (const [k, v] of Object.entries(this.filters)) {
-					if (v !== '' && v !== 'false') {
-						url += '&' + encodeURIComponent(k) + '=' + encodeURIComponent(v);
+	// Register eagerly when Alpine is already up (modal-swapped table); fall
+	// back to alpine:init for the initial page load. The alpine:init listener
+	// only fires ONCE per page; HTMX-swapped scripts arrive after init and
+	// would otherwise never register, leaving x-data="<name>Filters" silent.
+	//
+	// After late registration we MUST re-initialize the wrapper subtree —
+	// Alpine resolves x-data="<name>" at mount time, so a div that mounted
+	// before the script ran is bound to an empty {} until we tell Alpine to
+	// rebind. initTree(wrapper) is idempotent for already-bound trees.
+	return fmt.Sprintf(`(() => {
+		const name = '%s';
+		const register = () => {
+			Alpine.data(name, () => ({
+				filtersExpanded: %s,
+				filters: %s,
+				buildFilterURL() {
+					let url = '%s?_filter=1%s%s';
+					for (const [k, v] of Object.entries(this.filters)) {
+						if (v !== '' && v !== 'false') {
+							url += '&' + encodeURIComponent(k) + '=' + encodeURIComponent(v);
+						}
 					}
+					return url;
+				},
+				applyFilters() {
+					htmx.ajax('GET', this.buildFilterURL(), {target: '%s', swap: '%s'});
 				}
-				return url;
-			},
-			applyFilters() {
-				htmx.ajax('GET', this.buildFilterURL(), {target: '#%s', swap: 'innerHTML'});
-			}
-		}));
-	});
+			}));
+			document.querySelectorAll('[x-data="' + name + '"]').forEach((el) => {
+				if (typeof Alpine.initTree === 'function') Alpine.initTree(el);
+			});
+		};
+		if (window.Alpine && window.Alpine.version) {
+			register();
+		} else {
+			document.addEventListener('alpine:init', register);
+		}
+	})();
 	// Intercept all HTMX requests from this table to append filter params
 	document.addEventListener('htmx:configRequest', (evt) => {
 		var el = evt.detail.elt;
@@ -709,7 +787,7 @@ func filterScriptData(cfg Config) string {
 				evt.detail.parameters[k] = v;
 			}
 		}
-	});`, name, expanded, filters, endpoint, perPage, tbodyID, name)
+	});`, name, expanded, filters, endpoint, perPage, extra, hxTarget, hxSwap, name)
 }
 
 // jsEscape escapes a string for safe embedding in single-quoted JS literals
