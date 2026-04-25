@@ -1,6 +1,10 @@
 package schemafield
 
-import "fmt"
+import (
+	"fmt"
+
+	"github.com/guilycst/GoATTH-penguinui/components/tagslist"
+)
 
 // Fields renders a list of schema-derived fields produced by Walk / FallbackFromDefaults.
 //
@@ -39,42 +43,47 @@ func (c FieldsConfig) getNamePrefix() string {
 	return c.NamePrefix
 }
 
-// field renders a single field based on its Kind.
+// field renders a single field based on its Kind. Objects are rendered as
+// sections (fieldset + legend) with no outer label wrapper — the legend is
+// the label. Everything else renders the label + optional description + the
+// kind-specific input.
 templ field(f Field, prefix string) {
 	{{ inputName := fmt.Sprintf("%s.%s", orDefault(prefix, "values"), f.Path) }}
-	<div class="flex flex-col gap-1" data-field-path={ f.Path }>
-		<label for={ inputName } class="flex items-center gap-2 text-sm font-medium text-on-surface dark:text-on-surface-dark">
-			<span>{ f.Label }</span>
-			if f.Required {
-				<span class="text-danger" aria-label="required">*</span>
+	if f.Kind == KindObject {
+		@objectGroup(f, prefix)
+	} else {
+		<div class="flex flex-col gap-1" data-field-path={ f.Path }>
+			<label for={ inputName } class="flex items-center gap-2 text-sm font-medium text-on-surface dark:text-on-surface-dark">
+				<span>{ f.Label }</span>
+				if f.Required {
+					<span class="text-danger" aria-label="required">*</span>
+				}
+				if f.Managed {
+					@managedBadge()
+				}
+			</label>
+			if f.Description != "" {
+				<p class="text-xs text-on-surface-muted dark:text-on-surface-dark-muted">{ f.Description }</p>
 			}
-			if f.Managed {
-				@managedBadge()
+			switch f.Kind {
+				case KindString:
+					@stringInput(f, inputName)
+				case KindNumber, KindInteger:
+					@numberInput(f, inputName)
+				case KindBoolean:
+					@booleanInput(f, inputName)
+				case KindEnum:
+					@enumSelect(f, inputName)
+				case KindArray:
+					@arrayInput(f, inputName)
+				default:
+					@unknownFallback(f, inputName)
 			}
-		</label>
-		if f.Description != "" {
-			<p class="text-xs text-on-surface-muted dark:text-on-surface-dark-muted">{ f.Description }</p>
-		}
-		switch f.Kind {
-			case KindString:
-				@stringInput(f, inputName)
-			case KindNumber, KindInteger:
-				@numberInput(f, inputName)
-			case KindBoolean:
-				@booleanInput(f, inputName)
-			case KindEnum:
-				@enumSelect(f, inputName)
-			case KindArray:
-				@arrayInput(f, inputName)
-			case KindObject:
-				@objectGroup(f, prefix)
-			default:
-				@unknownFallback(f, inputName)
-		}
-		for _, e := range f.Errors {
-			<span class="text-xs text-danger">{ e }</span>
-		}
-	</div>
+			for _, e := range f.Errors {
+				<span class="text-xs text-danger">{ e }</span>
+			}
+		</div>
+	}
 }
 
 templ stringInput(f Field, name string) {
@@ -82,8 +91,11 @@ templ stringInput(f Field, name string) {
 		type="text"
 		id={ name }
 		name={ name }
-		value={ f.Value }
+		value={ prefillValue(f) }
 		placeholder={ f.Default }
+		if f.Required {
+			required
+		}
 		if f.Managed {
 			disabled
 			readonly
@@ -103,8 +115,11 @@ templ numberInput(f Field, name string) {
 		}
 		id={ name }
 		name={ name }
-		value={ f.Value }
+		value={ prefillValue(f) }
 		placeholder={ f.Default }
+		if f.Required {
+			required
+		}
 		if f.Managed {
 			disabled
 			readonly
@@ -120,7 +135,7 @@ templ booleanInput(f Field, name string) {
 			id={ name }
 			name={ name }
 			value="true"
-			if f.Value == "true" {
+			if prefillChecked(f) {
 				checked
 			}
 			if f.Managed {
@@ -137,9 +152,13 @@ templ booleanInput(f Field, name string) {
 }
 
 templ enumSelect(f Field, name string) {
+	{{ selected := prefillValue(f) }}
 	<select
 		id={ name }
 		name={ name }
+		if f.Required {
+			required
+		}
 		if f.Managed {
 			disabled
 		}
@@ -149,7 +168,7 @@ templ enumSelect(f Field, name string) {
 			<option value="">—</option>
 		}
 		for _, opt := range f.Enum {
-			if opt == f.Value {
+			if opt == selected {
 				<option value={ opt } selected>{ opt }</option>
 			} else {
 				<option value={ opt }>{ opt }</option>
@@ -159,18 +178,14 @@ templ enumSelect(f Field, name string) {
 }
 
 templ arrayInput(f Field, name string) {
-	<input
-		type="text"
-		id={ name }
-		name={ name }
-		value={ f.Value }
-		placeholder="comma-separated"
-		if f.Managed {
-			disabled
-			readonly
-		}
-		class={ inputClasses(f.Managed) }
-	/>
+	@tagslist.TagsList(tagslist.Config{
+		ID:          name,
+		Name:        name,
+		Values:      f.ArrayDefault,
+		Placeholder: "item",
+		AddLabel:    "+ Add item",
+		Disabled:    f.Managed,
+	})
 }
 
 templ objectGroup(f Field, prefix string) {
@@ -222,4 +237,23 @@ func orDefault(s, def string) string {
 		return def
 	}
 	return s
+}
+
+// prefillValue resolves the input `value` attribute: current form value wins,
+// default fills when absent. Ensures a freshly-rendered form carries the
+// addon's default values verbatim — saves users from having to re-type them.
+func prefillValue(f Field) string {
+	if f.Value != "" {
+		return f.Value
+	}
+	return f.Default
+}
+
+// prefillChecked resolves the checkbox state. `Value` takes precedence (user
+// submission); fall through to `Default` when the form is fresh.
+func prefillChecked(f Field) bool {
+	if f.Value != "" {
+		return f.Value == "true"
+	}
+	return f.Default == "true"
 }

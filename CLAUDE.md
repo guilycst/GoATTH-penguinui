@@ -65,7 +65,7 @@ GoATTH-penguinui/
 │   ├── e2e_test.go             # TestMain, shared browser, helpers
 │   ├── table_htmx_test.go      # Table API-level tests (pagination, sort, filter)
 │   ├── table_pagination_nav_test.go  # Browser paginator style tests
-│   ├── table_filter_test.go    # Browser filter interaction tests (WIP)
+│   ├── table_filter_test.go    # Browser filter interaction tests (bar + inline variants)
 │   └── sidebar_test.go         # All-components-present test
 ├── <component-name>/           # Original PenguinUI HTML (for reference/parity)
 └── SESSION_STATE.md            # Current in-progress work state
@@ -164,7 +164,7 @@ The table is the most complex component. Key features:
 - Pagination with HTMX OOB swap (paginator updates active state)
 - Infinite scroll with sentinel row
 - Lazy loading
-- Filter bar (search, select, toggle) — **in progress**
+- Filter bar (search, select, toggle) — `bar` + `inline` variants; `FilterConfig.HxTarget` overrides default tbody target
 
 HTMX endpoint: `/api/components/table/rows`
 Query params: `order_by`, `order_dir`, `page`, `per_page`, `search`, `membership`, `variant`
@@ -180,6 +180,7 @@ Query params: `order_by`, `order_dir`, `page`, `per_page`, `search`, `membership
 **Completed (22):** Accordion, Alert, Avatar, Badge, Banner, Button, Card, Checkbox, Combobox, Dropdown, Modal, Pagination, Select, Sidebar, Spinner, Table, Tabs, Textarea, Text Input, Toast, Toggle, Tooltip
 
 **In Progress:**
-- Table filter bar (types + templ done, Alpine.js timing issue in E2E tests)
 - Sort header cycling (neutral→asc→desc→neutral, uncommitted)
+
+> Note: Playwright `Locator.Fill()` does NOT fire a native `input` event — Alpine `x-model` won't update. Tests using debounced inputs must dispatch `input` manually (`fillSearchInput` helper in `tests/e2e/e2e_test.go`).
 

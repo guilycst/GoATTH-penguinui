@@ -15,9 +15,21 @@ const (
 	KindInteger Kind = "integer"
 	KindBoolean Kind = "boolean"
 	KindEnum    Kind = "enum"
-	KindObject  Kind = "object"   // group of nested fields
-	KindArray   Kind = "array"    // simple array of scalars (renders as tagslist)
-	KindUnknown Kind = "unknown"  // fallback — render read-only JSON
+	KindObject  Kind = "object"  // group of nested fields
+	KindArray   Kind = "array"   // simple array of scalars (renders as tagslist)
+	KindUnknown Kind = "unknown" // fallback — render read-only JSON
+)
+
+// AllowMode is the per-path constraint expressed by an allow_list entry.
+// AllowList leaves can be bool (true → managed) or string ("managed"/"disabled").
+type AllowMode string
+
+const (
+	// AllowModeManaged: platform-controlled — render but disable the input.
+	AllowModeManaged AllowMode = "managed"
+	// AllowModeDisabled: hide the field entirely — the platform won't accept
+	// overrides at this path.
+	AllowModeDisabled AllowMode = "disabled"
 )
 
 // Field describes one renderable input derived from a JSON Schema node + defaults.
@@ -26,7 +38,9 @@ type Field struct {
 	Path string
 	// Name is the input name attribute; usually Path.
 	Name string
-	// Label is the human-readable field label.
+	// Label is the human-readable field label. For unwrapped 1-child objects
+	// it includes the parent label (e.g. "Crds › Enabled") so the rendered
+	// context is preserved without a wrapping section.
 	Label string
 	// Description is an optional helper text.
 	Description string
@@ -34,10 +48,15 @@ type Field struct {
 	Kind Kind
 	// Required marks the field with an asterisk.
 	Required bool
-	// Managed means AllowList matches this path — rendered read-only with a lock.
+	// Managed means the allow_list marks this path as platform-controlled —
+	// rendered read-only with a lock.
 	Managed bool
 	// Default is the JSON-serialized default value (quoted scalars preserved).
 	Default string
+	// ArrayDefault is the element list when Kind == KindArray. Populated in
+	// parallel with Default so the renderer can feed it straight to the
+	// tagslist component without re-splitting the CSV representation.
+	ArrayDefault []string
 	// Value is the current form value (JSON-serialized).
 	Value string
 	// Enum lists valid options when Kind == KindEnum.
@@ -48,16 +67,58 @@ type Field struct {
 	Errors []string
 }
 
-// Walk builds a flat-ish list of Fields from a JSON Schema subset.
-// - schema: the JSON Schema root (typically an object with "properties").
-// - defaults: default values map (from AddonVersion.DefaultValues).
-// - values: current form values (user-submitted so far).
-// - allowList: set of paths the platform forbids overriding — rendered read-only.
+// FlattenAllowList walks a nested allow_list map and produces a flat map of
+// dotted JSONPath → AllowMode. Accepted leaf shapes:
+//   - bool true  → AllowModeManaged (backward-compatible encoding)
+//   - string "managed" → AllowModeManaged
+//   - string "disabled" → AllowModeDisabled
 //
-// Returns the list of top-level fields. Nested objects produce fields with Children.
-// Unknown / unsupported shapes produce a KindUnknown field — the caller can decide
-// to fall back to a raw YAML editor for the whole form.
-func Walk(schema map[string]any, defaults map[string]any, values map[string]any, allowList map[string]bool) []Field {
+// Anything else (bool false, other strings, numbers) is ignored — the path
+// behaves as unrestricted.
+func FlattenAllowList(m *map[string]any) map[string]AllowMode {
+	out := map[string]AllowMode{}
+	if m == nil {
+		return out
+	}
+	flattenAllowListInto(*m, "", out)
+	return out
+}
+
+func flattenAllowListInto(m map[string]any, prefix string, out map[string]AllowMode) {
+	for k, v := range m {
+		path := k
+		if prefix != "" {
+			path = prefix + "." + k
+		}
+		switch x := v.(type) {
+		case map[string]any:
+			flattenAllowListInto(x, path, out)
+		case bool:
+			if x {
+				out[path] = AllowModeManaged
+			}
+		case string:
+			switch strings.ToLower(x) {
+			case "managed":
+				out[path] = AllowModeManaged
+			case "disabled":
+				out[path] = AllowModeDisabled
+			}
+		}
+	}
+}
+
+// Walk builds a list of Fields from a JSON Schema subset.
+//   - schema: the JSON Schema root (typically an object with "properties").
+//   - defaults: default values map (from AddonVersion.DefaultValues).
+//   - values: current form values (user-submitted so far).
+//   - allowList: flattened allow_list (see FlattenAllowList).
+//
+// Paths marked AllowModeDisabled are skipped entirely.
+// Objects with exactly one (post-filter) child are unwrapped: the single
+// descendant bubbles up with its label prefixed "Parent › Child" so the UI
+// avoids a section wrapper with a single input inside.
+func Walk(schema map[string]any, defaults, values map[string]any, allowList map[string]AllowMode) []Field {
 	if schema == nil {
 		return nil
 	}
@@ -65,33 +126,41 @@ func Walk(schema map[string]any, defaults map[string]any, values map[string]any,
 	if !ok || len(props) == 0 {
 		return nil
 	}
-	required := stringSet(schema["required"])
+	return buildSchemaFields(props, stringSet(schema["required"]), "", defaults, values, allowList)
+}
 
-	// Deterministic ordering: schema-declared order isn't preserved by map, so sort.
-	keys := make([]string, 0, len(props))
-	for k := range props {
-		keys = append(keys, k)
-	}
-	sort.Strings(keys)
-
+func buildSchemaFields(props map[string]any, required map[string]bool, prefix string, defaults, values map[string]any, allowList map[string]AllowMode) []Field {
+	keys := sortedKeys(props)
 	out := make([]Field, 0, len(keys))
 	for _, k := range keys {
+		path := k
+		if prefix != "" {
+			path = prefix + "." + k
+		}
+		if allowList[path] == AllowModeDisabled {
+			continue
+		}
 		node, _ := props[k].(map[string]any)
 		if node == nil {
 			continue
 		}
-		out = append(out, buildField(k, k, node, defaults, values, allowList, required[k]))
+		f := buildSchemaField(path, k, node, defaults, values, allowList, required[k])
+		if f.Kind == KindObject && len(f.Children) == 0 {
+			continue
+		}
+		out = append(out, normalizeField(f))
 	}
 	return out
 }
 
-func buildField(path, name string, node map[string]any, defaults, values map[string]any, allowList map[string]bool, required bool) Field {
+func buildSchemaField(path, name string, node map[string]any, defaults, values map[string]any, allowList map[string]AllowMode, required bool) Field {
+	mode := allowList[path]
 	f := Field{
 		Path:     path,
-		Name:     name,
+		Name:     path,
 		Label:    humanize(name),
 		Required: required,
-		Managed:  allowList[path],
+		Managed:  mode == AllowModeManaged,
 	}
 	if t, ok := getString(node, "title"); ok && t != "" {
 		f.Label = t
@@ -100,7 +169,6 @@ func buildField(path, name string, node map[string]any, defaults, values map[str
 		f.Description = d
 	}
 
-	// Enum takes precedence over raw type.
 	if enumRaw, ok := node["enum"].([]any); ok && len(enumRaw) > 0 {
 		f.Kind = KindEnum
 		f.Enum = toStringSlice(enumRaw)
@@ -111,29 +179,18 @@ func buildField(path, name string, node map[string]any, defaults, values map[str
 
 	f.Default = jsonScalar(lookupDotted(defaults, path))
 	f.Value = jsonScalar(lookupDotted(values, path))
+	if f.Kind == KindArray {
+		f.ArrayDefault = arrayElements(lookupDotted(defaults, path))
+	}
 
 	if f.Kind == KindObject {
-		childProps, _ := node["properties"].(map[string]any)
-		if childProps != nil {
-			required := stringSet(node["required"])
-			keys := make([]string, 0, len(childProps))
-			for k := range childProps {
-				keys = append(keys, k)
-			}
-			sort.Strings(keys)
-			for _, k := range keys {
-				childNode, _ := childProps[k].(map[string]any)
-				if childNode == nil {
-					continue
-				}
-				childPath := path + "." + k
-				f.Children = append(f.Children, buildField(childPath, childPath, childNode, defaults, values, allowList, required[k]))
-			}
+		if childProps, ok := node["properties"].(map[string]any); ok && len(childProps) > 0 {
+			childRequired := stringSet(node["required"])
+			f.Children = buildSchemaFields(childProps, childRequired, path, defaults, values, allowList)
 		}
 	}
 
 	if f.Kind == KindArray {
-		// Only support simple arrays of scalars in MVP. Anything more complex downgrades.
 		if items, ok := node["items"].(map[string]any); ok {
 			if tp, _ := getString(items, "type"); tp == "" || tp == "object" || tp == "array" {
 				f.Kind = KindUnknown
@@ -144,42 +201,139 @@ func buildField(path, name string, node map[string]any, defaults, values map[str
 	return f
 }
 
-// FallbackFromDefaults produces fields when no schema is available.
-// Every top-level default becomes a KindString field (the user can still edit nested
-// values via the YAML escape hatch). Returns nil if no defaults.
-func FallbackFromDefaults(defaults map[string]any, values map[string]any, allowList map[string]bool) []Field {
+// FallbackFromDefaults builds fields when no schema is published. Recurses
+// into nested maps so complex defaults still produce an editable form.
+// Scalar kinds are inferred from the Go type of the default value; nested
+// maps become KindObject with populated Children. Disabled paths are skipped;
+// single-child objects are unwrapped (see normalizeField).
+func FallbackFromDefaults(defaults, values map[string]any, allowList map[string]AllowMode) []Field {
 	if len(defaults) == 0 {
 		return nil
 	}
-	keys := make([]string, 0, len(defaults))
-	for k := range defaults {
-		keys = append(keys, k)
-	}
-	sort.Strings(keys)
+	return buildDefaultsFields(defaults, "", values, allowList)
+}
 
+func buildDefaultsFields(m map[string]any, prefix string, values map[string]any, allowList map[string]AllowMode) []Field {
+	keys := sortedKeys(m)
 	out := make([]Field, 0, len(keys))
 	for _, k := range keys {
-		val := defaults[k]
-		// Nested objects/arrays downgrade to KindUnknown so the caller surfaces a
-		// YAML editor rather than rendering a misleading input.
-		kind := kindFromGo(val)
-		f := Field{
-			Path:    k,
-			Name:    k,
-			Label:   humanize(k),
-			Kind:    kind,
-			Managed: allowList[k],
-			Default: jsonScalar(val),
-			Value:   jsonScalar(lookupDotted(values, k)),
+		path := k
+		if prefix != "" {
+			path = prefix + "." + k
 		}
-		out = append(out, f)
+		mode := allowList[path]
+		if mode == AllowModeDisabled {
+			continue
+		}
+		f := buildDefaultField(path, k, m[k], values, allowList, mode)
+		if f.Kind == KindObject && len(f.Children) == 0 {
+			continue
+		}
+		out = append(out, normalizeField(f))
+	}
+	return out
+}
+
+func buildDefaultField(path, name string, val any, values map[string]any, allowList map[string]AllowMode, mode AllowMode) Field {
+	f := Field{
+		Path:    path,
+		Name:    path,
+		Label:   humanize(name),
+		Kind:    kindFromGo(val),
+		Managed: mode == AllowModeManaged,
+		Default: jsonScalar(val),
+		Value:   jsonScalar(lookupDotted(values, path)),
+	}
+	switch f.Kind {
+	case KindObject:
+		if m, ok := val.(map[string]any); ok {
+			f.Children = buildDefaultsFields(m, path, values, allowList)
+		}
+	case KindArray:
+		if arr, ok := val.([]any); ok {
+			if hasComplexElements(arr) {
+				f.Kind = KindUnknown
+			} else {
+				f.ArrayDefault = arrayElements(val)
+			}
+		}
+	}
+	return f
+}
+
+// arrayElements extracts a []string representation of an array-typed value
+// for seeding tagslist inputs. Accepts []any (YAML-decoded path) and returns
+// nil for anything else so the renderer can fall back to an empty list.
+func arrayElements(v any) []string {
+	arr, ok := v.([]any)
+	if !ok {
+		return nil
+	}
+	out := make([]string, 0, len(arr))
+	for _, el := range arr {
+		out = append(out, jsonScalar(el))
+	}
+	return out
+}
+
+// normalizeField collapses object→single-child chains. Recursive: each child
+// is normalized first, then if this field is an object with exactly one child
+// the child bubbles up carrying "Parent › " prepended to its label.
+// ≥2 children remain as sections.
+func normalizeField(f Field) Field {
+	if f.Kind != KindObject {
+		return f
+	}
+	for i := range f.Children {
+		f.Children[i] = normalizeField(f.Children[i])
+	}
+	if len(f.Children) == 1 {
+		c := f.Children[0]
+		c.Label = f.Label + " › " + c.Label
+		return c
+	}
+	return f
+}
+
+// PruneDisabled returns a deep copy of `values` with every path marked
+// AllowModeDisabled stripped out. Empty parent maps that remain after pruning
+// are removed as well so the serialized YAML doesn't carry orphan keys.
+// Used to seed the "raw YAML" tab of the drawer install flow with the same
+// subset the schema-field tab actually exposes.
+func PruneDisabled(values map[string]any, allowList map[string]AllowMode) map[string]any {
+	if len(values) == 0 {
+		return map[string]any{}
+	}
+	return pruneDisabledAt(values, "", allowList)
+}
+
+func pruneDisabledAt(m map[string]any, prefix string, allowList map[string]AllowMode) map[string]any {
+	out := make(map[string]any, len(m))
+	for k, v := range m {
+		path := k
+		if prefix != "" {
+			path = prefix + "." + k
+		}
+		if allowList[path] == AllowModeDisabled {
+			continue
+		}
+		if child, ok := v.(map[string]any); ok {
+			pruned := pruneDisabledAt(child, path, allowList)
+			if len(pruned) == 0 {
+				continue
+			}
+			out[k] = pruned
+			continue
+		}
+		out[k] = v
 	}
 	return out
 }
 
 // HasOnlySimpleScalars reports whether every field in the list is a simple scalar —
-// no objects, arrays, or unknowns. Used to decide whether the caller can render a
-// pure form or needs the YAML escape hatch.
+// no objects, arrays, or unknowns. Retained for backward compatibility; new
+// callers should render Fields unconditionally and let the component handle
+// groups/sections.
 func HasOnlySimpleScalars(fields []Field) bool {
 	for _, f := range fields {
 		switch f.Kind {
@@ -234,6 +388,16 @@ func kindFromGo(v any) Kind {
 	}
 }
 
+func hasComplexElements(arr []any) bool {
+	for _, v := range arr {
+		switch v.(type) {
+		case map[string]any, []any:
+			return true
+		}
+	}
+	return false
+}
+
 func getString(m map[string]any, key string) (string, bool) {
 	v, ok := m[key]
 	if !ok {
@@ -279,12 +443,17 @@ func jsonScalar(v any) string {
 		return "false"
 	case float64:
 		return fmt.Sprintf("%v", x)
+	case []any:
+		parts := make([]string, 0, len(x))
+		for _, el := range x {
+			parts = append(parts, jsonScalar(el))
+		}
+		return strings.Join(parts, ", ")
 	default:
 		return fmt.Sprintf("%v", x)
 	}
 }
 
-// lookupDotted walks a dotted path through a nested map. Missing segments return nil.
 func lookupDotted(m map[string]any, path string) any {
 	if m == nil || path == "" {
 		return nil
@@ -301,15 +470,21 @@ func lookupDotted(m map[string]any, path string) any {
 	return cur
 }
 
-// humanize converts a snake_or-camel path segment into a Title Case label.
+func sortedKeys(m map[string]any) []string {
+	keys := make([]string, 0, len(m))
+	for k := range m {
+		keys = append(keys, k)
+	}
+	sort.Strings(keys)
+	return keys
+}
+
 func humanize(s string) string {
-	// Take only the last segment for the label.
 	if i := strings.LastIndex(s, "."); i >= 0 {
 		s = s[i+1:]
 	}
 	s = strings.ReplaceAll(s, "_", " ")
 	s = strings.ReplaceAll(s, "-", " ")
-	// Split camelCase boundaries.
 	var b strings.Builder
 	for i, r := range s {
 		if i > 0 && isUpper(r) && !isUpper(prevRune(s, i)) {
@@ -321,7 +496,6 @@ func humanize(s string) string {
 	if out == "" {
 		return s
 	}
-	// Capitalize first letter.
 	return strings.ToUpper(out[:1]) + out[1:]
 }
 

@@ -93,6 +93,14 @@ type Row struct {
 	HXTarget string
 	// HXSwap is the HTMX swap strategy (used with HXGet/HXPost). Defaults to "innerHTML".
 	HXSwap string
+	// HXPushURL pushes the request URL into browser history when HXGet/HXPost
+	// navigates. Off by default. Link-mode rows always push and ignore this.
+	HXPushURL bool
+	// AlpineAttrs is a pass-through for per-row Alpine directives (e.g.
+	// `x-show`, `x-data`, `x-bind:class`). Keys become HTML attribute names
+	// verbatim; values go through templ's attribute escaping. Use for
+	// client-side row filters (x-show) that sit on top of a gotable.
+	AlpineAttrs map[string]string
 	// Expandable shows a chevron toggle and an expandable detail section below the row
 	Expandable bool
 	// Detail is rendered in the expanded panel below the row when Expandable is true
@@ -105,6 +113,21 @@ type Row struct {
 // (link, click handler, HTMX action, expandable, or custom actions).
 func (r Row) IsActionable() bool {
 	return r.Link != "" || r.OnClick != "" || r.HXGet != "" || r.HXPost != "" || r.Expandable || r.Actions != nil
+}
+
+// ClickableRole returns the ARIA role to advertise for a clickable row, or
+// "" if the row is not keyboard-activatable as a single unit. Rows whose
+// only interactive surfaces are nested (Actions or Expandable-only without a
+// row-level target) keep the default role and let the inner controls own
+// focus. See table.templ for the tabindex/onkeydown pairing.
+func (r Row) ClickableRole() string {
+	if r.Link != "" {
+		return "link"
+	}
+	if r.OnClick != "" || r.HXGet != "" || r.HXPost != "" {
+		return "button"
+	}
+	return ""
 }
 
 // HasLinkedRows returns true if any row has a Link
@@ -165,8 +188,13 @@ type PaginationMode string
 const (
 	// PaginationTraditional renders page numbers below the table (default)
 	PaginationTraditional PaginationMode = ""
-	// PaginationInfiniteScroll appends rows on scroll using HTMX revealed trigger.
-	// The table container gets a fixed height and scrolls internally.
+	// PaginationInfiniteScroll appends rows on scroll. The sentinel's
+	// IntersectionObserver attaches to the nearest ancestor scroller (usually
+	// the page's main content area) by default — the table itself does NOT
+	// create its own inner scroller. Set `PaginationConfig.ContainerHeight`
+	// only when the host page genuinely needs a bounded, table-local scroll
+	// (e.g. a dashboard with multiple independently-scrollable widgets).
+	// Default = page-scroll (one scrollbar, idiomatic for full-page tables).
 	PaginationInfiniteScroll PaginationMode = "infinite"
 )
 
@@ -182,14 +210,26 @@ type PaginationConfig struct {
 	PerPage int
 	// HasMore indicates if more rows are available (used by infinite scroll)
 	HasMore bool
-	// ContainerHeight is the CSS height for infinite scroll container (e.g. "400px", "60vh").
-	// Defaults to "400px" if empty and Mode is PaginationInfiniteScroll.
+	// ContainerHeight opts into Pattern A for infinite scroll: the table wraps
+	// itself in a max-height + overflow-y-auto container and scrolls
+	// internally. Leave empty (the default) for Pattern B, where the sentinel
+	// row reveals against the nearest ancestor scroller. Values are raw CSS
+	// (e.g. "400px", "60vh"). Only consulted when Mode is
+	// PaginationInfiniteScroll.
 	ContainerHeight string
 }
 
 // IsInfiniteScroll returns true if this pagination uses infinite scroll mode
 func (p *PaginationConfig) IsInfiniteScroll() bool {
 	return p != nil && p.Mode == PaginationInfiniteScroll
+}
+
+// IsContained returns true when the infinite-scroll table should render its
+// own capped scroll container (Pattern A). False means the sentinel reveals
+// against the nearest ancestor scroller (Pattern B — the default). Used by
+// the template to decide whether to emit `max-height + overflow-y: auto`.
+func (p *PaginationConfig) IsContained() bool {
+	return p != nil && p.Mode == PaginationInfiniteScroll && p.ContainerHeight != ""
 }
 
 // NextPage returns CurrentPage + 1
@@ -249,14 +289,60 @@ type Filter struct {
 	DefaultValue string
 }
 
+// FilterVariant switches the filter bar layout. FilterVariantBar (the
+// default, empty string) is the full-width bordered block with an optional
+// collapsible header — suitable for primary page tables. FilterVariantInline
+// drops the border, collapsible toggle, and padding wrapper so the filter
+// controls render as a plain flex row; suitable for modals and tight chrome
+// where the bar's own chrome would compete with the host's.
+type FilterVariant string
+
+const (
+	FilterVariantBar    FilterVariant = ""
+	FilterVariantInline FilterVariant = "inline"
+)
+
 // FilterConfig holds the filter bar configuration
 type FilterConfig struct {
 	// Filters is the list of filter controls
 	Filters []Filter
-	// Collapsible enables a toggle to show/hide the filter bar
+	// Collapsible enables a toggle to show/hide the filter bar.
+	// Ignored when Variant is FilterVariantInline.
 	Collapsible bool
-	// InitiallyExpanded controls whether filters start visible (default: true)
+	// InitiallyExpanded controls whether filters start visible (default: true).
+	// Ignored when Variant is FilterVariantInline.
 	InitiallyExpanded bool
+	// Variant selects the layout (bar vs inline). See FilterVariant.
+	Variant FilterVariant
+	// HxTarget overrides the CSS selector that filter changes swap into.
+	// Default (empty) resolves to "#{tbody-id}". Use when the table sits
+	// inside a larger fragment that should be re-rendered as a unit — for
+	// example, a modal body that includes both the table and surrounding
+	// header text, or a cluster-picker card that needs pager state reset.
+	HxTarget string
+	// HxSwap overrides the htmx swap strategy used when filters apply.
+	// Default (empty) resolves to "innerHTML". Use "outerHTML" when the
+	// HxTarget is itself the wrapper that the server re-renders (e.g. a
+	// catalog grid whose empty-state lives on the wrapper element).
+	HxSwap string
+}
+
+// ResolvedHxTarget returns the CSS selector that filter changes should swap
+// into. Caller-provided HxTarget wins; falls back to "#{tbody-id}".
+func (c *FilterConfig) ResolvedHxTarget(cfg Config) string {
+	if c != nil && c.HxTarget != "" {
+		return c.HxTarget
+	}
+	return "#" + cfg.TbodyID()
+}
+
+// ResolvedHxSwap returns the htmx swap strategy filter requests should use.
+// Caller-provided HxSwap wins; falls back to "innerHTML".
+func (c *FilterConfig) ResolvedHxSwap() string {
+	if c != nil && c.HxSwap != "" {
+		return c.HxSwap
+	}
+	return "innerHTML"
 }
 
 // Config holds configuration for the table component
@@ -585,6 +671,13 @@ func (cfg Config) FilterBarID() string {
 	return cfg.GetID() + "-filters"
 }
 
+// filterControlID returns a stable id for a single filter input. Stability
+// matters: hx-preserve relies on a matching id between the existing DOM and
+// the swap response to know which element to keep across renders.
+func filterControlID(cfg Config, filter Filter) string {
+	return cfg.FilterBarID() + "-" + filter.Key
+}
+
 // filterAlpineInit generates a name for the Alpine.data registration.
 // Converts hyphens to camelCase since Alpine evaluates x-data as JS expressions.
 func filterAlpineInit(cfg Config) string {
@@ -636,27 +729,52 @@ func filterScriptData(cfg Config) string {
 	if cfg.Pagination != nil && cfg.Pagination.PerPage > 0 {
 		perPage = "&per_page=" + itoa(cfg.Pagination.PerPage)
 	}
-	tbodyID := cfg.TbodyID()
+	// ExtraQueryParams already starts with '&' (or is empty) — appended raw
+	// after the auto `?_filter=1` marker so static query state (modal context
+	// like ?addon_name=X) survives every filter request.
+	extra := cfg.ExtraQueryParams
+	hxTarget := cfg.Filters.ResolvedHxTarget(cfg)
+	hxSwap := cfg.Filters.ResolvedHxSwap()
 	name := filterAlpineInit(cfg)
 
-	return fmt.Sprintf(`document.addEventListener('alpine:init', () => {
-		Alpine.data('%s', () => ({
-			filtersExpanded: %s,
-			filters: %s,
-			buildFilterURL() {
-				let url = '%s?_filter=1%s';
-				for (const [k, v] of Object.entries(this.filters)) {
-					if (v !== '' && v !== 'false') {
-						url += '&' + encodeURIComponent(k) + '=' + encodeURIComponent(v);
+	// Register eagerly when Alpine is already up (modal-swapped table); fall
+	// back to alpine:init for the initial page load. The alpine:init listener
+	// only fires ONCE per page; HTMX-swapped scripts arrive after init and
+	// would otherwise never register, leaving x-data="<name>Filters" silent.
+	//
+	// After late registration we MUST re-initialize the wrapper subtree —
+	// Alpine resolves x-data="<name>" at mount time, so a div that mounted
+	// before the script ran is bound to an empty {} until we tell Alpine to
+	// rebind. initTree(wrapper) is idempotent for already-bound trees.
+	return fmt.Sprintf(`(() => {
+		const name = '%s';
+		const register = () => {
+			Alpine.data(name, () => ({
+				filtersExpanded: %s,
+				filters: %s,
+				buildFilterURL() {
+					let url = '%s?_filter=1%s%s';
+					for (const [k, v] of Object.entries(this.filters)) {
+						if (v !== '' && v !== 'false') {
+							url += '&' + encodeURIComponent(k) + '=' + encodeURIComponent(v);
+						}
 					}
+					return url;
+				},
+				applyFilters() {
+					htmx.ajax('GET', this.buildFilterURL(), {target: '%s', swap: '%s'});
 				}
-				return url;
-			},
-			applyFilters() {
-				htmx.ajax('GET', this.buildFilterURL(), {target: '#%s', swap: 'innerHTML'});
-			}
-		}));
-	});
+			}));
+			document.querySelectorAll('[x-data="' + name + '"]').forEach((el) => {
+				if (typeof Alpine.initTree === 'function') Alpine.initTree(el);
+			});
+		};
+		if (window.Alpine && window.Alpine.version) {
+			register();
+		} else {
+			document.addEventListener('alpine:init', register);
+		}
+	})();
 	// Intercept all HTMX requests from this table to append filter params
 	document.addEventListener('htmx:configRequest', (evt) => {
 		var el = evt.detail.elt;
@@ -669,7 +787,7 @@ func filterScriptData(cfg Config) string {
 				evt.detail.parameters[k] = v;
 			}
 		}
-	});`, name, expanded, filters, endpoint, perPage, tbodyID, name)
+	});`, name, expanded, filters, endpoint, perPage, extra, hxTarget, hxSwap, name)
 }
 
 // jsEscape escapes a string for safe embedding in single-quoted JS literals

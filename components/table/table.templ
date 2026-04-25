@@ -69,13 +69,33 @@ templ Table(cfg Config) {
 	}
 }
 
-// tableContainer renders the table with appropriate wrapping for the pagination mode
+// tableContainer renders the table with appropriate wrapping for the pagination mode.
+// Two infinite-scroll patterns:
+//   - Pattern B (default): no inline max-height. The sentinel observes the
+//     nearest ancestor scroller — usually the page's main content area. One
+//     scrollbar per page. Idiomatic for full-page tables.
+//   - Pattern A (opt-in via ContainerHeight): the table wraps itself in a
+//     capped, internally-scrollable container. Use only when a page hosts
+//     multiple independently-scrollable widgets (dashboards, split panes).
 templ tableContainer(cfg Config) {
-	if cfg.Pagination != nil && cfg.Pagination.IsInfiniteScroll() {
-		<!-- Infinite scroll: height-constrained scrollable container -->
-		<div class={ cfg.ContainerClasses() } style={ "max-height: " + cfg.Pagination.GetContainerHeight() + "; overflow-y: auto;" }>
-			@tableInner(cfg)
-		</div>
+	if cfg.Pagination.IsContained() {
+		if cfg.ShowCheckbox && cfg.HasExpandableRows() {
+			<div x-data="{ checkAll: false, openRows: {} }" class={ cfg.ContainerClasses() } style={ "max-height: " + cfg.Pagination.GetContainerHeight() + "; overflow-y: auto;" }>
+				@tableInner(cfg)
+			</div>
+		} else if cfg.ShowCheckbox {
+			<div x-data="{ checkAll: false }" class={ cfg.ContainerClasses() } style={ "max-height: " + cfg.Pagination.GetContainerHeight() + "; overflow-y: auto;" }>
+				@tableInner(cfg)
+			</div>
+		} else if cfg.HasExpandableRows() {
+			<div x-data="{ openRows: {} }" class={ cfg.ContainerClasses() } style={ "max-height: " + cfg.Pagination.GetContainerHeight() + "; overflow-y: auto;" }>
+				@tableInner(cfg)
+			</div>
+		} else {
+			<div class={ cfg.ContainerClasses() } style={ "max-height: " + cfg.Pagination.GetContainerHeight() + "; overflow-y: auto;" }>
+				@tableInner(cfg)
+			</div>
+		}
 	} else if cfg.ShowCheckbox && cfg.HasExpandableRows() {
 		<div x-data="{ checkAll: false, openRows: {} }" class={ cfg.ContainerClasses() }>
 			@tableInner(cfg)
@@ -99,41 +119,55 @@ func showTraditionalPagination(cfg Config) bool {
 	return cfg.Pagination != nil && !cfg.Pagination.IsInfiniteScroll()
 }
 
-// filterBar renders the collapsible filter controls above the table
+// filterBar renders the filter controls above the table. Two variants:
+//
+//   - FilterVariantBar (default) — bordered block, optional collapsible
+//     header. Use for primary page tables.
+//   - FilterVariantInline — no border, no collapse, plain flex row. Use when
+//     the host container already provides chrome (modals, toolbar strips).
+//     Ignores Collapsible / InitiallyExpanded.
 templ filterBar(cfg Config) {
-	<div id={ cfg.FilterBarID() } class="border border-outline rounded-radius mb-3 bg-surface dark:border-outline-dark dark:bg-surface-dark">
-		if cfg.Filters.Collapsible {
-			<button
-				type="button"
-				@click="filtersExpanded = !filtersExpanded"
-				class="flex w-full items-center justify-between px-4 py-3 text-sm font-medium text-on-surface-strong hover:bg-surface-alt dark:text-on-surface-dark-strong dark:hover:bg-surface-dark-alt transition-colors"
-			>
-				<span class="flex items-center gap-2">
-					<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4">
-						<path stroke-linecap="round" stroke-linejoin="round" d="M12 3c2.755 0 5.455.232 8.083.678.533.09.917.556.917 1.096v1.044a2.25 2.25 0 0 1-.659 1.591l-5.432 5.432a2.25 2.25 0 0 0-.659 1.591v2.927a2.25 2.25 0 0 1-1.244 2.013L9.75 21v-6.568a2.25 2.25 0 0 0-.659-1.591L3.659 7.409A2.25 2.25 0 0 1 3 5.818V4.774c0-.54.384-1.006.917-1.096A48.32 48.32 0 0 1 12 3Z"/>
-					</svg>
-					Filters
-				</span>
-				<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-5 transition-transform" :class="filtersExpanded ? 'rotate-180' : ''">
-					<path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd"/>
-				</svg>
-			</button>
-		}
-		<div
-			x-show="filtersExpanded"
-			x-collapse
-			class="px-4 pb-4"
-			if !cfg.Filters.Collapsible {
-				class="px-4 py-4"
+	if cfg.Filters.Variant == FilterVariantInline {
+		<div id={ cfg.FilterBarID() } class="mb-3 flex flex-wrap items-end gap-3">
+			for _, filter := range cfg.Filters.Filters {
+				@filterControl(cfg, filter)
 			}
-		>
-			<div class="flex flex-wrap items-end gap-4">
-				for _, filter := range cfg.Filters.Filters {
-					@filterControl(cfg, filter)
+		</div>
+	} else {
+		<div id={ cfg.FilterBarID() } class="border border-outline rounded-radius mb-3 bg-surface dark:border-outline-dark dark:bg-surface-dark">
+			if cfg.Filters.Collapsible {
+				<button
+					type="button"
+					@click="filtersExpanded = !filtersExpanded"
+					class="flex w-full items-center justify-between px-4 py-3 text-sm font-medium text-on-surface-strong hover:bg-surface-alt dark:text-on-surface-dark-strong dark:hover:bg-surface-dark-alt transition-colors"
+				>
+					<span class="flex items-center gap-2">
+						<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4">
+							<path stroke-linecap="round" stroke-linejoin="round" d="M12 3c2.755 0 5.455.232 8.083.678.533.09.917.556.917 1.096v1.044a2.25 2.25 0 0 1-.659 1.591l-5.432 5.432a2.25 2.25 0 0 0-.659 1.591v2.927a2.25 2.25 0 0 1-1.244 2.013L9.75 21v-6.568a2.25 2.25 0 0 0-.659-1.591L3.659 7.409A2.25 2.25 0 0 1 3 5.818V4.774c0-.54.384-1.006.917-1.096A48.32 48.32 0 0 1 12 3Z"/>
+						</svg>
+						Filters
+					</span>
+					<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-5 transition-transform" :class="filtersExpanded ? 'rotate-180' : ''">
+						<path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd"/>
+					</svg>
+				</button>
+			}
+			<div
+				x-show="filtersExpanded"
+				x-collapse
+				class="px-4 pb-4"
+				if !cfg.Filters.Collapsible {
+					class="px-4 py-4"
 				}
+			>
+				<div class="flex flex-wrap items-end gap-4">
+					for _, filter := range cfg.Filters.Filters {
+						@filterControl(cfg, filter)
+					}
+				</div>
 			</div>
 		</div>
-	</div>
+	}
 }
 
 // filterControl renders a single filter control based on its type
@@ -161,13 +195,22 @@ templ filterScript(cfg Config) {
 	@templ.Raw("<script type=\"text/javascript\">" + filterScriptData(cfg) + "</script>")
 }
 
-// filterSearchInput renders a search text input
+// filterSearchInput renders a search text input.
+//
+// hx-preserve + stable id keep the input element (and its focus + caret
+// position) intact across HTMX swaps that include the filter bar in the
+// swap target — e.g. when consumers configure HxTarget at a wrapper that
+// re-renders the filter row whole-cloth (catalog with empty-state branch).
+// On the common tbody-only swap path the attribute is a no-op since the
+// filter inputs aren't part of the target.
 templ filterSearchInput(cfg Config, filter Filter) {
 	<div class="relative">
 		<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="absolute left-2.5 top-1/2 size-4 -translate-y-1/2 text-on-surface-muted dark:text-on-surface-dark-muted" aria-hidden="true">
 			<path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"/>
 		</svg>
 		<input
+			id={ filterControlID(cfg, filter) }
+			hx-preserve="true"
 			type="search"
 			x-model={ "filters." + filter.Key }
 			@input.debounce.300ms="applyFilters()"
@@ -180,6 +223,8 @@ templ filterSearchInput(cfg Config, filter Filter) {
 // filterSelectInput renders a select dropdown
 templ filterSelectInput(cfg Config, filter Filter) {
 	<select
+		id={ filterControlID(cfg, filter) }
+		hx-preserve="true"
 		x-model={ "filters." + filter.Key }
 		@change="applyFilters()"
 		class="rounded-radius border border-outline bg-surface py-2 pl-3 pr-8 text-sm text-on-surface focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary dark:border-outline-dark dark:bg-surface-dark dark:text-on-surface-dark dark:focus-visible:outline-primary-dark"
@@ -203,6 +248,8 @@ templ filterSelectInput(cfg Config, filter Filter) {
 templ filterToggleInput(cfg Config, filter Filter) {
 	<label class="inline-flex cursor-pointer items-center gap-2">
 		<input
+			id={ filterControlID(cfg, filter) }
+			hx-preserve="true"
 			type="checkbox"
 			x-model={ "filters." + filter.Key }
 			@change="applyFilters()"
@@ -332,6 +379,8 @@ templ TableRow(cfg Config, row Row) {
 		if row.Link == "" {
 			{ rowActionAttrs(row)... }
 		}
+		{ rowA11yAttrs(row)... }
+		{ rowAlpineAttrs(row)... }
 	>
 		if cfg.ShowCheckbox {
 			<td class={ cfg.CellClasses() }>
@@ -458,6 +507,9 @@ func rowActionAttrs(row Row) templ.Attributes {
 		} else {
 			attrs["hx-swap"] = "innerHTML"
 		}
+		if row.HXPushURL {
+			attrs["hx-push-url"] = "true"
+		}
 		return attrs
 	}
 	if row.HXPost != "" {
@@ -470,9 +522,46 @@ func rowActionAttrs(row Row) templ.Attributes {
 		} else {
 			attrs["hx-swap"] = "innerHTML"
 		}
+		if row.HXPushURL {
+			attrs["hx-push-url"] = "true"
+		}
 		return attrs
 	}
 	return nil
+}
+
+// rowA11yAttrs gives keyboard and assistive-tech affordances to a row whose
+// whole area is clickable. Without these, a screen reader announces the row
+// as plain text and keyboard users can't Tab to it. Only emitted when the
+// row has a row-level target (Link / OnClick / HXGet / HXPost) — rows whose
+// interactions live inside nested controls (Actions column, Expandable with
+// its own toggle) keep native cell focus order.
+func rowA11yAttrs(row Row) templ.Attributes {
+	role := row.ClickableRole()
+	if role == "" {
+		return nil
+	}
+	return templ.Attributes{
+		"tabindex": "0",
+		"role":     role,
+		// Enter and Space trigger a native click, which HTMX and onclick
+		// handlers both pick up. Guard against repeat firings from a focused
+		// nested input accepting space as a character.
+		"onkeydown": "if((event.key==='Enter'||event.key===' ')&&!event.target.closest('input,textarea,select,button,a')){event.preventDefault();event.currentTarget.click();}",
+	}
+}
+
+// rowAlpineAttrs passes Row.AlpineAttrs through to the rendered <tr>. Keys
+// like `x-show`, `x-data`, `x-bind:class` arrive as-is.
+func rowAlpineAttrs(row Row) templ.Attributes {
+	if len(row.AlpineAttrs) == 0 {
+		return nil
+	}
+	attrs := templ.Attributes{}
+	for k, v := range row.AlpineAttrs {
+		attrs[k] = v
+	}
+	return attrs
 }
 
 templ sortableHeader(cfg Config, col Column) {
