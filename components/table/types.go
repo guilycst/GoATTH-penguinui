@@ -93,6 +93,14 @@ type Row struct {
 	HXTarget string
 	// HXSwap is the HTMX swap strategy (used with HXGet/HXPost). Defaults to "innerHTML".
 	HXSwap string
+	// HXPushURL pushes the request URL into browser history when HXGet/HXPost
+	// navigates. Off by default. Link-mode rows always push and ignore this.
+	HXPushURL bool
+	// AlpineAttrs is a pass-through for per-row Alpine directives (e.g.
+	// `x-show`, `x-data`, `x-bind:class`). Keys become HTML attribute names
+	// verbatim; values go through templ's attribute escaping. Use for
+	// client-side row filters (x-show) that sit on top of a gotable.
+	AlpineAttrs map[string]string
 	// Expandable shows a chevron toggle and an expandable detail section below the row
 	Expandable bool
 	// Detail is rendered in the expanded panel below the row when Expandable is true
@@ -105,6 +113,21 @@ type Row struct {
 // (link, click handler, HTMX action, expandable, or custom actions).
 func (r Row) IsActionable() bool {
 	return r.Link != "" || r.OnClick != "" || r.HXGet != "" || r.HXPost != "" || r.Expandable || r.Actions != nil
+}
+
+// ClickableRole returns the ARIA role to advertise for a clickable row, or
+// "" if the row is not keyboard-activatable as a single unit. Rows whose
+// only interactive surfaces are nested (Actions or Expandable-only without a
+// row-level target) keep the default role and let the inner controls own
+// focus. See table.templ for the tabindex/onkeydown pairing.
+func (r Row) ClickableRole() string {
+	if r.Link != "" {
+		return "link"
+	}
+	if r.OnClick != "" || r.HXGet != "" || r.HXPost != "" {
+		return "button"
+	}
+	return ""
 }
 
 // HasLinkedRows returns true if any row has a Link
@@ -165,8 +188,13 @@ type PaginationMode string
 const (
 	// PaginationTraditional renders page numbers below the table (default)
 	PaginationTraditional PaginationMode = ""
-	// PaginationInfiniteScroll appends rows on scroll using HTMX revealed trigger.
-	// The table container gets a fixed height and scrolls internally.
+	// PaginationInfiniteScroll appends rows on scroll. The sentinel's
+	// IntersectionObserver attaches to the nearest ancestor scroller (usually
+	// the page's main content area) by default — the table itself does NOT
+	// create its own inner scroller. Set `PaginationConfig.ContainerHeight`
+	// only when the host page genuinely needs a bounded, table-local scroll
+	// (e.g. a dashboard with multiple independently-scrollable widgets).
+	// Default = page-scroll (one scrollbar, idiomatic for full-page tables).
 	PaginationInfiniteScroll PaginationMode = "infinite"
 )
 
@@ -182,14 +210,26 @@ type PaginationConfig struct {
 	PerPage int
 	// HasMore indicates if more rows are available (used by infinite scroll)
 	HasMore bool
-	// ContainerHeight is the CSS height for infinite scroll container (e.g. "400px", "60vh").
-	// Defaults to "400px" if empty and Mode is PaginationInfiniteScroll.
+	// ContainerHeight opts into Pattern A for infinite scroll: the table wraps
+	// itself in a max-height + overflow-y-auto container and scrolls
+	// internally. Leave empty (the default) for Pattern B, where the sentinel
+	// row reveals against the nearest ancestor scroller. Values are raw CSS
+	// (e.g. "400px", "60vh"). Only consulted when Mode is
+	// PaginationInfiniteScroll.
 	ContainerHeight string
 }
 
 // IsInfiniteScroll returns true if this pagination uses infinite scroll mode
 func (p *PaginationConfig) IsInfiniteScroll() bool {
 	return p != nil && p.Mode == PaginationInfiniteScroll
+}
+
+// IsContained returns true when the infinite-scroll table should render its
+// own capped scroll container (Pattern A). False means the sentinel reveals
+// against the nearest ancestor scroller (Pattern B — the default). Used by
+// the template to decide whether to emit `max-height + overflow-y: auto`.
+func (p *PaginationConfig) IsContained() bool {
+	return p != nil && p.Mode == PaginationInfiniteScroll && p.ContainerHeight != ""
 }
 
 // NextPage returns CurrentPage + 1
